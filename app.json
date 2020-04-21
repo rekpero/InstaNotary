@@ -1,0 +1,17 @@
+{
+  "name": "BluzelleInstantNotary",
+  "displayName": "BluzelleInstantNotary",
+  "expo": {
+    "name": "BluzelleInstantNotary",
+    "slug": "BluzelleInstantNotary",
+    "version": "1.0.0",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
