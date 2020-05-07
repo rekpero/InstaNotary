@@ -1,0 +1,23 @@
+{
+  "name": "hrms-express-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bluzelle": "^1.0.8",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "fs": "0.0.1-security",
+    "ipfs-api": "^26.1.2",
+    "ipfs-http-client": "^44.0.0",
+    "ipfs-mini": "^1.1.5",
+    "multer": "^1.4.2"
+  }
+}
