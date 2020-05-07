@@ -6,20 +6,24 @@ import {
   Animated,
   TouchableWithoutFeedback,
   Image,
+  AsyncStorage,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
 import Constants from "expo-constants";
 import { decode } from "base64-arraybuffer";
 import * as Permissions from "expo-permissions";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, Feather } from "@expo/vector-icons";
+
 import styles from "./styles";
-import { uploadFileToServer } from "../../services";
+import { WebService } from "../../services";
+import { AuthContext } from "../../hooks";
 
 export default class HomeScreen extends React.Component {
+  static contextType = AuthContext;
   state = {
     image: null,
-    bounceValue: new Animated.Value(136),
+    bounceValue: new Animated.Value(200),
     isHidden: true,
     ipfsHash: "",
   };
@@ -39,9 +43,17 @@ export default class HomeScreen extends React.Component {
   };
 
   _pickDocument = async () => {
-    let result = await DocumentPicker.getDocumentAsync({});
-    alert(result.uri);
-    console.log(result);
+    try {
+      let result = await DocumentPicker.getDocumentAsync({});
+      if (!result.cancelled) {
+        const ipfsHash = await WebService.uploadFileToServer(result);
+        console.log(ipfsHash);
+        this.setState({ ipfsHash });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+    this._toggleSubView();
   };
 
   _pickImageFromCamera = async () => {
@@ -56,7 +68,7 @@ export default class HomeScreen extends React.Component {
         },
       });
       if (!result.cancelled) {
-        uploadFileToServer(result);
+        WebService.uploadFileToServer(result);
       }
     } catch (err) {
       console.log(err);
@@ -71,9 +83,10 @@ export default class HomeScreen extends React.Component {
         allowsEditing: false,
       });
       if (!result.cancelled) {
-        const ipfsHash = await uploadFileToServer(result);
-        console.log(ipfsHash);
-        this.setState({ ipfsHash });
+        // const ipfsHash = await WebService.uploadFileToServer(result);
+        // console.log(ipfsHash);
+        // this.setState({ ipfsHash });
+        this.props.navigation.push("NotaryDetail");
       }
     } catch (err) {
       console.log(err);
@@ -83,7 +96,7 @@ export default class HomeScreen extends React.Component {
 
   _toggleSubView = () => {
     const { isHidden } = this.state;
-    var toValue = 136;
+    var toValue = 200;
 
     if (isHidden) {
       toValue = 0;
@@ -98,6 +111,19 @@ export default class HomeScreen extends React.Component {
     this.setState({ isHidden: !isHidden });
   };
 
+  logout = async () => {
+    try {
+      console.log("Logout start");
+      await AsyncStorage.removeItem("mobileNumber");
+      console.log("Logout started");
+      const { signOut } = this.context;
+      signOut();
+      console.log("Logout done");
+    } catch (error) {
+      // Error saving data
+    }
+  };
+
   static getDerivedStateFromError(error) {
     // Update state so the next render will show the fallback UI.
     return { hasError: true };
@@ -110,21 +136,14 @@ export default class HomeScreen extends React.Component {
 
   render() {
     let { isHidden, ipfsHash } = this.state;
-    console.log(`https://ipfs.io/ipfs/${ipfsHash}`);
     return (
       <View style={styles.homeContainer}>
         <View style={styles.toolbarContainer}>
-          <Text style={styles.title}>Notary</Text>
-          <TouchableOpacity style={styles.logoutButton}>
+          <Text style={styles.title}>Instant Notary</Text>
+          <TouchableOpacity style={styles.logoutButton} onPress={this.logout}>
             <Ionicons name="ios-power" size={18} color="white" />
             <Text style={styles.logoutText}>Logout</Text>
           </TouchableOpacity>
-        </View>
-        <View>
-          <Image
-            style={{ width: 200, height: 200 }}
-            source={{ uri: `https://ipfs.io/ipfs/${ipfsHash}` }}
-          />
         </View>
         <TouchableOpacity
           style={styles.fabButton}
@@ -163,10 +182,26 @@ export default class HomeScreen extends React.Component {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.importButton}
+              onPress={this._pickImageFromSystem}
+            >
+              <Ionicons name="md-images" size={18} color="white" />
+              <Text style={styles.importText}>Gallery</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.subViewButtonContainer}>
+            <TouchableOpacity
+              style={[styles.importButton, styles.marginSet]}
               onPress={this._pickDocument}
             >
               <Ionicons name="ios-document" size={18} color="white" />
-              <Text style={styles.importText}>Files</Text>
+              <Text style={styles.importText}>Document</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.importButton}
+              onPress={this._pickDocument}
+            >
+              <Feather name="file-text" size={18} color="white" />
+              <Text style={styles.importText}>Text</Text>
             </TouchableOpacity>
           </View>
         </Animated.View>

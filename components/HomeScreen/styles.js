@@ -8,7 +8,7 @@ export default StyleSheet.create({
     flexDirection: "column",
     padding: 24,
     paddingTop: 48,
-    backgroundColor: "#d6d6d6",
+    backgroundColor: "#f5f5f5",
   },
   toolbarContainer: {
     flexDirection: "row",
@@ -61,7 +61,7 @@ export default StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderTopRightRadius: 8,
     borderTopLeftRadius: 8,
-    height: 136,
+    height: 200,
     elevation: 100,
     paddingLeft: 24,
     paddingRight: 24,
@@ -74,6 +74,7 @@ export default StyleSheet.create({
   },
   subViewButtonContainer: {
     flexDirection: "row",
+    marginVertical: 10,
   },
   subViewHeaderContainer: {
     flexDirection: "row",
@@ -107,7 +108,7 @@ export default StyleSheet.create({
     elevation: 4,
     shadowRadius: 15,
     shadowOffset: { width: 0, height: 0 },
-    flexGrow: 1,
+    width: "48%",
   },
   marginSet: {
     marginRight: 12,
