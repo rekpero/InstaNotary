@@ -14,7 +14,6 @@ export default StyleSheet.create({
   enterPhoneNumberTextContainer: {
     flexDirection: "row",
     justifyContent: "center",
-    marginTop: 240,
   },
   enterPhoneNumberText: {
     fontSize: 24,
@@ -22,7 +21,7 @@ export default StyleSheet.create({
     color: "#2b2d2f",
   },
   phoneNumberInput: {
-    marginTop: 56,
+    marginTop: 40,
     fontSize: 18,
     borderWidth: 2,
     borderColor: "#15548b",
@@ -58,5 +57,12 @@ export default StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     textTransform: "uppercase",
+  },
+  welcomeIcon: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: 300,
+    height: 100,
+    marginTop: 150,
   },
 });
