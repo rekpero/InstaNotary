@@ -15,7 +15,7 @@ import { AuthContext } from "../../hooks";
 !firebase.apps.length ? firebase.initializeApp(firebaseConfig) : firebase.app();
 
 const PhoneAuthScreen = ({ navigation }) => {
-  const { signIn } = React.useContext(AuthContext);
+  const { authContext } = React.useContext(AuthContext);
   const recaptchaVerifier = React.useRef(null);
   const [phoneNumber, setPhoneNumber] = React.useState();
   const [phoneAuthState, setPhoneAuthState] = React.useState("phone");
@@ -36,14 +36,11 @@ const PhoneAuthScreen = ({ navigation }) => {
   const sendVerification = async () => {
     try {
       const phoneProvider = new firebase.auth.PhoneAuthProvider();
-      console.log("Verification start");
       const verificationId = await phoneProvider.verifyPhoneNumber(
         phoneNumber,
         recaptchaVerifier.current
       );
-      console.log("Verification started");
       setVerificationId(verificationId);
-      console.log("Verification done");
       setPhoneAuthState("verification");
     } catch (err) {
       showMessage({ text: `Error: ${err.message}`, color: "red" });
@@ -59,8 +56,10 @@ const PhoneAuthScreen = ({ navigation }) => {
       await firebase.auth().signInWithCredential(credential);
       try {
         await AsyncStorage.setItem("mobileNumber", phoneNumber);
-        signIn(phoneNumber);
-        navigation.navigate("Home");
+        authContext.signIn(phoneNumber);
+        navigation.navigate("Home", {
+          loadNotaryItems: true,
+        });
       } catch (error) {
         // Error saving data
       }

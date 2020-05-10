@@ -1,7 +1,6 @@
 import * as React from "react";
 import { View, AsyncStorage } from "react-native";
 import Routes from "./routes";
-import SplashScreen from "./components/SplashScreen";
 import { AuthContext } from "./hooks";
 
 function App() {
@@ -61,7 +60,7 @@ function App() {
 
   return (
     <View style={{ flex: 1 }}>
-      <AuthContext.Provider value={authContext}>
+      <AuthContext.Provider value={{ authContext, state }}>
         <Routes state={state} />
       </AuthContext.Provider>
     </View>

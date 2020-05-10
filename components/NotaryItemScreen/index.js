@@ -5,18 +5,43 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   TextInput,
+  ToastAndroid,
 } from "react-native";
 import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 
 import styles from "./styles";
+import moment from "moment";
 import { WebService } from "../../services";
+import { AuthContext } from "../../hooks";
 
-export default function NotaryItemScreen({ navigation }) {
+export default function NotaryItemScreen({ navigation, route }) {
+  const { file, fileType } = route.params;
+  const { state } = React.useContext(AuthContext);
   const [notaryName, setNotaryName] = React.useState("");
   const [notaryDescription, setNotaryDescription] = React.useState("");
+  const fileName = file.uri.split("/")[file.uri.split("/").length - 1];
 
   const goBack = () => {
     navigation.goBack();
+  };
+  const sendFileData = async () => {
+    const res = await WebService.uploadFileToServer(file, {
+      name: notaryName,
+      description: notaryDescription,
+      type: fileType,
+      phoneNumber: state.userMobileNumber,
+      time: moment().format(),
+    });
+    ToastAndroid.showWithGravity(
+      res.message,
+      ToastAndroid.SHORT,
+      ToastAndroid.BOTTOM
+    );
+    setTimeout(() => {
+      navigation.navigate("Home", {
+        loadNotaryItems: true,
+      });
+    }, 2000);
   };
   return (
     <View style={styles.homeContainer}>
@@ -47,9 +72,12 @@ export default function NotaryItemScreen({ navigation }) {
       <Text style={styles.label}>File</Text>
       <View style={styles.fileContainer}>
         <MaterialIcons name="attach-file" size={24} color="black" />
-        <Text style={styles.fileName}>Notary Details</Text>
+        <Text style={styles.fileName}>{fileName}</Text>
       </View>
-      <TouchableOpacity style={styles.sendVerificationButton}>
+      <TouchableOpacity
+        style={styles.sendVerificationButton}
+        onPress={sendFileData}
+      >
         <Text style={styles.sendVerificationText}>Notarize</Text>
       </TouchableOpacity>
     </View>

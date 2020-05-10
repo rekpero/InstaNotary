@@ -5,32 +5,68 @@ import {
   TouchableOpacity,
   Animated,
   TouchableWithoutFeedback,
-  Image,
+  FlatList,
+  TextInput,
   AsyncStorage,
+  ToastAndroid,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
 import Constants from "expo-constants";
 import { decode } from "base64-arraybuffer";
 import * as Permissions from "expo-permissions";
-import { Ionicons, Feather } from "@expo/vector-icons";
-
+import { Ionicons, Feather, FontAwesome } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import styles from "./styles";
 import { WebService } from "../../services";
-import { AuthContext } from "../../hooks";
+import { AuthContext, StateContext } from "../../hooks";
+import moment from "moment";
 
 export default class HomeScreen extends React.Component {
   static contextType = AuthContext;
-  state = {
-    image: null,
-    bounceValue: new Animated.Value(200),
-    isHidden: true,
-    ipfsHash: "",
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      bounceValue: new Animated.Value(200),
+      isHidden: true,
+      isMailLoaded: false,
+      openSortMenu: false,
+      searchText: "",
+      allNotaries: [],
+      backupNotaries: [],
+      phoneNumber: "",
+    };
+  }
 
   componentDidMount() {
+    const { state } = this.context;
     this.getPermissionAsync();
+    this.getAllNotaryItems(state.userMobileNumber);
   }
+
+  componentDidUpdate() {
+    if (
+      this.props.route.params !== undefined &&
+      this.props.route.params.loadNotaryItems !== undefined &&
+      this.props.route.params.loadNotaryItems === true &&
+      !this.state.isMailLoaded
+    ) {
+      const { state } = this.context;
+      this.getAllNotaryItems(state.userMobileNumber);
+    }
+  }
+
+  getAllNotaryItems = async (userMobileNumber) => {
+    const allNotaries = await WebService.getNotaryItemsByNumber(
+      userMobileNumber
+    );
+    this.setState({
+      allNotaries: allNotaries.notaries,
+      backupNotaries: allNotaries.notaries,
+      isMailLoaded: true,
+    });
+  };
 
   getPermissionAsync = async () => {
     if (Constants.platform.ios) {
@@ -46,9 +82,11 @@ export default class HomeScreen extends React.Component {
     try {
       let result = await DocumentPicker.getDocumentAsync({});
       if (!result.cancelled) {
-        const ipfsHash = await WebService.uploadFileToServer(result);
-        console.log(ipfsHash);
-        this.setState({ ipfsHash });
+        this.setState({ isMailLoaded: false });
+        this.props.navigation.navigate("NotaryDetail", {
+          file: result,
+          fileType: "file",
+        });
       }
     } catch (err) {
       console.log(err);
@@ -68,7 +106,11 @@ export default class HomeScreen extends React.Component {
         },
       });
       if (!result.cancelled) {
-        WebService.uploadFileToServer(result);
+        this.setState({ isMailLoaded: false });
+        this.props.navigation.navigate("NotaryDetail", {
+          file: result,
+          fileType: "image",
+        });
       }
     } catch (err) {
       console.log(err);
@@ -83,10 +125,11 @@ export default class HomeScreen extends React.Component {
         allowsEditing: false,
       });
       if (!result.cancelled) {
-        // const ipfsHash = await WebService.uploadFileToServer(result);
-        // console.log(ipfsHash);
-        // this.setState({ ipfsHash });
-        this.props.navigation.push("NotaryDetail");
+        this.setState({ isMailLoaded: false });
+        this.props.navigation.navigate("NotaryDetail", {
+          file: result,
+          fileType: "image",
+        });
       }
     } catch (err) {
       console.log(err);
@@ -113,15 +156,36 @@ export default class HomeScreen extends React.Component {
 
   logout = async () => {
     try {
-      console.log("Logout start");
       await AsyncStorage.removeItem("mobileNumber");
-      console.log("Logout started");
-      const { signOut } = this.context;
-      signOut();
-      console.log("Logout done");
+      const { authContext } = this.context;
+      authContext.signOut();
     } catch (error) {
+      console.log(error);
       // Error saving data
     }
+  };
+
+  deleteNotary = async (item) => {
+    const res = await WebService.deleteNotaryItemsByHash(item.hash);
+    ToastAndroid.showWithGravity(
+      res.message,
+      ToastAndroid.SHORT,
+      ToastAndroid.BOTTOM
+    );
+    const { state } = this.context;
+    this.getAllNotaryItems(state.userMobileNumber);
+  };
+
+  refreshList = () => {
+    const { state } = this.context;
+    this.getAllNotaryItems(state.userMobileNumber);
+  };
+  filterNotaryList = (search) => {
+    const { backupNotaries } = this.state;
+    const filteredNotaryList = backupNotaries.filter(
+      (notary) => notary.name.toLowerCase().indexOf(search.toLowerCase()) !== -1
+    );
+    this.setState({ searchText: search, allNotaries: filteredNotaryList });
   };
 
   static getDerivedStateFromError(error) {
@@ -133,9 +197,8 @@ export default class HomeScreen extends React.Component {
     // You can also log the error to an error reporting service
     console.log(error, errorInfo);
   }
-
   render() {
-    let { isHidden, ipfsHash } = this.state;
+    let { isHidden, openSortMenu, allNotaries } = this.state;
     return (
       <View style={styles.homeContainer}>
         <View style={styles.toolbarContainer}>
@@ -144,6 +207,109 @@ export default class HomeScreen extends React.Component {
             <Ionicons name="ios-power" size={18} color="white" />
             <Text style={styles.logoutText}>Logout</Text>
           </TouchableOpacity>
+        </View>
+        <View style={styles.searchContainer}>
+          <View style={styles.searchSection}>
+            <Ionicons
+              style={styles.searchIcon}
+              name="ios-search"
+              size={20}
+              color="#000"
+            />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search"
+              autoFocus
+              onChangeText={(search) => this.filterNotaryList(search)}
+            />
+          </View>
+          <TouchableOpacity
+            style={styles.sortButton}
+            onPress={(e) =>
+              this.setState({ openSortMenu: !this.state.openSortMenu })
+            }
+          >
+            <MaterialIcons name="sort" size={18} color="white" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.refreshButton}
+            onPress={this.refreshList}
+          >
+            <MaterialIcons name="refresh" size={18} color="white" />
+          </TouchableOpacity>
+          {openSortMenu && (
+            <View style={styles.sortMenu}>
+              <TouchableOpacity>
+                <Text style={styles.menuText}>Sort By Date</Text>
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <Text style={[styles.menuText, styles.borderTop]}>
+                  Sort By Name
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+        <View style={styles.listContainer}>
+          <FlatList
+            data={allNotaries}
+            renderItem={({ item, index }) => {
+              return (
+                <TouchableOpacity
+                  style={styles.notaryItemContainer}
+                  index={index}
+                >
+                  <View style={styles.notaryItemType}>
+                    {item.type === "image" && (
+                      <FontAwesome name="image" size={36} color="#737373" />
+                    )}
+                    {item.type === "file" && (
+                      <FontAwesome
+                        name="file-text-o"
+                        size={36}
+                        color="#737373"
+                      />
+                    )}
+                  </View>
+                  <View style={styles.notaryItemDetails}>
+                    <View style={styles.notaryItemDetailsHeader}>
+                      <Text
+                        style={styles.notaryItemDetailsHeaderTitle}
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                      >
+                        {item.name}
+                      </Text>
+                      <Text style={styles.notaryItemDetailsHeaderTime}>
+                        {moment(item.time).fromNow()}
+                      </Text>
+                      <TouchableOpacity
+                        onPress={(e) => this.deleteNotary(item)}
+                      >
+                        <Text style={styles.notaryItemDetailsHeaderDelete}>
+                          <FontAwesome
+                            name="trash-o"
+                            size={20}
+                            color="#737373"
+                          />
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                    <View style={styles.notaryItemDetailsDescriptionContainer}>
+                      <Text
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                        style={styles.notaryItemDetailsDescription}
+                      >
+                        {item.description}
+                      </Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              );
+            }}
+            keyExtractor={(item, index) => index.toString()}
+          />
         </View>
         <TouchableOpacity
           style={styles.fabButton}
@@ -156,6 +322,16 @@ export default class HomeScreen extends React.Component {
 
         {!isHidden && (
           <TouchableWithoutFeedback onPress={(e) => this._toggleSubView()}>
+            <View style={styles.backdrop}></View>
+          </TouchableWithoutFeedback>
+        )}
+
+        {openSortMenu && (
+          <TouchableWithoutFeedback
+            onPress={(e) =>
+              this.setState({ openSortMenu: !this.state.openSortMenu })
+            }
+          >
             <View style={styles.backdrop}></View>
           </TouchableWithoutFeedback>
         )}
