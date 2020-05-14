@@ -258,4 +258,10 @@ export default StyleSheet.create({
     color: "#323232",
     fontSize: 16,
   },
+  notaryItemDetailsHash: {
+    color: "#323232",
+    fontSize: 10.5,
+    fontWeight: "bold",
+    marginVertical: 4,
+  },
 });

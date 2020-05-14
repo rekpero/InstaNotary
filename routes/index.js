@@ -5,6 +5,7 @@ import HomeScreen from "../components/HomeScreen";
 import PhoneAuthScreen from "../components/PhoneAuthScreen";
 import SplashScreen from "../components/SplashScreen";
 import NotaryItemScreen from "../components/NotaryItemScreen";
+import NotaryViewScreen from "../components/NotaryViewScreen";
 
 const Stack = createStackNavigator();
 
@@ -32,6 +33,7 @@ function Routes({ state }) {
           <>
             <Stack.Screen name="Home" component={HomeScreen} />
             <Stack.Screen name="NotaryDetail" component={NotaryItemScreen} />
+            <Stack.Screen name="NotaryView" component={NotaryViewScreen} />
           </>
         )}
       </Stack.Navigator>

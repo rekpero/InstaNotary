@@ -10,7 +10,8 @@ class Webservice {
       name: `photo.${fileType}`,
       type: `${file.type}/${fileType}`,
     });
-    data.append("fileDetails", JSON.stringify(fileDetails));
+    const finalFileDetails = { ...fileDetails, type: fileType };
+    data.append("fileDetails", JSON.stringify(finalFileDetails));
     const config = {
       method: "POST",
       headers: {
@@ -19,7 +20,26 @@ class Webservice {
       body: data,
     };
     return fetch(
-      "https://bluzelle-notary-backend.herokuapp.com/uploadNotary",
+      "https://bluzelle-notary-backend.herokuapp.com/uploadNotary/file",
+      config
+    )
+      .then((res) => res.json())
+      .catch((err) => {
+        console.log("Error", err);
+      });
+  };
+
+  uploadTextToServer = async (textDetails) => {
+    console.log(textDetails);
+    const config = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(textDetails),
+    };
+    return fetch(
+      "https://bluzelle-notary-backend.herokuapp.com/uploadNotary/text",
       config
     )
       .then((res) => res.json())

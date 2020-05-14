@@ -19,19 +19,35 @@ export default function NotaryItemScreen({ navigation, route }) {
   const { state } = React.useContext(AuthContext);
   const [notaryName, setNotaryName] = React.useState("");
   const [notaryDescription, setNotaryDescription] = React.useState("");
-  const fileName = file.uri.split("/")[file.uri.split("/").length - 1];
+  const [notaryTextContent, setNotaryTextContent] = React.useState("");
+  let fileName = "";
+  if (file) {
+    fileName = file.uri.split("/")[file.uri.split("/").length - 1];
+  }
 
   const goBack = () => {
     navigation.goBack();
   };
   const sendFileData = async () => {
-    const res = await WebService.uploadFileToServer(file, {
-      name: notaryName,
-      description: notaryDescription,
-      type: fileType,
-      phoneNumber: state.userMobileNumber,
-      time: moment().format(),
-    });
+    let res;
+    if (fileType === "text") {
+      res = await WebService.uploadTextToServer({
+        name: notaryName,
+        description: notaryDescription,
+        type: fileType,
+        phoneNumber: state.userMobileNumber,
+        textContent: notaryTextContent,
+        time: moment().format(),
+      });
+    } else {
+      res = await WebService.uploadFileToServer(file, {
+        name: notaryName,
+        description: notaryDescription,
+        type: fileType,
+        phoneNumber: state.userMobileNumber,
+        time: moment().format(),
+      });
+    }
     ToastAndroid.showWithGravity(
       res.message,
       ToastAndroid.SHORT,
@@ -69,11 +85,29 @@ export default function NotaryItemScreen({ navigation, route }) {
           setNotaryDescription(notaryDescription)
         }
       />
-      <Text style={styles.label}>File</Text>
-      <View style={styles.fileContainer}>
-        <MaterialIcons name="attach-file" size={24} color="black" />
-        <Text style={styles.fileName}>{fileName}</Text>
-      </View>
+      {fileType !== "text" ? (
+        <>
+          <Text style={styles.label}>File</Text>
+          <View style={styles.fileContainer}>
+            <MaterialIcons name="attach-file" size={24} color="black" />
+            <Text style={styles.fileName}>{fileName}</Text>
+          </View>
+        </>
+      ) : (
+        <>
+          <Text style={styles.label}>Content</Text>
+          <TextInput
+            style={styles.notaryDescription}
+            placeholder="Enter your content"
+            multiline
+            editable
+            numberOfLines={4}
+            onChangeText={(notaryTextContent) =>
+              setNotaryTextContent(notaryTextContent)
+            }
+          />
+        </>
+      )}
       <TouchableOpacity
         style={styles.sendVerificationButton}
         onPress={sendFileData}

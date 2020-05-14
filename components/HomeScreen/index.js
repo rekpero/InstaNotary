@@ -137,6 +137,13 @@ export default class HomeScreen extends React.Component {
     this._toggleSubView();
   };
 
+  _addText = () => {
+    this.setState({ isMailLoaded: false });
+    this.props.navigation.navigate("NotaryDetail", {
+      fileType: "text",
+    });
+  };
+
   _toggleSubView = () => {
     const { isHidden } = this.state;
     var toValue = 200;
@@ -186,6 +193,13 @@ export default class HomeScreen extends React.Component {
       (notary) => notary.name.toLowerCase().indexOf(search.toLowerCase()) !== -1
     );
     this.setState({ searchText: search, allNotaries: filteredNotaryList });
+  };
+
+  viewNotary = (item) => {
+    this.setState({ isMailLoaded: false });
+    this.props.navigation.navigate("NotaryView", {
+      notary: item,
+    });
   };
 
   static getDerivedStateFromError(error) {
@@ -258,6 +272,7 @@ export default class HomeScreen extends React.Component {
                 <TouchableOpacity
                   style={styles.notaryItemContainer}
                   index={index}
+                  onPress={(e) => this.viewNotary(item)}
                 >
                   <View style={styles.notaryItemType}>
                     {item.type === "image" && (
@@ -294,6 +309,14 @@ export default class HomeScreen extends React.Component {
                           />
                         </Text>
                       </TouchableOpacity>
+                    </View>
+                    <View style={styles.notaryItemDetailsDescriptionContainer}>
+                      <Text
+                        numberOfLines={1}
+                        style={styles.notaryItemDetailsHash}
+                      >
+                        {item.hash}
+                      </Text>
                     </View>
                     <View style={styles.notaryItemDetailsDescriptionContainer}>
                       <Text
@@ -374,7 +397,7 @@ export default class HomeScreen extends React.Component {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.importButton}
-              onPress={this._pickDocument}
+              onPress={this._addText}
             >
               <Feather name="file-text" size={18} color="white" />
               <Text style={styles.importText}>Text</Text>
