@@ -1,11 +1,16 @@
 {
-  "name": "BluzelleInstantNotary",
-  "displayName": "BluzelleInstantNotary",
   "expo": {
-    "name": "BluzelleInstantNotary",
-    "slug": "BluzelleInstantNotary",
+    "name": "InstaNotary",
+    "icon": "./assets/app-icon.jpg",
     "version": "1.0.0",
-    "platforms": ["ios", "android", "web"],
-    "assetBundlePatterns": ["**/*"]
+    "slug": "instanotary",
+    "ios": {
+      "bundleIdentifier": "com.rekpero.instanotary",
+      "buildNumber": "1.0.0"
+    },
+    "android": {
+      "package": "com.rekpero.instanotary",
+      "versionCode": 1
+    }
   }
 }

@@ -3,9 +3,15 @@ var multer = require("multer");
 var upload = multer();
 
 module.exports = (app) => {
-  app.post("/uploadNotary", upload.single("fileData"), (req, res) => {
+  app.post("/uploadNotary/file", upload.single("fileData"), (req, res) => {
     // console.log(req.body.fileDetails, req.file);
     repository.parseFileUpload(req.file, JSON.parse(req.body.fileDetails), res);
+  });
+
+  app.post("/uploadNotary/text", (req, res) => {
+    // console.log(req.body.fileDetails, req.file);
+    console.log(req);
+    repository.parseTextUpload(req.body, res);
   });
 
   app.get("/notary", (req, res) => {

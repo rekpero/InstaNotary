@@ -77,6 +77,60 @@ class Repository {
     });
   }
 
+  async parseTextUpload(notaryText, res) {
+    console.log(notaryText);
+
+    ipfs.files.add([new Buffer(notaryText.textContent)], async (err, data) => {
+      if (err) {
+        console.error(err);
+        res.json({ message: err.message });
+      }
+      this.bz.version().then(
+        (version) => {
+          console.log(version);
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+      console.log(data[0].hash);
+      const fileData = {
+        ...notaryText,
+        hash: data[0].hash,
+      };
+      console.log(fileData);
+      try {
+        let addNotaryItem = [];
+        try {
+          const notaryItems = await this.bz.read("notaryItems", {
+            gas_price: 10,
+          });
+          console.log("Notary items", notaryItems);
+          addNotaryItem = [...JSON.parse(notaryItems), fileData];
+          console.log("Uploaded Notary Item", addNotaryItem);
+          await this.bz.update("notaryItems", JSON.stringify(addNotaryItem), {
+            gas_price: 10,
+          });
+        } catch (err) {
+          console.log(err);
+          addNotaryItem = [fileData];
+          console.log("Uploaded Notary Item", addNotaryItem);
+          await this.bz.create("notaryItems", JSON.stringify(addNotaryItem), {
+            gas_price: 10,
+          });
+        }
+        res.json({
+          message: "Successfully uploaded file to bluzelle",
+        });
+      } catch (err) {
+        console.log(err);
+        res.json({
+          message: "Error in uploaded file to bluzelle",
+        });
+      }
+    });
+  }
+
   async getAllFiles(res) {
     try {
       const notaryItems = await this.bz.read("notaryItems", {

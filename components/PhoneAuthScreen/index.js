@@ -7,6 +7,7 @@ import {
   Platform,
   AsyncStorage,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import * as firebase from "firebase";
@@ -22,6 +23,10 @@ const PhoneAuthScreen = ({ navigation }) => {
   const [phoneAuthState, setPhoneAuthState] = React.useState("phone");
   const [verificationId, setVerificationId] = React.useState();
   const [verificationCode, setVerificationCode] = React.useState();
+  const [sendVerificationLoading, setSendVerificationLoading] = React.useState(
+    false
+  );
+  const [verifyLoading, setVerifyLoading] = React.useState(false);
   const firebaseConfig = firebase.apps.length
     ? firebase.app().options
     : undefined;
@@ -35,6 +40,7 @@ const PhoneAuthScreen = ({ navigation }) => {
   );
 
   const sendVerification = async () => {
+    setSendVerificationLoading(true);
     try {
       const phoneProvider = new firebase.auth.PhoneAuthProvider();
       const verificationId = await phoneProvider.verifyPhoneNumber(
@@ -46,9 +52,11 @@ const PhoneAuthScreen = ({ navigation }) => {
     } catch (err) {
       showMessage({ text: `Error: ${err.message}`, color: "red" });
     }
+    setSendVerificationLoading(false);
   };
 
   const confirmVerification = async () => {
+    setVerifyLoading(true);
     try {
       const credential = firebase.auth.PhoneAuthProvider.credential(
         verificationId,
@@ -67,6 +75,7 @@ const PhoneAuthScreen = ({ navigation }) => {
     } catch (err) {
       showMessage({ text: `Error: ${err.message}`, color: "red" });
     }
+    setVerifyLoading(false);
   };
 
   return (
@@ -102,7 +111,11 @@ const PhoneAuthScreen = ({ navigation }) => {
               style={styles.sendVerificationButton}
               onPress={sendVerification}
             >
-              <Text style={styles.sendVerificationText}>Next</Text>
+              {!sendVerificationLoading ? (
+                <Text style={styles.sendVerificationText}>Next</Text>
+              ) : (
+                <ActivityIndicator size="small" color="#fff" />
+              )}
             </TouchableOpacity>
           </View>
         </View>
@@ -135,7 +148,11 @@ const PhoneAuthScreen = ({ navigation }) => {
               style={styles.sendVerificationButton}
               onPress={confirmVerification}
             >
-              <Text style={styles.sendVerificationText}>Confirm</Text>
+              {!verifyLoading ? (
+                <Text style={styles.sendVerificationText}>Confirm</Text>
+              ) : (
+                <ActivityIndicator size="small" color="#fff" />
+              )}
             </TouchableOpacity>
           </View>
         </View>

@@ -6,6 +6,8 @@ import {
   TouchableWithoutFeedback,
   TextInput,
   ToastAndroid,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 
@@ -17,47 +19,63 @@ import { AuthContext } from "../../hooks";
 export default function NotaryItemScreen({ navigation, route }) {
   const { file, fileType } = route.params;
   const { state } = React.useContext(AuthContext);
+  const [loading, setLoading] = React.useState(false);
   const [notaryName, setNotaryName] = React.useState("");
   const [notaryDescription, setNotaryDescription] = React.useState("");
   const [notaryTextContent, setNotaryTextContent] = React.useState("");
   let fileName = "";
-  if (file) {
-    fileName = file.uri.split("/")[file.uri.split("/").length - 1];
+  try {
+    if (file) {
+      fileName = file.uri.split("/")[file.uri.split("/").length - 1];
+    }
+  } catch (err) {
+    console.log(err);
   }
 
   const goBack = () => {
     navigation.goBack();
   };
-  const sendFileData = async () => {
-    let res;
-    if (fileType === "text") {
-      res = await WebService.uploadTextToServer({
-        name: notaryName,
-        description: notaryDescription,
-        type: fileType,
-        phoneNumber: state.userMobileNumber,
-        textContent: notaryTextContent,
-        time: moment().format(),
-      });
+  const notifyMessage = (msg) => {
+    if (Platform.OS === "android") {
+      ToastAndroid.show(msg, ToastAndroid.SHORT);
     } else {
-      res = await WebService.uploadFileToServer(file, {
-        name: notaryName,
-        description: notaryDescription,
-        type: fileType,
-        phoneNumber: state.userMobileNumber,
-        time: moment().format(),
-      });
+      Alert.alert(msg, "", [], { cancelable: true });
     }
-    ToastAndroid.showWithGravity(
-      res.message,
-      ToastAndroid.SHORT,
-      ToastAndroid.BOTTOM
-    );
-    setTimeout(() => {
-      navigation.navigate("Home", {
-        loadNotaryItems: true,
-      });
-    }, 2000);
+  };
+  const sendFileData = async () => {
+    // notifyMessage("This is a toast");
+    // console.log(toast);
+    setLoading(true);
+    try {
+      let res;
+      if (fileType === "text") {
+        res = await WebService.uploadTextToServer({
+          name: notaryName,
+          description: notaryDescription,
+          type: fileType,
+          phoneNumber: state.userMobileNumber,
+          textContent: notaryTextContent,
+          time: moment().format(),
+        });
+      } else {
+        res = await WebService.uploadFileToServer(file, {
+          name: notaryName,
+          description: notaryDescription,
+          type: fileType,
+          phoneNumber: state.userMobileNumber,
+          time: moment().format(),
+        });
+      }
+      notifyMessage(res.message);
+      setTimeout(() => {
+        navigation.navigate("Home", {
+          loadNotaryItems: true,
+        });
+      }, 2000);
+    } catch (err) {
+      notifyMessage(err.message);
+    }
+    setLoading(false);
   };
   return (
     <View style={styles.homeContainer}>
@@ -112,7 +130,11 @@ export default function NotaryItemScreen({ navigation, route }) {
         style={styles.sendVerificationButton}
         onPress={sendFileData}
       >
-        <Text style={styles.sendVerificationText}>Notarize</Text>
+        {!loading ? (
+          <Text style={styles.sendVerificationText}>Notarize</Text>
+        ) : (
+          <ActivityIndicator size="small" color="#fff" />
+        )}
       </TouchableOpacity>
     </View>
   );

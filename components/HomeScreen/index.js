@@ -9,17 +9,17 @@ import {
   TextInput,
   AsyncStorage,
   ToastAndroid,
+  Image,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
 import Constants from "expo-constants";
-import { decode } from "base64-arraybuffer";
 import * as Permissions from "expo-permissions";
 import { Ionicons, Feather, FontAwesome } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import styles from "./styles";
 import { WebService } from "../../services";
-import { AuthContext, StateContext } from "../../hooks";
+import { AuthContext } from "../../hooks";
 import moment from "moment";
 
 export default class HomeScreen extends React.Component {
@@ -28,7 +28,7 @@ export default class HomeScreen extends React.Component {
     super(props);
 
     this.state = {
-      bounceValue: new Animated.Value(200),
+      bounceValue: new Animated.Value(210),
       isHidden: true,
       isMailLoaded: false,
       openSortMenu: false,
@@ -57,13 +57,39 @@ export default class HomeScreen extends React.Component {
     }
   }
 
+  handleSortNotaries = (type) => {
+    console.log("Entered sort");
+    const finalNotaries = this.sortNotaries(this.state.allNotaries, type);
+    console.log(finalNotaries);
+    this.setState({ allNotaries: finalNotaries, openSortMenu: false });
+  };
+
+  sortNotaries = (allNotaries, type) => {
+    if (type === "name") {
+      console.log("Entered name");
+      return allNotaries.sort((a, b) => {
+        if (a.name < b.name) {
+          return -1;
+        }
+        if (a.name > b.name) {
+          return 1;
+        }
+        return 0;
+      });
+    } else {
+      return allNotaries.sort((a, b) => moment(b.time).diff(moment(a.time)));
+    }
+  };
+
   getAllNotaryItems = async (userMobileNumber) => {
     const allNotaries = await WebService.getNotaryItemsByNumber(
       userMobileNumber
     );
+    console.log(allNotaries);
+    const finalSort = this.sortNotaries(allNotaries.notaries);
     this.setState({
-      allNotaries: allNotaries.notaries,
-      backupNotaries: allNotaries.notaries,
+      allNotaries: finalSort,
+      backupNotaries: finalSort,
       isMailLoaded: true,
     });
   };
@@ -81,7 +107,8 @@ export default class HomeScreen extends React.Component {
   _pickDocument = async () => {
     try {
       let result = await DocumentPicker.getDocumentAsync({});
-      if (!result.cancelled) {
+      // console.log(result.type);
+      if (result.type === "success") {
         this.setState({ isMailLoaded: false });
         this.props.navigation.navigate("NotaryDetail", {
           file: result,
@@ -105,6 +132,7 @@ export default class HomeScreen extends React.Component {
           skipBackup: true,
         },
       });
+      // console.log(result.cancelled);
       if (!result.cancelled) {
         this.setState({ isMailLoaded: false });
         this.props.navigation.navigate("NotaryDetail", {
@@ -124,6 +152,7 @@ export default class HomeScreen extends React.Component {
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         allowsEditing: false,
       });
+      // console.log(result.cancelled);
       if (!result.cancelled) {
         this.setState({ isMailLoaded: false });
         this.props.navigation.navigate("NotaryDetail", {
@@ -146,7 +175,7 @@ export default class HomeScreen extends React.Component {
 
   _toggleSubView = () => {
     const { isHidden } = this.state;
-    var toValue = 200;
+    var toValue = 210;
 
     if (isHidden) {
       toValue = 0;
@@ -169,6 +198,186 @@ export default class HomeScreen extends React.Component {
     } catch (error) {
       console.log(error);
       // Error saving data
+    }
+  };
+
+  getIconForFile = (ext) => {
+    switch (ext) {
+      case "image":
+        return (
+          <Image
+            source={require("../../assets/image.png")}
+            style={styles.fileIcon}
+          ></Image>
+        );
+      case "zip":
+        return (
+          <Image
+            source={require("../../assets/zip.png")}
+            style={styles.fileIcon}
+          ></Image>
+        );
+      case "pdf":
+        return (
+          <Image
+            source={require("../../assets/pdf.png")}
+            style={styles.fileIcon}
+          ></Image>
+        );
+      case "xls":
+        return (
+          <Image
+            source={require("../../assets/xls.png")}
+            style={styles.fileIcon}
+          ></Image>
+        );
+      case "xlsx":
+        return (
+          <Image
+            source={require("../../assets/xls.png")}
+            style={styles.fileIcon}
+          ></Image>
+        );
+      case "txt":
+        return (
+          <Image
+            source={require("../../assets/txt.png")}
+            style={styles.fileIcon}
+          ></Image>
+        );
+      case "rtf":
+        return (
+          <Image
+            source={require("../../assets/rtf.png")}
+            style={styles.fileIcon}
+          ></Image>
+        );
+      case "rar":
+        return (
+          <Image
+            source={require("../../assets/rar.png")}
+            style={styles.fileIcon}
+          ></Image>
+        );
+      case "ppt":
+        return (
+          <Image
+            source={require("../../assets/ppt.png")}
+            style={styles.fileIcon}
+          ></Image>
+        );
+      case "pps":
+        return (
+          <Image
+            source={require("../../assets/pps.png")}
+            style={styles.fileIcon}
+          ></Image>
+        );
+      case "doc":
+        return (
+          <Image
+            source={require("../../assets/doc.png")}
+            style={styles.fileIcon}
+          ></Image>
+        );
+      case "docx":
+        return (
+          <Image
+            source={require("../../assets/doc.png")}
+            style={styles.fileIcon}
+          ></Image>
+        );
+      case "text":
+        return (
+          <Image
+            source={require("../../assets/text.png")}
+            style={styles.fileIcon}
+          ></Image>
+        );
+      case "file":
+        return (
+          <Image
+            source={require("../../assets/file.png")}
+            style={styles.fileIcon}
+          ></Image>
+        );
+      case "mp4":
+        return (
+          <Image
+            source={require("../../assets/video.png")}
+            style={styles.fileIcon}
+          ></Image>
+        );
+      case "mpeg":
+        return (
+          <Image
+            source={require("../../assets/video.png")}
+            style={styles.fileIcon}
+          ></Image>
+        );
+      case "mpg":
+        return (
+          <Image
+            source={require("../../assets/video.png")}
+            style={styles.fileIcon}
+          ></Image>
+        );
+      case "mov":
+        return (
+          <Image
+            source={require("../../assets/video.png")}
+            style={styles.fileIcon}
+          ></Image>
+        );
+      case "mkv":
+        return (
+          <Image
+            source={require("../../assets/video.png")}
+            style={styles.fileIcon}
+          ></Image>
+        );
+      case "m4v":
+        return (
+          <Image
+            source={require("../../assets/video.png")}
+            style={styles.fileIcon}
+          ></Image>
+        );
+      case "avi":
+        return (
+          <Image
+            source={require("../../assets/video.png")}
+            style={styles.fileIcon}
+          ></Image>
+        );
+      case "3gp":
+        return (
+          <Image
+            source={require("../../assets/video.png")}
+            style={styles.fileIcon}
+          ></Image>
+        );
+      case "3g2":
+        return (
+          <Image
+            source={require("../../assets/video.png")}
+            style={styles.fileIcon}
+          ></Image>
+        );
+      case "wmv":
+        return (
+          <Image
+            source={require("../../assets/video.png")}
+            style={styles.fileIcon}
+          ></Image>
+        );
+      default:
+        return (
+          <Image
+            source={require("../../assets/file.png")}
+            style={styles.fileIcon}
+          ></Image>
+        );
     }
   };
 
@@ -216,7 +425,7 @@ export default class HomeScreen extends React.Component {
     return (
       <View style={styles.homeContainer}>
         <View style={styles.toolbarContainer}>
-          <Text style={styles.title}>Instant Notary</Text>
+          <Text style={styles.title}>InstaNotary.</Text>
           <TouchableOpacity style={styles.logoutButton} onPress={this.logout}>
             <Ionicons name="ios-power" size={18} color="white" />
             <Text style={styles.logoutText}>Logout</Text>
@@ -233,7 +442,6 @@ export default class HomeScreen extends React.Component {
             <TextInput
               style={styles.searchInput}
               placeholder="Search"
-              autoFocus
               onChangeText={(search) => this.filterNotaryList(search)}
             />
           </View>
@@ -253,10 +461,14 @@ export default class HomeScreen extends React.Component {
           </TouchableOpacity>
           {openSortMenu && (
             <View style={styles.sortMenu}>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={(e) => this.handleSortNotaries("date")}
+              >
                 <Text style={styles.menuText}>Sort By Date</Text>
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={(e) => this.handleSortNotaries("name")}
+              >
                 <Text style={[styles.menuText, styles.borderTop]}>
                   Sort By Name
                 </Text>
@@ -265,74 +477,79 @@ export default class HomeScreen extends React.Component {
           )}
         </View>
         <View style={styles.listContainer}>
-          <FlatList
-            data={allNotaries}
-            renderItem={({ item, index }) => {
-              return (
-                <TouchableOpacity
-                  style={styles.notaryItemContainer}
-                  index={index}
-                  onPress={(e) => this.viewNotary(item)}
-                >
-                  <View style={styles.notaryItemType}>
-                    {item.type === "image" && (
-                      <FontAwesome name="image" size={36} color="#737373" />
-                    )}
-                    {item.type === "file" && (
-                      <FontAwesome
-                        name="file-text-o"
-                        size={36}
-                        color="#737373"
-                      />
-                    )}
-                  </View>
-                  <View style={styles.notaryItemDetails}>
-                    <View style={styles.notaryItemDetailsHeader}>
-                      <Text
-                        style={styles.notaryItemDetailsHeaderTitle}
-                        numberOfLines={1}
-                        ellipsizeMode="tail"
-                      >
-                        {item.name}
-                      </Text>
-                      <Text style={styles.notaryItemDetailsHeaderTime}>
-                        {moment(item.time).fromNow()}
-                      </Text>
-                      <TouchableOpacity
-                        onPress={(e) => this.deleteNotary(item)}
-                      >
-                        <Text style={styles.notaryItemDetailsHeaderDelete}>
-                          <FontAwesome
-                            name="trash-o"
-                            size={20}
-                            color="#737373"
-                          />
+          {allNotaries.length ? (
+            <FlatList
+              data={allNotaries}
+              renderItem={({ item, index }) => {
+                return (
+                  <TouchableOpacity
+                    style={styles.notaryItemContainer}
+                    index={index}
+                    onPress={(e) => this.viewNotary(item)}
+                  >
+                    <View style={styles.notaryItemType}>
+                      {this.getIconForFile(item.type)}
+                    </View>
+                    <View style={styles.notaryItemDetails}>
+                      <View style={styles.notaryItemDetailsHeader}>
+                        <Text
+                          style={styles.notaryItemDetailsHeaderTitle}
+                          numberOfLines={1}
+                          ellipsizeMode="tail"
+                        >
+                          {item.name}
                         </Text>
-                      </TouchableOpacity>
-                    </View>
-                    <View style={styles.notaryItemDetailsDescriptionContainer}>
-                      <Text
-                        numberOfLines={1}
-                        style={styles.notaryItemDetailsHash}
+                        <Text style={styles.notaryItemDetailsHeaderTime}>
+                          {moment(item.time).fromNow()}
+                        </Text>
+                        <TouchableOpacity
+                          onPress={(e) => this.deleteNotary(item)}
+                        >
+                          <Text style={styles.notaryItemDetailsHeaderDelete}>
+                            <FontAwesome
+                              name="trash-o"
+                              size={20}
+                              color="#737373"
+                            />
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                      <View
+                        style={styles.notaryItemDetailsDescriptionContainer}
                       >
-                        {item.hash}
-                      </Text>
-                    </View>
-                    <View style={styles.notaryItemDetailsDescriptionContainer}>
-                      <Text
-                        numberOfLines={1}
-                        ellipsizeMode="tail"
-                        style={styles.notaryItemDetailsDescription}
+                        <Text
+                          numberOfLines={1}
+                          style={styles.notaryItemDetailsHash}
+                        >
+                          {item.hash}
+                        </Text>
+                      </View>
+                      <View
+                        style={styles.notaryItemDetailsDescriptionContainer}
                       >
-                        {item.description}
-                      </Text>
+                        <Text
+                          numberOfLines={1}
+                          ellipsizeMode="tail"
+                          style={styles.notaryItemDetailsDescription}
+                        >
+                          {item.description}
+                        </Text>
+                      </View>
                     </View>
-                  </View>
-                </TouchableOpacity>
-              );
-            }}
-            keyExtractor={(item, index) => index.toString()}
-          />
+                  </TouchableOpacity>
+                );
+              }}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          ) : (
+            <View style={styles.emptyImageContainer}>
+              <Image
+                source={require("../../assets/empty.png")}
+                style={styles.emptyIcon}
+              ></Image>
+              <Text style={styles.emptyTitle}>You have no Notaries</Text>
+            </View>
+          )}
         </View>
         <TouchableOpacity
           style={styles.fabButton}
@@ -351,9 +568,10 @@ export default class HomeScreen extends React.Component {
 
         {openSortMenu && (
           <TouchableWithoutFeedback
-            onPress={(e) =>
-              this.setState({ openSortMenu: !this.state.openSortMenu })
-            }
+            onPress={(e) => {
+              console.log("Entered backdrop");
+              this.setState({ openSortMenu: !this.state.openSortMenu });
+            }}
           >
             <View style={styles.backdrop}></View>
           </TouchableWithoutFeedback>

@@ -57,6 +57,7 @@ class Webservice {
   };
 
   getNotaryItemsByNumber = async (phoneNumber) => {
+    console.log(phoneNumber);
     return fetch(
       "https://bluzelle-notary-backend.herokuapp.com/notary/phone/" +
         phoneNumber

@@ -39,8 +39,9 @@ export default StyleSheet.create({
     borderWidth: 2,
     borderColor: "#15548b",
     borderRadius: 6,
-    paddingLeft: 18,
-    paddingRight: 18,
+    paddingHorizontal: 18,
+    paddingBottom: 8,
+    paddingTop: 10,
     marginVertical: 12,
   },
   fileContainer: {

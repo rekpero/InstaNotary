@@ -19,6 +19,7 @@ export default StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "bold",
+    color: "#15548b",
   },
   logoutButton: {
     flexDirection: "row",
@@ -45,6 +46,8 @@ export default StyleSheet.create({
     position: "relative",
     paddingRight: 24,
     paddingLeft: 24,
+    elevation: 20,
+    zIndex: 1000,
   },
   searchSection: {
     display: "flex",
@@ -98,15 +101,15 @@ export default StyleSheet.create({
   },
   sortMenu: {
     position: "absolute",
-    right: 0,
+    right: 75,
     top: 42,
     borderRadius: 6,
-    elevation: 3,
     elevation: 100,
     backgroundColor: "#fff",
+    // zIndex: 10000,
   },
   menuText: {
-    width: 120,
+    width: 150,
     paddingTop: 8,
     paddingBottom: 8,
     paddingLeft: 24,
@@ -142,7 +145,7 @@ export default StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderTopRightRadius: 8,
     borderTopLeftRadius: 8,
-    height: 200,
+    height: 210,
     elevation: 100,
     paddingLeft: 24,
     paddingRight: 24,
@@ -170,7 +173,8 @@ export default StyleSheet.create({
     position: "absolute",
     top: 0,
     left: 0,
-    elevation: 20,
+    // elevation: 10,
+    // zIndex: 100,
     width: winWidth,
     height: winHeight + 50,
   },
@@ -209,6 +213,7 @@ export default StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     paddingHorizontal: 22,
+    width: "100%",
   },
   notaryItemContainer: {
     elevation: 4,
@@ -260,8 +265,28 @@ export default StyleSheet.create({
   },
   notaryItemDetailsHash: {
     color: "#323232",
-    fontSize: 10.5,
+    fontSize: 12,
     fontWeight: "bold",
     marginVertical: 4,
+  },
+  fileIcon: {
+    height: 42,
+    width: 42,
+  },
+  emptyIcon: {
+    height: 150,
+    width: 150,
+  },
+  emptyImageContainer: {
+    flex: 1,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "column",
+  },
+  emptyTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginVertical: 12,
   },
 });

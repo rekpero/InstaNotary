@@ -45,4 +45,6 @@ target 'BluzelleInstantNotary' do
   use_native_modules!
   pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
 
+  pod 'react-native-simple-toast', :path => '../node_modules/react-native-simple-toast'
+
 end
