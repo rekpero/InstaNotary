@@ -19,3 +19,13 @@ Find apk [here](https://gitlab.com/mmitrasish/bluzellenotaryapp/-/releases/).
 
 ## Demo Video
 You can watch the small demo video [here](https://drive.google.com/file/d/1Mm8V093ULBbVRPmZH0JZQ6uhasFEbQXB/view?usp=sharing).
+
+## License
+Instanotary is licensed under [the MIT license](https://gitlab.com/mmitrasish/bluzellenotaryapp/-/blob/master/LICENSE).
+
+## Screenshots
+<img src="Screenshots/Screenshot1.png" width="400"> <img src="Screenshots/Screenshot2.png" width="400">
+<img src="Screenshots/Screenshot3.png" width="400"> <img src="Screenshots/Screenshot4.png" width="400">
+<img src="Screenshots/Screenshot5.png" width="400"> <img src="Screenshots/Screenshot6.png" width="400">
+<img src="Screenshots/Screenshot7.png" width="400"> <img src="Screenshots/Screenshot8.png" width="400">
+- Head over to screenshots folder for more screenshots.
