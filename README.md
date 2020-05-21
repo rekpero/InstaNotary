@@ -17,6 +17,25 @@ Find apk [here](https://github.com/mmitrasish/InstaNotary/releases).
 #### NOTE 1:- This application is throughly tested to be running on android as well as iOS without any change in code, but if you face any issues please reach out to me on telegram `@rekpero` or discord `@rekpero#3898`
 #### NOTE 2:- I tried to impliment all the possible checks, but if you encounter any issues or bugs, please reach out to me.
 
+## How to run?
+This app is built with [expo](https://expo.io/learn) (a wrapper for react-native). To run this app, first you need to install expo-cli
+```
+yarn global add expo-cli
+```
+Now, clone the repo and do these:
+```
+git clone https://github.com/mmitrasish/InstaNotary.git
+cd InstaNotary
+yarn
+```
+To run the android app, you can directly download the app from [Release](https://github.com/mmitrasish/InstaNotary/releases/tag/Alpha-v1.0.0), I have app in both apk and bundled form.
+Or, if you want to run from the repo, you have to first download the expo app in both [android play store](https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en_IN) and [ios app store](https://apps.apple.com/us/app/expo-client/id982107779), then you can follow these steps:
+```
+cd InstaNotary
+expo start //This will open a window in http://localhost:19002
+```
+Now you have to open expo app in android and ios and scan the QR code from the metro bundler in http://localhost:19002 ,You will be able run the app now. 
+
 ## Demo Video
 You can watch the small demo video [here](https://drive.google.com/file/d/1Mm8V093ULBbVRPmZH0JZQ6uhasFEbQXB/view?usp=sharing).
 
