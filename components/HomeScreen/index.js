@@ -86,7 +86,6 @@ export default class HomeScreen extends React.Component {
     const allNotaries = await WebService.getNotaryItemsByNumber(
       userMobileNumber
     );
-    console.log(allNotaries);
     const finalSort = allNotaries.notaries
       ? this.sortNotaries(allNotaries.notaries)
       : [];

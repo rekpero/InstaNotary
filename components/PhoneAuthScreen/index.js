@@ -15,6 +15,7 @@ import { firebaseConfig, countryCodes } from "../../constants";
 import styles from "./style";
 import { AuthContext } from "../../hooks";
 import RNPickerSelect from "react-native-picker-select";
+import RNOtpVerify from "react-native-otp-verify";
 !firebase.apps.length ? firebase.initializeApp(firebaseConfig) : firebase.app();
 
 const PhoneAuthScreen = ({ navigation }) => {
@@ -32,6 +33,30 @@ const PhoneAuthScreen = ({ navigation }) => {
   const firebaseConfig = firebase.apps.length
     ? firebase.app().options
     : undefined;
+
+  React.useEffect(() => {
+    RNOtpVerify.getOtp().then((p) =>
+      RNOtpVerify.addListener((message) => {
+        try {
+          if (message) {
+            const messageArray = message.split("\n");
+            if (messageArray[2]) {
+              const otp = messageArray[2].split(" ")[0];
+              if (otp.length === 4) {
+                console.log(otp.split(""));
+              }
+            }
+          }
+        } catch (err) {
+          showMessage(err.message);
+        }
+      })
+    );
+    // remove listener on unmount
+    return () => {
+      RNOtpVerify.removeListener();
+    };
+  }, []);
 
   const sendVerification = async () => {
     setSendVerificationLoading(true);

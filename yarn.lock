@@ -6711,6 +6711,11 @@ react-native-iphone-x-helper@^1.2.1:
   resolved "https://registry.yarnpkg.com/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.2.1.tgz#645e2ffbbb49e80844bb4cbbe34a126fda1e6772"
   integrity sha512-/VbpIEp8tSNNHIvstuA3Swx610whci1Zpc9mqNkqn14DkMbw+ORviln2u0XyHG1kPvvwTNGZY6QpeFwxYaSdbQ==
 
+react-native-otp-verify@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/react-native-otp-verify/-/react-native-otp-verify-1.0.3.tgz#a205521bf19f1e448e563ddfa462559469fa8662"
+  integrity sha512-BIKP89H5a6ItAcRXJBxQkc2uzA4jazaEHTRWZxqnUUb6njHKHOevKrtzfhUOoAXQGq3evCRldEot5EaNWTDq9g==
+
 react-native-picker-select@^7.0.0:
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/react-native-picker-select/-/react-native-picker-select-7.0.0.tgz#4808a1177f997e234bb8505849dfffe1a01fedac"
