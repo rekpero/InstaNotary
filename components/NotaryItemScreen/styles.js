@@ -52,9 +52,12 @@ export default StyleSheet.create({
     borderColor: "#15548b",
     borderRadius: 8,
     padding: 8,
+    overflow: "hidden",
   },
   fileName: {
     fontSize: 15,
+    overflow: "hidden",
+    flex: 1,
   },
   sendVerificationButton: {
     justifyContent: "center",

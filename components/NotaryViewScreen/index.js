@@ -129,6 +129,7 @@ export default function NotaryViewScreen({ route, navigation }) {
             source={require("../../assets/fileback1.png")}
             style={styles.fileIcon}
           ></Image>
+          <Text style={styles.title}>No preview available</Text>
         </View>
       )}
 

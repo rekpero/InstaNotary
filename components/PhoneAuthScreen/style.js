@@ -20,9 +20,26 @@ export default StyleSheet.create({
     fontWeight: "bold",
     color: "#2b2d2f",
   },
-  phoneNumberInput: {
+  phoneNumberContainer: {
     marginTop: 40,
-    fontSize: 18,
+    borderWidth: 2,
+    borderColor: "#15548b",
+    borderRadius: 6,
+    padding: 8,
+    paddingLeft: 18,
+    paddingRight: 18,
+    display: "flex",
+    alignItems: "center",
+    flexDirection: "row",
+  },
+  phoneNumberInput: {
+    fontSize: 15,
+    flex: 1,
+    marginLeft: 5,
+  },
+  verificationInput: {
+    fontSize: 15,
+    marginTop: 40,
     borderWidth: 2,
     borderColor: "#15548b",
     borderRadius: 6,

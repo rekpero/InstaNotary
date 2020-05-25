@@ -1,4 +1,12 @@
+import { ToastAndroid, Alert } from "react-native";
 class Webservice {
+  notifyMessage = (msg) => {
+    if (Platform.OS === "android") {
+      ToastAndroid.show(msg, ToastAndroid.SHORT);
+    } else {
+      Alert.alert(msg, "", [], { cancelable: true });
+    }
+  };
   uploadFileToServer = async (file, fileDetails) => {
     const data = new FormData();
 
@@ -26,6 +34,7 @@ class Webservice {
       .then((res) => res.json())
       .catch((err) => {
         console.log("Error", err);
+        this.notifyMessage(err.message);
       });
   };
 

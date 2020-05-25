@@ -8,8 +8,9 @@ import {
   FlatList,
   TextInput,
   AsyncStorage,
-  ToastAndroid,
   Image,
+  ToastAndroid,
+  Alert,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
@@ -86,7 +87,9 @@ export default class HomeScreen extends React.Component {
       userMobileNumber
     );
     console.log(allNotaries);
-    const finalSort = this.sortNotaries(allNotaries.notaries);
+    const finalSort = allNotaries.notaries
+      ? this.sortNotaries(allNotaries.notaries)
+      : [];
     this.setState({
       allNotaries: finalSort,
       backupNotaries: finalSort,
@@ -381,13 +384,17 @@ export default class HomeScreen extends React.Component {
     }
   };
 
+  notifyMessage = (msg) => {
+    if (Platform.OS === "android") {
+      ToastAndroid.show(msg, ToastAndroid.SHORT);
+    } else {
+      Alert.alert(msg, "", [], { cancelable: true });
+    }
+  };
+
   deleteNotary = async (item) => {
     const res = await WebService.deleteNotaryItemsByHash(item.hash);
-    ToastAndroid.showWithGravity(
-      res.message,
-      ToastAndroid.SHORT,
-      ToastAndroid.BOTTOM
-    );
+    this.notifyMessage(res.message);
     const { state } = this.context;
     this.getAllNotaryItems(state.userMobileNumber);
   };

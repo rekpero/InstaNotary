@@ -11,9 +11,10 @@ import {
 } from "react-native";
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import * as firebase from "firebase";
-import { firebaseConfig } from "../../constants";
+import { firebaseConfig, countryCodes } from "../../constants";
 import styles from "./style";
 import { AuthContext } from "../../hooks";
+import RNPickerSelect from "react-native-picker-select";
 !firebase.apps.length ? firebase.initializeApp(firebaseConfig) : firebase.app();
 
 const PhoneAuthScreen = ({ navigation }) => {
@@ -27,24 +28,17 @@ const PhoneAuthScreen = ({ navigation }) => {
     false
   );
   const [verifyLoading, setVerifyLoading] = React.useState(false);
+  const [countryCode, setCountryCode] = React.useState("+91");
   const firebaseConfig = firebase.apps.length
     ? firebase.app().options
     : undefined;
-  const [message, showMessage] = React.useState(
-    !firebaseConfig || Platform.OS === "web"
-      ? {
-          text:
-            "To get started, provide a valid firebase config in App.js and open this snack on an iOS or Android device.",
-        }
-      : undefined
-  );
 
   const sendVerification = async () => {
     setSendVerificationLoading(true);
     try {
       const phoneProvider = new firebase.auth.PhoneAuthProvider();
       const verificationId = await phoneProvider.verifyPhoneNumber(
-        phoneNumber,
+        countryCode + phoneNumber,
         recaptchaVerifier.current
       );
       setVerificationId(verificationId);
@@ -64,8 +58,8 @@ const PhoneAuthScreen = ({ navigation }) => {
       );
       await firebase.auth().signInWithCredential(credential);
       try {
-        await AsyncStorage.setItem("mobileNumber", phoneNumber);
-        authContext.signIn(phoneNumber);
+        await AsyncStorage.setItem("mobileNumber", countryCode + phoneNumber);
+        authContext.signIn(countryCode + phoneNumber);
         navigation.navigate("Home", {
           loadNotaryItems: true,
         });
@@ -76,6 +70,13 @@ const PhoneAuthScreen = ({ navigation }) => {
       showMessage({ text: `Error: ${err.message}`, color: "red" });
     }
     setVerifyLoading(false);
+  };
+
+  const getCountryCodes = () => {
+    return countryCodes.map((countryCode, i) => ({
+      label: countryCode.name + " - " + countryCode.code,
+      value: countryCode.code,
+    }));
   };
 
   return (
@@ -97,15 +98,25 @@ const PhoneAuthScreen = ({ navigation }) => {
           <View style={styles.enterPhoneNumberTextContainer}>
             <Text style={styles.enterPhoneNumberText}>Enter phone number</Text>
           </View>
-          <TextInput
-            style={styles.phoneNumberInput}
-            placeholder="+1 999 999 9999"
-            autoFocus
-            autocompletetype="tel"
-            keyboardType="phone-pad"
-            textContentType="telephoneNumber"
-            onChangeText={(phoneNumber) => setPhoneNumber(phoneNumber)}
-          />
+          <View style={styles.phoneNumberContainer}>
+            <RNPickerSelect
+              styles={styles.countryCode}
+              value={countryCode}
+              hideIcon={true}
+              onValueChange={(value) => setCountryCode(value)}
+              useNativeAndroidPickerStyle={false}
+              items={getCountryCodes()}
+            />
+            <TextInput
+              style={styles.phoneNumberInput}
+              placeholder="999 999 9999"
+              autoFocus
+              autocompleteType="tel"
+              keyboardType="phone-pad"
+              textContentType="telephoneNumber"
+              onChangeText={(phoneNumber) => setPhoneNumber(phoneNumber)}
+            />
+          </View>
           <View style={styles.sendVerificationButtonContainer}>
             <TouchableOpacity
               style={styles.sendVerificationButton}
@@ -134,7 +145,7 @@ const PhoneAuthScreen = ({ navigation }) => {
             </Text>
           </View>
           <TextInput
-            style={styles.phoneNumberInput}
+            style={styles.verificationInput}
             editable={!!verificationId}
             placeholder="123456"
             autoFocus
