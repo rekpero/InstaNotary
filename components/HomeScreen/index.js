@@ -21,7 +21,12 @@ import { MaterialIcons } from "@expo/vector-icons";
 import styles from "./styles";
 import { WebService } from "../../services";
 import { AuthContext } from "../../hooks";
+import { sortNotaries } from "../../utils";
+import Menu, { MenuItem, MenuDivider } from "react-native-material-menu";
+
 import moment from "moment";
+
+console.disableYellowBox = true;
 
 export default class HomeScreen extends React.Component {
   static contextType = AuthContext;
@@ -31,69 +36,38 @@ export default class HomeScreen extends React.Component {
     this.state = {
       bounceValue: new Animated.Value(210),
       isHidden: true,
-      isMailLoaded: false,
-      openSortMenu: false,
       searchText: "",
-      allNotaries: [],
-      backupNotaries: [],
-      phoneNumber: "",
     };
   }
 
-  componentDidMount() {
-    const { state } = this.context;
-    this.getPermissionAsync();
-    this.getAllNotaryItems(state.userMobileNumber);
-  }
+  _menu = null;
 
-  componentDidUpdate() {
-    if (
-      this.props.route.params !== undefined &&
-      this.props.route.params.loadNotaryItems !== undefined &&
-      this.props.route.params.loadNotaryItems === true &&
-      !this.state.isMailLoaded
-    ) {
-      const { state } = this.context;
-      this.getAllNotaryItems(state.userMobileNumber);
-    }
+  setMenuRef = (ref) => {
+    this._menu = ref;
+  };
+
+  hideMenu = () => {
+    this._menu.hide();
+  };
+
+  showMenu = () => {
+    this._menu.show();
+  };
+
+  componentDidMount() {
+    const { state, authContext } = this.context;
+    this.getPermissionAsync();
+    authContext.fetchNotaryItem(state.userMobileNumber);
   }
 
   handleSortNotaries = (type) => {
     console.log("Entered sort");
-    const finalNotaries = this.sortNotaries(this.state.allNotaries, type);
+    const { authContext, state } = this.context;
+
+    const finalNotaries = sortNotaries(state.allNotaries, type);
     console.log(finalNotaries);
-    this.setState({ allNotaries: finalNotaries, openSortMenu: false });
-  };
-
-  sortNotaries = (allNotaries, type) => {
-    if (type === "name") {
-      console.log("Entered name");
-      return allNotaries.sort((a, b) => {
-        if (a.name < b.name) {
-          return -1;
-        }
-        if (a.name > b.name) {
-          return 1;
-        }
-        return 0;
-      });
-    } else {
-      return allNotaries.sort((a, b) => moment(b.time).diff(moment(a.time)));
-    }
-  };
-
-  getAllNotaryItems = async (userMobileNumber) => {
-    const allNotaries = await WebService.getNotaryItemsByNumber(
-      userMobileNumber
-    );
-    const finalSort = allNotaries.notaries
-      ? this.sortNotaries(allNotaries.notaries)
-      : [];
-    this.setState({
-      allNotaries: finalSort,
-      backupNotaries: finalSort,
-      isMailLoaded: true,
-    });
+    authContext.setAllNotaries(finalNotaries);
+    this.hideMenu();
   };
 
   getPermissionAsync = async () => {
@@ -111,7 +85,8 @@ export default class HomeScreen extends React.Component {
       let result = await DocumentPicker.getDocumentAsync({});
       // console.log(result.type);
       if (result.type === "success") {
-        this.setState({ isMailLoaded: false });
+        this._toggleSubView();
+
         this.props.navigation.navigate("NotaryDetail", {
           file: result,
           fileType: "file",
@@ -120,7 +95,6 @@ export default class HomeScreen extends React.Component {
     } catch (err) {
       console.log(err);
     }
-    this._toggleSubView();
   };
 
   _pickImageFromCamera = async () => {
@@ -136,7 +110,8 @@ export default class HomeScreen extends React.Component {
       });
       // console.log(result.cancelled);
       if (!result.cancelled) {
-        this.setState({ isMailLoaded: false });
+        this._toggleSubView();
+
         this.props.navigation.navigate("NotaryDetail", {
           file: result,
           fileType: "image",
@@ -145,7 +120,6 @@ export default class HomeScreen extends React.Component {
     } catch (err) {
       console.log(err);
     }
-    this._toggleSubView();
   };
 
   _pickImageFromSystem = async () => {
@@ -156,7 +130,7 @@ export default class HomeScreen extends React.Component {
       });
       // console.log(result.cancelled);
       if (!result.cancelled) {
-        this.setState({ isMailLoaded: false });
+        this._toggleSubView();
         this.props.navigation.navigate("NotaryDetail", {
           file: result,
           fileType: "image",
@@ -165,11 +139,10 @@ export default class HomeScreen extends React.Component {
     } catch (err) {
       console.log(err);
     }
-    this._toggleSubView();
   };
 
   _addText = () => {
-    this.setState({ isMailLoaded: false });
+    this._toggleSubView();
     this.props.navigation.navigate("NotaryDetail", {
       fileType: "text",
     });
@@ -394,20 +367,23 @@ export default class HomeScreen extends React.Component {
   deleteNotary = async (item) => {
     const res = await WebService.deleteNotaryItemsByHash(item.hash);
     this.notifyMessage(res.message);
-    const { state } = this.context;
-    this.getAllNotaryItems(state.userMobileNumber);
+    const { state, authContext } = this.context;
+    authContext.fetchNotaryItem(state.userMobileNumber);
   };
 
   refreshList = () => {
-    const { state } = this.context;
-    this.getAllNotaryItems(state.userMobileNumber);
+    const { state, authContext } = this.context;
+    authContext.fetchNotaryItem(state.userMobileNumber);
   };
   filterNotaryList = (search) => {
-    const { backupNotaries } = this.state;
-    const filteredNotaryList = backupNotaries.filter(
+    const { authContext, state } = this.context;
+
+    const filteredNotaryList = state.backupNotaries.filter(
       (notary) => notary.name.toLowerCase().indexOf(search.toLowerCase()) !== -1
     );
-    this.setState({ searchText: search, allNotaries: filteredNotaryList });
+    this.setState({ searchText: search }, () => {
+      authContext.setAllNotaries(filteredNotaryList);
+    });
   };
 
   viewNotary = (item) => {
@@ -427,7 +403,8 @@ export default class HomeScreen extends React.Component {
     console.log(error, errorInfo);
   }
   render() {
-    let { isHidden, openSortMenu, allNotaries } = this.state;
+    let { isHidden } = this.state;
+    const { state } = this.context;
     return (
       <View style={styles.homeContainer}>
         <View style={styles.toolbarContainer}>
@@ -451,41 +428,37 @@ export default class HomeScreen extends React.Component {
               onChangeText={(search) => this.filterNotaryList(search)}
             />
           </View>
-          <TouchableOpacity
-            style={styles.sortButton}
-            onPress={(e) =>
-              this.setState({ openSortMenu: !this.state.openSortMenu })
+          <Menu
+            ref={this.setMenuRef}
+            button={
+              <TouchableOpacity
+                style={styles.sortButton}
+                onPress={this.showMenu}
+              >
+                <MaterialIcons name="sort" size={18} color="white" />
+              </TouchableOpacity>
             }
           >
-            <MaterialIcons name="sort" size={18} color="white" />
-          </TouchableOpacity>
+            <MenuItem onPress={(e) => this.handleSortNotaries("date")}>
+              Sort By Date
+            </MenuItem>
+            <MenuDivider />
+            <MenuItem onPress={(e) => this.handleSortNotaries("name")}>
+              Sort By Name
+            </MenuItem>
+          </Menu>
+
           <TouchableOpacity
             style={styles.refreshButton}
             onPress={this.refreshList}
           >
             <MaterialIcons name="refresh" size={18} color="white" />
           </TouchableOpacity>
-          {openSortMenu && (
-            <View style={styles.sortMenu}>
-              <TouchableOpacity
-                onPress={(e) => this.handleSortNotaries("date")}
-              >
-                <Text style={styles.menuText}>Sort By Date</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={(e) => this.handleSortNotaries("name")}
-              >
-                <Text style={[styles.menuText, styles.borderTop]}>
-                  Sort By Name
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
         </View>
         <View style={styles.listContainer}>
-          {allNotaries.length ? (
+          {state.allNotaries.length ? (
             <FlatList
-              data={allNotaries}
+              data={state.allNotaries}
               renderItem={({ item, index }) => {
                 return (
                   <TouchableOpacity
@@ -568,17 +541,6 @@ export default class HomeScreen extends React.Component {
 
         {!isHidden && (
           <TouchableWithoutFeedback onPress={(e) => this._toggleSubView()}>
-            <View style={styles.backdrop}></View>
-          </TouchableWithoutFeedback>
-        )}
-
-        {openSortMenu && (
-          <TouchableWithoutFeedback
-            onPress={(e) => {
-              console.log("Entered backdrop");
-              this.setState({ openSortMenu: !this.state.openSortMenu });
-            }}
-          >
             <View style={styles.backdrop}></View>
           </TouchableWithoutFeedback>
         )}

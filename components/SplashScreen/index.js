@@ -2,6 +2,8 @@ import * as React from "react";
 import { View, Image } from "react-native";
 import styles from "./style";
 
+console.disableYellowBox = true;
+
 export default function SplashScreen() {
   return (
     <View style={styles.homeContainer}>

@@ -15,7 +15,11 @@ import { firebaseConfig, countryCodes } from "../../constants";
 import styles from "./style";
 import { AuthContext } from "../../hooks";
 import RNPickerSelect from "react-native-picker-select";
-import RNOtpVerify from "react-native-otp-verify";
+import { notifyMessage } from "../../utils";
+
+console.disableYellowBox = true;
+
+// import RNOtpVerify from "react-native-otp-verify";
 !firebase.apps.length ? firebase.initializeApp(firebaseConfig) : firebase.app();
 
 const PhoneAuthScreen = ({ navigation }) => {
@@ -34,29 +38,29 @@ const PhoneAuthScreen = ({ navigation }) => {
     ? firebase.app().options
     : undefined;
 
-  React.useEffect(() => {
-    RNOtpVerify.getOtp().then((p) =>
-      RNOtpVerify.addListener((message) => {
-        try {
-          if (message) {
-            const messageArray = message.split("\n");
-            if (messageArray[2]) {
-              const otp = messageArray[2].split(" ")[0];
-              if (otp.length === 4) {
-                console.log(otp.split(""));
-              }
-            }
-          }
-        } catch (err) {
-          showMessage(err.message);
-        }
-      })
-    );
-    // remove listener on unmount
-    return () => {
-      RNOtpVerify.removeListener();
-    };
-  }, []);
+  // React.useEffect(() => {
+  //   RNOtpVerify.getOtp().then((p) =>
+  //     RNOtpVerify.addListener((message) => {
+  //       try {
+  //         if (message) {
+  //           const messageArray = message.split("\n");
+  //           if (messageArray[2]) {
+  //             const otp = messageArray[2].split(" ")[0];
+  //             if (otp.length === 4) {
+  //               console.log(otp.split(""));
+  //             }
+  //           }
+  //         }
+  //       } catch (err) {
+  //         showMessage(err.message);
+  //       }
+  //     })
+  //   );
+  //   // remove listener on unmount
+  //   return () => {
+  //     RNOtpVerify.removeListener();
+  //   };
+  // }, []);
 
   const sendVerification = async () => {
     setSendVerificationLoading(true);
@@ -69,7 +73,7 @@ const PhoneAuthScreen = ({ navigation }) => {
       setVerificationId(verificationId);
       setPhoneAuthState("verification");
     } catch (err) {
-      showMessage({ text: `Error: ${err.message}`, color: "red" });
+      notifyMessage(`Error: ${err.message}`);
     }
     setSendVerificationLoading(false);
   };
@@ -92,7 +96,7 @@ const PhoneAuthScreen = ({ navigation }) => {
         // Error saving data
       }
     } catch (err) {
-      showMessage({ text: `Error: ${err.message}`, color: "red" });
+      notifyMessage(`Error: ${err.message}`);
     }
     setVerifyLoading(false);
   };
@@ -125,7 +129,6 @@ const PhoneAuthScreen = ({ navigation }) => {
           </View>
           <View style={styles.phoneNumberContainer}>
             <RNPickerSelect
-              styles={styles.countryCode}
               value={countryCode}
               hideIcon={true}
               onValueChange={(value) => setCountryCode(value)}

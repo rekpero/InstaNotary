@@ -5,20 +5,21 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   TextInput,
-  ToastAndroid,
-  Alert,
   ActivityIndicator,
+  AsyncStorage,
 } from "react-native";
 import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
-
+import { notifyMessage } from "../../utils";
 import styles from "./styles";
 import moment from "moment";
 import { WebService } from "../../services";
 import { AuthContext } from "../../hooks";
 
+console.disableYellowBox = true;
+
 export default function NotaryItemScreen({ navigation, route }) {
   const { file, fileType } = route.params;
-  const { state } = React.useContext(AuthContext);
+  const { state, authContext } = React.useContext(AuthContext);
   const [loading, setLoading] = React.useState(false);
   const [notaryName, setNotaryName] = React.useState("");
   const [notaryDescription, setNotaryDescription] = React.useState("");
@@ -35,13 +36,7 @@ export default function NotaryItemScreen({ navigation, route }) {
   const goBack = () => {
     navigation.goBack();
   };
-  const notifyMessage = (msg) => {
-    if (Platform.OS === "android") {
-      ToastAndroid.show(msg, ToastAndroid.SHORT);
-    } else {
-      Alert.alert(msg, "", [], { cancelable: true });
-    }
-  };
+
   const sendFileData = async () => {
     // notifyMessage("This is a toast");
     // console.log(toast);
@@ -67,10 +62,9 @@ export default function NotaryItemScreen({ navigation, route }) {
         });
       }
       notifyMessage(res.message);
-      setTimeout(() => {
-        navigation.navigate("Home", {
-          loadNotaryItems: true,
-        });
+      authContext.fetchNotaryItem(state.userMobileNumber);
+      setTimeout(async () => {
+        navigation.navigate("Home");
       }, 2000);
     } catch (err) {
       notifyMessage(err.message);
@@ -90,15 +84,14 @@ export default function NotaryItemScreen({ navigation, route }) {
         style={styles.notaryName}
         placeholder="Enter a name"
         autoFocus
+        autoCorrect={false}
         onChangeText={(notaryName) => setNotaryName(notaryName)}
       />
       <Text style={styles.label}>Description</Text>
       <TextInput
-        style={styles.notaryDescription}
+        style={styles.notaryName}
         placeholder="Enter a description"
-        multiline
-        editable
-        numberOfLines={4}
+        autoCorrect={false}
         onChangeText={(notaryDescription) =>
           setNotaryDescription(notaryDescription)
         }
@@ -115,11 +108,9 @@ export default function NotaryItemScreen({ navigation, route }) {
         <>
           <Text style={styles.label}>Content</Text>
           <TextInput
-            style={styles.notaryDescription}
+            style={styles.notaryName}
             placeholder="Enter your content"
-            multiline
-            editable
-            numberOfLines={4}
+            autoCorrect={false}
             onChangeText={(notaryTextContent) =>
               setNotaryTextContent(notaryTextContent)
             }

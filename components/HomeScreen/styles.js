@@ -65,6 +65,7 @@ export default StyleSheet.create({
   searchInput: {
     fontSize: 14,
     marginLeft: 12,
+    flex: 1,
   },
   sortButton: {
     display: "flex",
@@ -81,6 +82,7 @@ export default StyleSheet.create({
     elevation: 10,
     shadowRadius: 15,
     shadowOffset: { width: 2, height: 2 },
+    height: 36,
   },
   refreshButton: {
     display: "flex",
@@ -106,7 +108,7 @@ export default StyleSheet.create({
     borderRadius: 6,
     elevation: 100,
     backgroundColor: "#fff",
-    // zIndex: 10000,
+    zIndex: 10000,
   },
   menuText: {
     width: 150,
@@ -114,6 +116,8 @@ export default StyleSheet.create({
     paddingBottom: 8,
     paddingLeft: 24,
     fontWeight: "bold",
+    zIndex: 100000,
+    elevation: 2,
     paddingRight: 18,
   },
   borderTop: {

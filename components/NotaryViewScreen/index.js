@@ -13,6 +13,8 @@ import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import moment from "moment";
 import styles from "./styles";
 
+console.disableYellowBox = true;
+
 export default function NotaryViewScreen({ route, navigation }) {
   const { notary } = route.params;
   const [isHidden, setIsHidden] = React.useState(true);
@@ -130,6 +132,10 @@ export default function NotaryViewScreen({ route, navigation }) {
             style={styles.fileIcon}
           ></Image>
           <Text style={styles.title}>No preview available</Text>
+          <Text style={styles.noPreviewText}>
+            Please click on download button on the toolbar to open the item in
+            browser
+          </Text>
         </View>
       )}
 

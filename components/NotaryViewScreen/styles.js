@@ -101,4 +101,9 @@ export default StyleSheet.create({
     fontSize: 16,
     flex: 1,
   },
+  noPreviewText: {
+    textAlign: "center",
+    paddingHorizontal: 24,
+    marginVertical: 8,
+  },
 });
