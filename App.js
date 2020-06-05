@@ -70,7 +70,6 @@ function App() {
       },
       signOut: () => dispatch({ type: "SIGN_OUT" }),
       fetchNotaryItem: async (userMobileNumber) => {
-        console.log(userMobileNumber);
         const allNotaries = await WebService.getNotaryItemsByNumber(
           userMobileNumber
         );

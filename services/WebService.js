@@ -39,7 +39,6 @@ class Webservice {
   };
 
   uploadTextToServer = async (textDetails) => {
-    console.log(textDetails);
     const config = {
       method: "POST",
       headers: {
@@ -58,7 +57,6 @@ class Webservice {
   };
 
   getNotaryItemsByNumber = async (phoneNumber) => {
-    console.log(phoneNumber);
     return fetch(
       "https://bluzelle-notary-backend.herokuapp.com/notary/phone/" +
         phoneNumber

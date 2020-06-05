@@ -6,7 +6,6 @@ import {
   TouchableWithoutFeedback,
   TextInput,
   ActivityIndicator,
-  AsyncStorage,
 } from "react-native";
 import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { notifyMessage } from "../../utils";
@@ -37,9 +36,8 @@ export default function NotaryItemScreen({ navigation, route }) {
     navigation.goBack();
   };
 
+  // send file data to server
   const sendFileData = async () => {
-    // notifyMessage("This is a toast");
-    // console.log(toast);
     setLoading(true);
     try {
       let res;

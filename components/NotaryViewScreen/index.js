@@ -18,13 +18,14 @@ console.disableYellowBox = true;
 export default function NotaryViewScreen({ route, navigation }) {
   const { notary } = route.params;
   const [isHidden, setIsHidden] = React.useState(true);
-  const [bounceValue, setBounceValue] = React.useState(new Animated.Value(320));
+  const [bounceValue, setBounceValue] = React.useState(new Animated.Value(280));
   const [downloadFile, setDownloadFile] = React.useState(false);
 
   const goBack = () => {
     navigation.goBack();
   };
 
+  // check gview viewable extensions
   const checkGViewSupportedExt = (pType) => {
     if (pType === "pdf" || pType === "doc" || pType === "docx") {
       return true;
@@ -32,7 +33,8 @@ export default function NotaryViewScreen({ route, navigation }) {
     return false;
   };
 
-  const handleDownloadFile = async () => {
+  // open file in browser
+  const handleOpenFile = async () => {
     const url = `${
       checkGViewSupportedExt(notary.type) && !downloadFile
         ? "http://docs.google.com/gview?embedded=true&url="
@@ -44,10 +46,14 @@ export default function NotaryViewScreen({ route, navigation }) {
     }
   };
 
+  // check viewable extensions
   const previewAbleExt = (pType) => {
     if (
       pType === "jpg" ||
       pType === "jpeg" ||
+      pType === "png" ||
+      pType === "gif" ||
+      pType === "tiff" ||
       pType === "text" ||
       pType === "pdf" ||
       pType === "doc" ||
@@ -69,8 +75,9 @@ export default function NotaryViewScreen({ route, navigation }) {
     return false;
   };
 
+  // toggle subview
   const _toggleSubView = () => {
-    var toValue = 320;
+    var toValue = 280;
 
     if (isHidden) {
       toValue = 0;
@@ -106,7 +113,7 @@ export default function NotaryViewScreen({ route, navigation }) {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.downloadButton}
-            onPress={handleDownloadFile}
+            onPress={handleOpenFile}
           >
             <Ionicons name="md-cloud-download" size={32} color="#15548b" />
           </TouchableOpacity>

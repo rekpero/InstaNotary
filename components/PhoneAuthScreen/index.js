@@ -4,7 +4,6 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  Platform,
   AsyncStorage,
   Image,
   ActivityIndicator,
@@ -38,30 +37,7 @@ const PhoneAuthScreen = ({ navigation }) => {
     ? firebase.app().options
     : undefined;
 
-  // React.useEffect(() => {
-  //   RNOtpVerify.getOtp().then((p) =>
-  //     RNOtpVerify.addListener((message) => {
-  //       try {
-  //         if (message) {
-  //           const messageArray = message.split("\n");
-  //           if (messageArray[2]) {
-  //             const otp = messageArray[2].split(" ")[0];
-  //             if (otp.length === 4) {
-  //               console.log(otp.split(""));
-  //             }
-  //           }
-  //         }
-  //       } catch (err) {
-  //         showMessage(err.message);
-  //       }
-  //     })
-  //   );
-  //   // remove listener on unmount
-  //   return () => {
-  //     RNOtpVerify.removeListener();
-  //   };
-  // }, []);
-
+  // send the verification code
   const sendVerification = async () => {
     setSendVerificationLoading(true);
     try {
@@ -78,6 +54,7 @@ const PhoneAuthScreen = ({ navigation }) => {
     setSendVerificationLoading(false);
   };
 
+  // confirmation of verification code
   const confirmVerification = async () => {
     setVerifyLoading(true);
     try {
@@ -101,6 +78,7 @@ const PhoneAuthScreen = ({ navigation }) => {
     setVerifyLoading(false);
   };
 
+  // get all the country code
   const getCountryCodes = () => {
     return countryCodes.map((countryCode, i) => ({
       label: countryCode.name + " - " + countryCode.code,
@@ -108,6 +86,7 @@ const PhoneAuthScreen = ({ navigation }) => {
       key: countryCode.code,
     }));
   };
+
   return (
     <View style={styles.homeContainer}>
       <FirebaseRecaptchaVerifierModal

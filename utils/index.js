@@ -13,7 +13,6 @@ export const notifyMessage = (msg) => {
 
 export const sortNotaries = (allNotaries, type) => {
   if (type === "name") {
-    console.log("Entered name");
     return allNotaries.sort((a, b) => {
       if (a.name < b.name) {
         return -1;

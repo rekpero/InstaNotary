@@ -60,21 +60,21 @@ export default class HomeScreen extends React.Component {
     authContext.fetchNotaryItem(state.userMobileNumber);
   }
 
+  // sort notary
   handleSortNotaries = (type) => {
-    console.log("Entered sort");
     const { authContext, state } = this.context;
 
     const finalNotaries = sortNotaries(state.allNotaries, type);
-    console.log(finalNotaries);
+
     authContext.setAllNotaries(finalNotaries);
     this.hideMenu();
   };
 
+  // get all the permissions
   getPermissionAsync = async () => {
     if (Constants.platform.ios) {
       let permission1 = await Permissions.askAsync(Permissions.CAMERA_ROLL);
       let permission2 = await Permissions.askAsync(Permissions.CAMERA);
-      console.log(permission1.status, permission2.status);
       if (
         permission1.status !== "granted" &&
         permission2.status !== "granted"
@@ -84,10 +84,10 @@ export default class HomeScreen extends React.Component {
     }
   };
 
+  // get the document files
   _pickDocument = async () => {
     try {
       let result = await DocumentPicker.getDocumentAsync({});
-      // console.log(result.type);
       if (result.type === "success") {
         this._toggleSubView();
 
@@ -101,6 +101,7 @@ export default class HomeScreen extends React.Component {
     }
   };
 
+  // get image from the camera
   _pickImageFromCamera = async () => {
     try {
       let result = await ImagePicker.launchCameraAsync({
@@ -112,7 +113,6 @@ export default class HomeScreen extends React.Component {
           skipBackup: true,
         },
       });
-      // console.log(result.cancelled);
       if (!result.cancelled) {
         this._toggleSubView();
 
@@ -126,13 +126,13 @@ export default class HomeScreen extends React.Component {
     }
   };
 
+  // get image from the gallery
   _pickImageFromSystem = async () => {
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         allowsEditing: false,
       });
-      // console.log(result.cancelled);
       if (!result.cancelled) {
         this._toggleSubView();
         this.props.navigation.navigate("NotaryDetail", {
@@ -145,6 +145,7 @@ export default class HomeScreen extends React.Component {
     }
   };
 
+  // send to add text view
   _addText = () => {
     this._toggleSubView();
     this.props.navigation.navigate("NotaryDetail", {
@@ -152,6 +153,7 @@ export default class HomeScreen extends React.Component {
     });
   };
 
+  // toggle the bottom subView
   _toggleSubView = () => {
     const { isHidden } = this.state;
     var toValue = 210;
@@ -180,9 +182,38 @@ export default class HomeScreen extends React.Component {
     }
   };
 
+  // get icons for extensions
   getIconForFile = (ext) => {
     switch (ext) {
-      case "image":
+      case "jpg":
+        return (
+          <Image
+            source={require("../../assets/image.png")}
+            style={styles.fileIcon}
+          ></Image>
+        );
+      case "jpeg":
+        return (
+          <Image
+            source={require("../../assets/image.png")}
+            style={styles.fileIcon}
+          ></Image>
+        );
+      case "png":
+        return (
+          <Image
+            source={require("../../assets/image.png")}
+            style={styles.fileIcon}
+          ></Image>
+        );
+      case "gif":
+        return (
+          <Image
+            source={require("../../assets/image.png")}
+            style={styles.fileIcon}
+          ></Image>
+        );
+      case "tiff":
         return (
           <Image
             source={require("../../assets/image.png")}
@@ -360,6 +391,7 @@ export default class HomeScreen extends React.Component {
     }
   };
 
+  // show toaster notification
   notifyMessage = (msg) => {
     if (Platform.OS === "android") {
       ToastAndroid.show(msg, ToastAndroid.SHORT);
@@ -368,6 +400,7 @@ export default class HomeScreen extends React.Component {
     }
   };
 
+  // delete notary files
   deleteNotary = async (item) => {
     console.log(item);
     const res = await WebService.deleteNotaryItems(item.phoneNumber, item.id);
@@ -376,10 +409,13 @@ export default class HomeScreen extends React.Component {
     authContext.fetchNotaryItem(state.userMobileNumber);
   };
 
+  // refresh notary file list
   refreshList = () => {
     const { state, authContext } = this.context;
     authContext.fetchNotaryItem(state.userMobileNumber);
   };
+
+  // filter notary file list for search
   filterNotaryList = (search) => {
     const { authContext, state } = this.context;
 
@@ -391,6 +427,7 @@ export default class HomeScreen extends React.Component {
     });
   };
 
+  // open view screen for notary item
   viewNotary = (item) => {
     this.setState({ isMailLoaded: false });
     this.props.navigation.navigate("NotaryView", {
@@ -410,7 +447,6 @@ export default class HomeScreen extends React.Component {
   render() {
     let { isHidden } = this.state;
     const { state } = this.context;
-    console.log(state.allNotaries);
     return (
       <View style={styles.homeContainer}>
         <View style={styles.toolbarContainer}>
@@ -598,9 +634,6 @@ export default class HomeScreen extends React.Component {
             </TouchableOpacity>
           </View>
         </Animated.View>
-        {/* {image && (
-          <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
-        )} */}
       </View>
     );
   }
