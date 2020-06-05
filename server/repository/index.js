@@ -9,61 +9,68 @@ class Repository {
   async initBlz() {
     try {
       this.bz = await bluzelle({
-        address: "bluzelle1htcd86l00dmkptdja75za0akg8mrt2w3qhd65v",
+        address: "bluzelle1myff7jsku73rnwud4pc8n2txu65upxzencg784",
         mnemonic:
-          "apology antique such ancient spend narrow twin banner coral book iron summer west extend toddler walnut left genius exchange globe satisfy shield case rose",
+          "celery celery swamp outside measure convince another surprise daring glue smoke web silver hazard divert absent december wife usage eight inquiry diesel order that",
         endpoint: "http://testnet.public.bluzelle.com:1317",
         chain_id: "bluzelle",
-        uuid: "MyNotaryAppv1.0.0",
+        uuid: "MyNotaryAppv1.0.2",
       });
     } catch (err) {
       console.error(err);
     }
   }
   async parseFileUpload(file, fileDetails, res) {
-    console.log(file);
-    // var uploadedFile = fs.readFileSync(file.path);
-    // console.log(uploadedFile);
+    // getting the buffer from the file
     var picBuffer = Buffer.from(file.buffer);
-    console.log(picBuffer);
+    // storing the file in IPFS
     ipfs.files.add(picBuffer, async (err, data) => {
       if (err) {
         console.error(err);
         res.json({ message: err.message });
       }
-      this.bz.version().then(
-        (version) => {
-          console.log(version);
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-      console.log(data[0].hash);
+      const randomID = (Math.random() * 1e32).toString(36).substring(0, 10);
       const fileData = {
         ...fileDetails,
         hash: data[0].hash,
+        id: randomID,
       };
-      console.log(fileData);
       try {
         let addNotaryItem = [];
+        // creating a notary with a unique id
+        await this.bz.create(randomID, JSON.stringify(fileData), {
+          gas_price: 10,
+          max_gas: 2000000,
+        });
         try {
-          const notaryItems = await this.bz.read("notaryItems", {
+          // fetching previously stored notary list
+          const notaryItems = await this.bz.read(fileData.phoneNumber, {
             gas_price: 10,
+            max_gas: 2000000,
           });
-          console.log("Notary items", notaryItems);
-          addNotaryItem = [...JSON.parse(notaryItems), fileData];
-          console.log("Uploaded Notary Item", addNotaryItem);
-          await this.bz.update("notaryItems", JSON.stringify(addNotaryItem), {
-            gas_price: 10,
-          });
+          addNotaryItem = [...JSON.parse(notaryItems), { id: randomID }];
+          // updating with the newly added notary item
+          await this.bz.update(
+            fileData.phoneNumber,
+            JSON.stringify(addNotaryItem),
+            {
+              gas_price: 10,
+              max_gas: 2000000,
+            }
+          );
         } catch (err) {
           console.log(err);
-          addNotaryItem = [fileData];
-          console.log("Uploaded Notary Item", addNotaryItem);
-          await this.bz.create("notaryItems", JSON.stringify(addNotaryItem), {
-            gas_price: 10,
-          });
+          // didn't found any notary items of the user
+          addNotaryItem = [{ id: randomID }];
+          // creating new notary item for the user
+          await this.bz.create(
+            fileData.phoneNumber,
+            JSON.stringify(addNotaryItem),
+            {
+              gas_price: 10,
+              max_gas: 2000000,
+            }
+          );
         }
         res.json({
           message: "Successfully uploaded file to bluzelle",
@@ -78,46 +85,54 @@ class Repository {
   }
 
   async parseTextUpload(notaryText, res) {
-    console.log(notaryText);
-
+    // getting the buffer from the file and storing the text in IPFS
     ipfs.files.add([new Buffer(notaryText.textContent)], async (err, data) => {
       if (err) {
         console.error(err);
         res.json({ message: err.message });
       }
-      this.bz.version().then(
-        (version) => {
-          console.log(version);
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-      console.log(data[0].hash);
+      const randomID = (Math.random() * 1e32).toString(36).substring(0, 10);
       const fileData = {
         ...notaryText,
         hash: data[0].hash,
+        id: randomID,
       };
-      console.log(fileData);
       try {
         let addNotaryItem = [];
+        // creating a notary with a unique id
+        await this.bz.create(randomID, JSON.stringify(fileData), {
+          gas_price: 10,
+          max_gas: 2000000,
+        });
         try {
-          const notaryItems = await this.bz.read("notaryItems", {
+          // fetching previously stored notary list
+          const notaryItems = await this.bz.read(fileData.phoneNumber, {
             gas_price: 10,
+            max_gas: 2000000,
           });
-          console.log("Notary items", notaryItems);
-          addNotaryItem = [...JSON.parse(notaryItems), fileData];
-          console.log("Uploaded Notary Item", addNotaryItem);
-          await this.bz.update("notaryItems", JSON.stringify(addNotaryItem), {
-            gas_price: 10,
-          });
+          addNotaryItem = [...JSON.parse(notaryItems), { id: randomID }];
+          // updating with the newly added notary item
+          await this.bz.update(
+            fileData.phoneNumber,
+            JSON.stringify(addNotaryItem),
+            {
+              gas_price: 10,
+              max_gas: 2000000,
+            }
+          );
         } catch (err) {
           console.log(err);
-          addNotaryItem = [fileData];
-          console.log("Uploaded Notary Item", addNotaryItem);
-          await this.bz.create("notaryItems", JSON.stringify(addNotaryItem), {
-            gas_price: 10,
-          });
+          // didn't found any notary items of the user
+          addNotaryItem = [{ id: randomID }];
+          // creating new notary item for the user
+          await this.bz.create(
+            fileData.phoneNumber,
+            JSON.stringify(addNotaryItem),
+            {
+              gas_price: 10,
+              max_gas: 2000000,
+            }
+          );
         }
         res.json({
           message: "Successfully uploaded file to bluzelle",
@@ -131,39 +146,26 @@ class Repository {
     });
   }
 
-  async getAllFiles(res) {
-    try {
-      const notaryItems = await this.bz.read("notaryItems", {
-        gas_price: 10,
-      });
-      console.log("Notary items", notaryItems);
-      res.json({
-        message: "Get All Notary Items",
-        notaries: JSON.parse(notaryItems),
-      });
-    } catch (err) {
-      console.log(err);
-      res.json({
-        message: "Error in getting all notary from bluzelle",
-      });
-    }
-  }
-
   async getNotaryFilesByPhoneNumber(phoneNumber, res) {
     try {
-      const notaryItems = await this.bz.read("notaryItems", {
+      // fetching all notary item of user
+      const notaryItems = await this.bz.read(phoneNumber, {
         gas_price: 10,
+        max_gas: 2000000,
       });
       const parsedNotaryItems = JSON.parse(notaryItems);
-      const selectedNotaries = parsedNotaryItems.filter((notary) => {
-        console.log(
-          notary.phoneNumber,
-          phoneNumber,
-          notary.phoneNumber === phoneNumber
-        );
-        return notary.phoneNumber === phoneNumber;
-      });
-      console.log("Notary items", selectedNotaries);
+      // fetching all notary items details
+      let selectedNotaries = await Promise.all(
+        parsedNotaryItems.map((notaryItem) => {
+          return this.bz.read(notaryItem.id, {
+            gas_price: 10,
+            max_gas: 2000000,
+          });
+        })
+      );
+      selectedNotaries = selectedNotaries.map((notaryItem) =>
+        JSON.parse(notaryItem)
+      );
       res.json({
         message: "Get All Notary Items",
         notaries: selectedNotaries,
@@ -176,40 +178,24 @@ class Repository {
     }
   }
 
-  async getNotaryFilesByHash(hash, res) {
+  async deleteNotaryFiles(phoneNumber, id, res) {
     try {
-      const notaryItems = await this.bz.read("notaryItems", {
+      // fetching all notary item of user
+      const notaryItems = await this.bz.read(phoneNumber, {
         gas_price: 10,
+        max_gas: 2000000,
       });
       const parsedNotaryItems = JSON.parse(notaryItems);
+      // deleting from the list
       const selectedNotary = parsedNotaryItems.filter(
-        (notary) => notary.hash === hash
-      )[0];
-      console.log("Notary items", selectedNotary);
-      res.json({
-        message: "Get All Notary Items",
-        notaries: selectedNotary,
-      });
-    } catch (err) {
-      console.log(err);
-      res.json({
-        message: "Error in getting notary from bluzelle",
-      });
-    }
-  }
-
-  async deleteNotaryFilesByHash(hash, res) {
-    try {
-      const notaryItems = await this.bz.read("notaryItems", {
-        gas_price: 10,
-      });
-      const parsedNotaryItems = JSON.parse(notaryItems);
-      const selectedNotary = parsedNotaryItems.filter(
-        (notary) => notary.hash !== hash
+        (notary) => notary.id !== id
       );
-      console.log("Notary items", selectedNotary);
-      await this.bz.update("notaryItems", JSON.stringify(selectedNotary), {
+      // deleting the notary item
+      await this.bz.delete(id, { gas_price: 10, max_gas: 2000000 });
+      // updating the notary list
+      await this.bz.update(phoneNumber, JSON.stringify(selectedNotary), {
         gas_price: 10,
+        max_gas: 2000000,
       });
       res.json({
         message: "Deleted Notary",

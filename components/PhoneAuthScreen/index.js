@@ -105,9 +105,9 @@ const PhoneAuthScreen = ({ navigation }) => {
     return countryCodes.map((countryCode, i) => ({
       label: countryCode.name + " - " + countryCode.code,
       value: countryCode.code,
+      key: countryCode.code,
     }));
   };
-
   return (
     <View style={styles.homeContainer}>
       <FirebaseRecaptchaVerifierModal
@@ -131,7 +131,21 @@ const PhoneAuthScreen = ({ navigation }) => {
             <RNPickerSelect
               value={countryCode}
               hideIcon={true}
+              style={{
+                inputIOS: {
+                  fontSize: 15,
+                  paddingHorizontal: 4,
+                  paddingRight: 4, // to ensure the text is never behind the icon
+                  maxWidth: 150,
+                },
+                inputAndroid: {
+                  fontSize: 15,
+                  paddingRight: 36, // to ensure the text is never behind the icon
+                  maxWidth: 150,
+                },
+              }}
               onValueChange={(value) => setCountryCode(value)}
+              itemKey={countryCode}
               useNativeAndroidPickerStyle={false}
               items={getCountryCodes()}
             />
@@ -142,6 +156,8 @@ const PhoneAuthScreen = ({ navigation }) => {
               autocompleteType="tel"
               keyboardType="phone-pad"
               textContentType="telephoneNumber"
+              returnKeyType="done"
+              autoCorrect={false}
               onChangeText={(phoneNumber) => setPhoneNumber(phoneNumber)}
             />
           </View>
@@ -180,6 +196,8 @@ const PhoneAuthScreen = ({ navigation }) => {
             autocompletetype="tel"
             keyboardType="phone-pad"
             textContentType="telephoneNumber"
+            returnKeyType="done"
+            autoCorrect={false}
             onChangeText={setVerificationCode}
           />
           <View style={styles.sendVerificationButtonContainer}>

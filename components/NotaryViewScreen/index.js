@@ -18,7 +18,7 @@ console.disableYellowBox = true;
 export default function NotaryViewScreen({ route, navigation }) {
   const { notary } = route.params;
   const [isHidden, setIsHidden] = React.useState(true);
-  const [bounceValue, setBounceValue] = React.useState(new Animated.Value(240));
+  const [bounceValue, setBounceValue] = React.useState(new Animated.Value(320));
   const [downloadFile, setDownloadFile] = React.useState(false);
 
   const goBack = () => {
@@ -46,7 +46,8 @@ export default function NotaryViewScreen({ route, navigation }) {
 
   const previewAbleExt = (pType) => {
     if (
-      pType === "image" ||
+      pType === "jpg" ||
+      pType === "jpeg" ||
       pType === "text" ||
       pType === "pdf" ||
       pType === "doc" ||
@@ -69,7 +70,7 @@ export default function NotaryViewScreen({ route, navigation }) {
   };
 
   const _toggleSubView = () => {
-    var toValue = 240;
+    var toValue = 320;
 
     if (isHidden) {
       toValue = 0;
@@ -165,6 +166,12 @@ export default function NotaryViewScreen({ route, navigation }) {
           <View style={styles.subViewDetailItems}>
             <Text style={styles.detailTitle}>Hash: </Text>
             <Text style={styles.detailText}>{notary.hash}</Text>
+          </View>
+          <View style={styles.subViewDetailItems}>
+            <Text style={styles.detailTitle}>IPFS Link: </Text>
+            <Text style={styles.detailText}>
+              https://ipfs.io/ipfs/{notary.hash}
+            </Text>
           </View>
           <View style={styles.subViewDetailItems}>
             <Text style={styles.detailTitle}>Created On: </Text>

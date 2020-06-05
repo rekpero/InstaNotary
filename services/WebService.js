@@ -57,14 +57,6 @@ class Webservice {
       });
   };
 
-  getAllNotaryItems = async () => {
-    return fetch("https://bluzelle-notary-backend.herokuapp.com/notary")
-      .then((res) => res.json())
-      .catch((err) => {
-        console.log("Error", err);
-      });
-  };
-
   getNotaryItemsByNumber = async (phoneNumber) => {
     console.log(phoneNumber);
     return fetch(
@@ -77,22 +69,12 @@ class Webservice {
       });
   };
 
-  getNotaryItemsByHash = async (hash) => {
-    return fetch(
-      "https://bluzelle-notary-backend.herokuapp.com/notary/hash/" + phoneNumber
-    )
-      .then((res) => res.json())
-      .catch((err) => {
-        console.log("Error", err);
-      });
-  };
-
-  deleteNotaryItemsByHash = async (hash) => {
+  deleteNotaryItems = async (phoneNumber, id) => {
     const config = {
       method: "DELETE",
     };
     return fetch(
-      "https://bluzelle-notary-backend.herokuapp.com/notary/hash/" + hash,
+      `https://bluzelle-notary-backend.herokuapp.com/notary/phone/${phoneNumber}/${id}`,
       config
     )
       .then((res) => res.json())

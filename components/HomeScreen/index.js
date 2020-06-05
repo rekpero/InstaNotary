@@ -72,9 +72,13 @@ export default class HomeScreen extends React.Component {
 
   getPermissionAsync = async () => {
     if (Constants.platform.ios) {
-      let { status1 } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-      let { status2 } = await Permissions.askAsync(Permissions.CAMERA);
-      if (status1 !== "granted" && status2 !== "granted") {
+      let permission1 = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+      let permission2 = await Permissions.askAsync(Permissions.CAMERA);
+      console.log(permission1.status, permission2.status);
+      if (
+        permission1.status !== "granted" &&
+        permission2.status !== "granted"
+      ) {
         alert("Sorry, we need camera roll permissions to make this work!");
       }
     }
@@ -365,7 +369,8 @@ export default class HomeScreen extends React.Component {
   };
 
   deleteNotary = async (item) => {
-    const res = await WebService.deleteNotaryItemsByHash(item.hash);
+    console.log(item);
+    const res = await WebService.deleteNotaryItems(item.phoneNumber, item.id);
     this.notifyMessage(res.message);
     const { state, authContext } = this.context;
     authContext.fetchNotaryItem(state.userMobileNumber);
@@ -405,6 +410,7 @@ export default class HomeScreen extends React.Component {
   render() {
     let { isHidden } = this.state;
     const { state } = this.context;
+    console.log(state.allNotaries);
     return (
       <View style={styles.homeContainer}>
         <View style={styles.toolbarContainer}>
@@ -425,6 +431,8 @@ export default class HomeScreen extends React.Component {
             <TextInput
               style={styles.searchInput}
               placeholder="Search"
+              returnKeyType="search"
+              autoCorrect={false}
               onChangeText={(search) => this.filterNotaryList(search)}
             />
           </View>
