@@ -11,8 +11,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bluzelle": "^1.0.8",
+    "bluzelle": "^1.0.15",
     "body-parser": "^1.19.0",
+    "connect-timeout": "^1.9.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "fs": "0.0.1-security",

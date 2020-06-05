@@ -65,7 +65,7 @@ export default StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderTopRightRadius: 8,
     borderTopLeftRadius: 8,
-    height: 240,
+    height: 280,
     elevation: 100,
     paddingLeft: 24,
     paddingRight: 24,
@@ -98,7 +98,12 @@ export default StyleSheet.create({
     width: 90,
   },
   detailText: {
-    fontSize: 16,
+    fontSize: 14,
     flex: 1,
+  },
+  noPreviewText: {
+    textAlign: "center",
+    paddingHorizontal: 24,
+    marginVertical: 8,
   },
 });

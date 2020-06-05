@@ -13,16 +13,19 @@ import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import moment from "moment";
 import styles from "./styles";
 
+console.disableYellowBox = true;
+
 export default function NotaryViewScreen({ route, navigation }) {
   const { notary } = route.params;
   const [isHidden, setIsHidden] = React.useState(true);
-  const [bounceValue, setBounceValue] = React.useState(new Animated.Value(240));
+  const [bounceValue, setBounceValue] = React.useState(new Animated.Value(280));
   const [downloadFile, setDownloadFile] = React.useState(false);
 
   const goBack = () => {
     navigation.goBack();
   };
 
+  // check gview viewable extensions
   const checkGViewSupportedExt = (pType) => {
     if (pType === "pdf" || pType === "doc" || pType === "docx") {
       return true;
@@ -30,7 +33,8 @@ export default function NotaryViewScreen({ route, navigation }) {
     return false;
   };
 
-  const handleDownloadFile = async () => {
+  // open file in browser
+  const handleOpenFile = async () => {
     const url = `${
       checkGViewSupportedExt(notary.type) && !downloadFile
         ? "http://docs.google.com/gview?embedded=true&url="
@@ -42,9 +46,14 @@ export default function NotaryViewScreen({ route, navigation }) {
     }
   };
 
+  // check viewable extensions
   const previewAbleExt = (pType) => {
     if (
-      pType === "image" ||
+      pType === "jpg" ||
+      pType === "jpeg" ||
+      pType === "png" ||
+      pType === "gif" ||
+      pType === "tiff" ||
       pType === "text" ||
       pType === "pdf" ||
       pType === "doc" ||
@@ -66,8 +75,9 @@ export default function NotaryViewScreen({ route, navigation }) {
     return false;
   };
 
+  // toggle subview
   const _toggleSubView = () => {
-    var toValue = 240;
+    var toValue = 280;
 
     if (isHidden) {
       toValue = 0;
@@ -103,7 +113,7 @@ export default function NotaryViewScreen({ route, navigation }) {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.downloadButton}
-            onPress={handleDownloadFile}
+            onPress={handleOpenFile}
           >
             <Ionicons name="md-cloud-download" size={32} color="#15548b" />
           </TouchableOpacity>
@@ -130,6 +140,10 @@ export default function NotaryViewScreen({ route, navigation }) {
             style={styles.fileIcon}
           ></Image>
           <Text style={styles.title}>No preview available</Text>
+          <Text style={styles.noPreviewText}>
+            Please click on download button on the toolbar to open the item in
+            browser
+          </Text>
         </View>
       )}
 
@@ -159,6 +173,12 @@ export default function NotaryViewScreen({ route, navigation }) {
           <View style={styles.subViewDetailItems}>
             <Text style={styles.detailTitle}>Hash: </Text>
             <Text style={styles.detailText}>{notary.hash}</Text>
+          </View>
+          <View style={styles.subViewDetailItems}>
+            <Text style={styles.detailTitle}>IPFS Link: </Text>
+            <Text style={styles.detailText}>
+              https://ipfs.io/ipfs/{notary.hash}
+            </Text>
           </View>
           <View style={styles.subViewDetailItems}>
             <Text style={styles.detailTitle}>Created On: </Text>

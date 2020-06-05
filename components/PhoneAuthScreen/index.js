@@ -4,7 +4,6 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  Platform,
   AsyncStorage,
   Image,
   ActivityIndicator,
@@ -15,6 +14,11 @@ import { firebaseConfig, countryCodes } from "../../constants";
 import styles from "./style";
 import { AuthContext } from "../../hooks";
 import RNPickerSelect from "react-native-picker-select";
+import { notifyMessage } from "../../utils";
+
+console.disableYellowBox = true;
+
+// import RNOtpVerify from "react-native-otp-verify";
 !firebase.apps.length ? firebase.initializeApp(firebaseConfig) : firebase.app();
 
 const PhoneAuthScreen = ({ navigation }) => {
@@ -33,6 +37,7 @@ const PhoneAuthScreen = ({ navigation }) => {
     ? firebase.app().options
     : undefined;
 
+  // send the verification code
   const sendVerification = async () => {
     setSendVerificationLoading(true);
     try {
@@ -44,11 +49,12 @@ const PhoneAuthScreen = ({ navigation }) => {
       setVerificationId(verificationId);
       setPhoneAuthState("verification");
     } catch (err) {
-      showMessage({ text: `Error: ${err.message}`, color: "red" });
+      notifyMessage(`Error: ${err.message}`);
     }
     setSendVerificationLoading(false);
   };
 
+  // confirmation of verification code
   const confirmVerification = async () => {
     setVerifyLoading(true);
     try {
@@ -67,15 +73,17 @@ const PhoneAuthScreen = ({ navigation }) => {
         // Error saving data
       }
     } catch (err) {
-      showMessage({ text: `Error: ${err.message}`, color: "red" });
+      notifyMessage(`Error: ${err.message}`);
     }
     setVerifyLoading(false);
   };
 
+  // get all the country code
   const getCountryCodes = () => {
     return countryCodes.map((countryCode, i) => ({
       label: countryCode.name + " - " + countryCode.code,
       value: countryCode.code,
+      key: countryCode.code,
     }));
   };
 
@@ -100,10 +108,23 @@ const PhoneAuthScreen = ({ navigation }) => {
           </View>
           <View style={styles.phoneNumberContainer}>
             <RNPickerSelect
-              styles={styles.countryCode}
               value={countryCode}
               hideIcon={true}
+              style={{
+                inputIOS: {
+                  fontSize: 15,
+                  paddingHorizontal: 4,
+                  paddingRight: 4, // to ensure the text is never behind the icon
+                  maxWidth: 150,
+                },
+                inputAndroid: {
+                  fontSize: 15,
+                  paddingRight: 36, // to ensure the text is never behind the icon
+                  maxWidth: 150,
+                },
+              }}
               onValueChange={(value) => setCountryCode(value)}
+              itemKey={countryCode}
               useNativeAndroidPickerStyle={false}
               items={getCountryCodes()}
             />
@@ -114,6 +135,8 @@ const PhoneAuthScreen = ({ navigation }) => {
               autocompleteType="tel"
               keyboardType="phone-pad"
               textContentType="telephoneNumber"
+              returnKeyType="done"
+              autoCorrect={false}
               onChangeText={(phoneNumber) => setPhoneNumber(phoneNumber)}
             />
           </View>
@@ -152,6 +175,8 @@ const PhoneAuthScreen = ({ navigation }) => {
             autocompletetype="tel"
             keyboardType="phone-pad"
             textContentType="telephoneNumber"
+            returnKeyType="done"
+            autoCorrect={false}
             onChangeText={setVerificationCode}
           />
           <View style={styles.sendVerificationButtonContainer}>
