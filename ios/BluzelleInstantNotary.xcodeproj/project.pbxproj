@@ -290,7 +290,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.rekpero.instanotary;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bluzelle.notary;
 				PRODUCT_NAME = instanotary;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -313,7 +313,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.rekpero.instanotary;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bluzelle.notary;
 				PRODUCT_NAME = instanotary;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
