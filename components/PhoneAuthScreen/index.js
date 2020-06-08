@@ -15,6 +15,11 @@ import styles from "./style";
 import { AuthContext } from "../../hooks";
 import RNPickerSelect from "react-native-picker-select";
 import { notifyMessage } from "../../utils";
+import {
+  MAGIC_NUMBER,
+  MAGIC_NUMBER_COUNTRY_CODE,
+  MAGIC_NUMBER_AUTH,
+} from "../../config";
 
 console.disableYellowBox = true;
 
@@ -32,7 +37,7 @@ const PhoneAuthScreen = ({ navigation }) => {
     false
   );
   const [verifyLoading, setVerifyLoading] = React.useState(false);
-  const [countryCode, setCountryCode] = React.useState("+91");
+  const [countryCode, setCountryCode] = React.useState("+1");
   const firebaseConfig = firebase.apps.length
     ? firebase.app().options
     : undefined;
@@ -40,6 +45,31 @@ const PhoneAuthScreen = ({ navigation }) => {
   // send the verification code
   const sendVerification = async () => {
     setSendVerificationLoading(true);
+    if (MAGIC_NUMBER_AUTH) {
+      if (
+        MAGIC_NUMBER_COUNTRY_CODE === countryCode &&
+        MAGIC_NUMBER === phoneNumber
+      ) {
+        try {
+          await AsyncStorage.setItem("mobileNumber", countryCode + phoneNumber);
+          authContext.signIn(countryCode + phoneNumber);
+          navigation.navigate("Home", {
+            loadNotaryItems: true,
+          });
+        } catch (error) {
+          // Error saving data
+          console.log(error.message);
+        }
+      } else {
+        handleSetVerification();
+      }
+    } else {
+      handleSetVerification();
+    }
+    setSendVerificationLoading(false);
+  };
+
+  const handleSetVerification = async () => {
     try {
       const phoneProvider = new firebase.auth.PhoneAuthProvider();
       const verificationId = await phoneProvider.verifyPhoneNumber(
@@ -51,7 +81,6 @@ const PhoneAuthScreen = ({ navigation }) => {
     } catch (err) {
       notifyMessage(`Error: ${err.message}`);
     }
-    setSendVerificationLoading(false);
   };
 
   // confirmation of verification code
@@ -71,6 +100,7 @@ const PhoneAuthScreen = ({ navigation }) => {
         });
       } catch (error) {
         // Error saving data
+        console.log(error.message);
       }
     } catch (err) {
       notifyMessage(`Error: ${err.message}`);
