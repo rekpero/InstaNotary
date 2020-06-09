@@ -64,6 +64,8 @@ Now you have to open expo app in android and ios and scan the QR code from the m
 
 ## How to Build?
 
+Be sure to update the versions (for each of Android and iOS) in app.json in the root, between build updates.
+
 You can build the app using expo commands:
 
 - For Android
