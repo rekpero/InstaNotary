@@ -29,6 +29,7 @@ Find apk [here](https://github.com/mmitrasish/InstaNotary/releases).
 ## Configuration
 
 We have added a magic number for directly accessing the app without authentication, The number is `+1 9999999999`
+
 There is additional configuration to disable this magic number authentication, This can be easily handled by updating config/index.js with
 
 ```
