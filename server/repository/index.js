@@ -12,9 +12,9 @@ class Repository {
         address: "bluzelle1myff7jsku73rnwud4pc8n2txu65upxzencg784",
         mnemonic:
           "celery celery swamp outside measure convince another surprise daring glue smoke web silver hazard divert absent december wife usage eight inquiry diesel order that",
-        endpoint: "http://testnet.public.bluzelle.com:1317",
+        endpoint: "http://dev.testnet.public.bluzelle.com:1317/",
         chain_id: "bluzelle",
-        uuid: "MyNotaryAppv1.0.2",
+        uuid: "InstaNotaryv0.0.3",
       });
     } catch (err) {
       console.error(err);
