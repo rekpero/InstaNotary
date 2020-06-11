@@ -38,6 +38,11 @@ function App() {
             ...prevState,
             allNotaries: action.allNotaries,
           };
+        case "TOGGLE_FETCH_LOADING":
+          return {
+            ...prevState,
+            isFetching: action.isFetching,
+          };
       }
     },
     {
@@ -46,6 +51,7 @@ function App() {
       userMobileNumber: null,
       allNotaries: [],
       backupNotaries: [],
+      isFetching: false,
     }
   );
   React.useEffect(() => {
@@ -70,6 +76,8 @@ function App() {
       },
       signOut: () => dispatch({ type: "SIGN_OUT" }),
       fetchNotaryItem: async (userMobileNumber) => {
+        dispatch({ type: "TOGGLE_FETCH_LOADING", isFetching: true });
+
         const allNotaries = await WebService.getNotaryItemsByNumber(
           userMobileNumber
         );
@@ -77,6 +85,7 @@ function App() {
           ? sortNotaries(allNotaries.notaries)
           : [];
         dispatch({ type: "SET_ALL_NOTARIES", allNotaries: finalSort });
+        dispatch({ type: "TOGGLE_FETCH_LOADING", isFetching: false });
       },
       setAllNotaries: (allNotaries) => {
         dispatch({ type: "SET_ONLY_ALL_NOTARIES", allNotaries });

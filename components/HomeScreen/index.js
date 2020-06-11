@@ -16,8 +16,10 @@ import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
 import Constants from "expo-constants";
 import * as Permissions from "expo-permissions";
-import { Ionicons, Feather, FontAwesome } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
+import Feather from "react-native-vector-icons/Feather";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./styles";
 import { WebService } from "../../services";
 import { AuthContext } from "../../hooks";
@@ -450,10 +452,15 @@ export default class HomeScreen extends React.Component {
     return (
       <View style={styles.homeContainer}>
         <View style={styles.toolbarContainer}>
+          <Image
+            source={{
+              uri: `https://cdn.discordapp.com/attachments/698447732028735528/712240046144749641/Bluzelle_-_Screen_-_Symbol_-_Big_-_Blue.png`,
+            }}
+            style={styles.sponsorIcon}
+          ></Image>
           <Text style={styles.title}>InstaNotary.</Text>
           <TouchableOpacity style={styles.logoutButton} onPress={this.logout}>
             <Ionicons name="ios-power" size={18} color="white" />
-            <Text style={styles.logoutText}>Logout</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.searchContainer}>
@@ -503,6 +510,8 @@ export default class HomeScreen extends React.Component {
           {state.allNotaries.length ? (
             <FlatList
               data={state.allNotaries}
+              onRefresh={() => this.refreshList()}
+              refreshing={state.isFetching}
               renderItem={({ item, index }) => {
                 return (
                   <TouchableOpacity

@@ -5,7 +5,7 @@ const timeout = require("connect-timeout");
 const cors = require("cors");
 const app = express();
 const PORT = process.env.PORT || 5000;
-app.use(timeout(120000));
+app.use(timeout(600000));
 app.use(bodyParser.json());
 app.use(haltOnTimedOut);
 app.use(cors());
