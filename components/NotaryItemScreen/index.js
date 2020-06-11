@@ -7,7 +7,8 @@ import {
   TextInput,
   ActivityIndicator,
 } from "react-native";
-import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { notifyMessage } from "../../utils";
 import styles from "./styles";
 import moment from "moment";

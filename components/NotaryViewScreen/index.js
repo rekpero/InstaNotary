@@ -9,7 +9,9 @@ import {
   Animated,
   Linking,
 } from "react-native";
-import { FontAwesome5, Ionicons } from "@expo/vector-icons";
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import Ionicons from "react-native-vector-icons/Ionicons";
+
 import moment from "moment";
 import styles from "./styles";
 
