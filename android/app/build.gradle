@@ -182,7 +182,6 @@ android {
 }
 
 dependencies {
-    implementation project(':react-native-vector-icons')
     implementation project(':react-native-otp-verify')
     implementation project(':react-native-image-picker')
     implementation fileTree(dir: "libs", include: ["*.jar"])
