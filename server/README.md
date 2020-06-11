@@ -1,3 +1,3 @@
-# hrms express app
+# InstaNotary Express App
 
-This is a express app with mongo db.
+This is a express app with bluzelle db.
