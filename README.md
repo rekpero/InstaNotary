@@ -75,7 +75,13 @@ expo build:android -t apk // for building apk
 expo build:android -t app-bundle // for building bundle
 ```
 
-These command directly build your app but you have to create an account on expo. Also for more details regarding building for android you can follow this doc [Expo Android Build Doc](https://docs.expo.io/distribution/building-standalone-apps/#if-you-choose-to-build-for-android). This has a step by step instructions to build your app.
+These commands directly build your app but you have to create an account on expo. Also for more details regarding building for android you can follow this doc [Expo Android Build Doc](https://docs.expo.io/distribution/building-standalone-apps/#if-you-choose-to-build-for-android). This has a step by step instructions to build your app.
+
+Once done, if you want to push to the Google PlayStore, use:
+
+```
+expo upload:android
+```
 
 - For IOS
 
@@ -84,9 +90,15 @@ expo build:ios -t archive // for app store
 expo build:ios -t simulator // for simulation
 ```
 
-Same as of android. Also for more details regarding building for ios you can follow this doc [Expo IOS Build Doc](https://docs.expo.io/distribution/building-standalone-apps/#if-you-choose-to-build-for-ios). This has a step by step instructions to build your app.
+Same as Android. Also for more details regarding building for ios you can follow this doc [Expo IOS Build Doc](https://docs.expo.io/distribution/building-standalone-apps/#if-you-choose-to-build-for-ios). This has a step by step instructions to build your app.
 
 _Or you can directly build ios and android app from xcode and android studio directly which is same as you do for standalone app._
+
+Once done, if you want to push to the Apple AppStore, use:
+
+```
+expo upload:ios
+```
 
 ## Demo Video
 
