@@ -1,4 +1,4 @@
-# Project Instanotary
+# Project InstaNotary
 
 This React Native based application aims to give users a way to instantly notarize any data or file they want with current datetime.<br>
 Find apk [here](https://github.com/mmitrasish/InstaNotary/releases).
@@ -89,6 +89,11 @@ If building with XCode, first do the following on a newly installed copy of the 
 
 ```
 pod install
+```
+
+In XCode, be sure to set the correct development team account:
+```
+Build Setting - Signing - Development Team - Change The Account "S3LY459S86"
 ```
 
 ```
