@@ -85,6 +85,12 @@ expo upload:android
 
 - For IOS
 
+If building with XCode, first do the following on a newly installed copy of the code, in the ios folder:
+
+```
+pod install
+```
+
 ```
 expo build:ios -t archive // for app store
 expo build:ios -t simulator // for simulation
