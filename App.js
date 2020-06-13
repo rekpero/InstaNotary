@@ -74,7 +74,10 @@ function App() {
       signIn: (data) => {
         dispatch({ type: "SIGN_IN", token: data });
       },
-      signOut: () => dispatch({ type: "SIGN_OUT" }),
+      signOut: () => {
+        dispatch({ type: "SET_ALL_NOTARIES", allNotaries: [] });
+        dispatch({ type: "SIGN_OUT" });
+      },
       fetchNotaryItem: async (userMobileNumber) => {
         dispatch({ type: "TOGGLE_FETCH_LOADING", isFetching: true });
 

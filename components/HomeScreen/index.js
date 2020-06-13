@@ -16,10 +16,6 @@ import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
 import Constants from "expo-constants";
 import * as Permissions from "expo-permissions";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
-import Feather from "react-native-vector-icons/Feather";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./styles";
 import { WebService } from "../../services";
 import { AuthContext } from "../../hooks";
@@ -460,17 +456,18 @@ export default class HomeScreen extends React.Component {
           ></Image>
           <Text style={styles.title}>InstaNotary.</Text>
           <TouchableOpacity style={styles.logoutButton} onPress={this.logout}>
-            <Ionicons name="ios-power" size={18} color="white" />
+            <Image
+              source={require("../../assets/system-icons/off.png")}
+              style={styles.systemIcon}
+            ></Image>
           </TouchableOpacity>
         </View>
         <View style={styles.searchContainer}>
           <View style={styles.searchSection}>
-            <Ionicons
-              style={styles.searchIcon}
-              name="ios-search"
-              size={20}
-              color="#000"
-            />
+            <Image
+              source={require("../../assets/system-icons/search.png")}
+              style={styles.systemIcon}
+            ></Image>
             <TextInput
               style={styles.searchInput}
               placeholder="Search"
@@ -486,7 +483,10 @@ export default class HomeScreen extends React.Component {
                 style={styles.sortButton}
                 onPress={this.showMenu}
               >
-                <MaterialIcons name="sort" size={18} color="white" />
+                <Image
+                  source={require("../../assets/system-icons/sorting.png")}
+                  style={styles.systemIcon}
+                ></Image>
               </TouchableOpacity>
             }
           >
@@ -503,7 +503,10 @@ export default class HomeScreen extends React.Component {
             style={styles.refreshButton}
             onPress={this.refreshList}
           >
-            <MaterialIcons name="refresh" size={18} color="white" />
+            <Image
+              source={require("../../assets/system-icons/refresh.png")}
+              style={styles.systemIcon}
+            ></Image>
           </TouchableOpacity>
         </View>
         <View style={styles.listContainer}>
@@ -538,11 +541,10 @@ export default class HomeScreen extends React.Component {
                           onPress={(e) => this.deleteNotary(item)}
                         >
                           <Text style={styles.notaryItemDetailsHeaderDelete}>
-                            <FontAwesome
-                              name="trash-o"
-                              size={20}
-                              color="#737373"
-                            />
+                            <Image
+                              source={require("../../assets/system-icons/trash.png")}
+                              style={styles.trashIcon}
+                            ></Image>
                           </Text>
                         </TouchableOpacity>
                       </View>
@@ -589,7 +591,10 @@ export default class HomeScreen extends React.Component {
             this._toggleSubView();
           }}
         >
-          <Ionicons name="ios-add" size={32} color="white" />
+          <Image
+            source={require("../../assets/system-icons/plus.png")}
+            style={styles.systemIcon}
+          ></Image>
         </TouchableOpacity>
 
         {!isHidden && (
@@ -607,7 +612,10 @@ export default class HomeScreen extends React.Component {
           <View style={styles.subViewHeaderContainer}>
             <Text style={styles.subViewTitle}>Import from</Text>
             <TouchableWithoutFeedback onPress={this._toggleSubView}>
-              <Ionicons name="ios-close" size={28} color="rgba(0, 0, 0, 0.5)" />
+              <Image
+                source={require("../../assets/system-icons/close.png")}
+                style={styles.closeIcon}
+              ></Image>
             </TouchableWithoutFeedback>
           </View>
           <View style={styles.subViewButtonContainer}>
@@ -615,14 +623,20 @@ export default class HomeScreen extends React.Component {
               style={[styles.importButton, styles.marginSet]}
               onPress={this._pickImageFromCamera}
             >
-              <Ionicons name="ios-camera" size={18} color="white" />
+              <Image
+                source={require("../../assets/system-icons/camera.png")}
+                style={styles.systemIcon}
+              ></Image>
               <Text style={styles.importText}>Camera</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.importButton}
               onPress={this._pickImageFromSystem}
             >
-              <Ionicons name="md-images" size={18} color="white" />
+              <Image
+                source={require("../../assets/system-icons/gallery.png")}
+                style={styles.systemIcon}
+              ></Image>
               <Text style={styles.importText}>Gallery</Text>
             </TouchableOpacity>
           </View>
@@ -631,14 +645,20 @@ export default class HomeScreen extends React.Component {
               style={[styles.importButton, styles.marginSet]}
               onPress={this._pickDocument}
             >
-              <Ionicons name="ios-document" size={18} color="white" />
+              <Image
+                source={require("../../assets/system-icons/folder.png")}
+                style={styles.systemIcon}
+              ></Image>
               <Text style={styles.importText}>Document</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.importButton}
               onPress={this._addText}
             >
-              <Feather name="file-text" size={18} color="white" />
+              <Image
+                source={require("../../assets/system-icons/text.png")}
+                style={styles.systemIcon}
+              ></Image>
               <Text style={styles.importText}>Text</Text>
             </TouchableOpacity>
           </View>
