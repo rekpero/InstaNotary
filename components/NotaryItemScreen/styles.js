@@ -79,4 +79,13 @@ export default StyleSheet.create({
     textAlign: "center",
     textTransform: "uppercase",
   },
+  backIcon: {
+    height: 32,
+    width: 32,
+  },
+  systemIcon: {
+    height: 24,
+    width: 24,
+    marginRight: 12,
+  },
 });

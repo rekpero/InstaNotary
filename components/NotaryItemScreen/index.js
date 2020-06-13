@@ -6,9 +6,8 @@ import {
   TouchableWithoutFeedback,
   TextInput,
   ActivityIndicator,
+  Image,
 } from "react-native";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { notifyMessage } from "../../utils";
 import styles from "./styles";
 import moment from "moment";
@@ -74,7 +73,10 @@ export default function NotaryItemScreen({ navigation, route }) {
     <View style={styles.homeContainer}>
       <View style={styles.toolbarContainer}>
         <TouchableWithoutFeedback onPress={goBack}>
-          <FontAwesome5 name="arrow-left" size={20} color="black" />
+          <Image
+            source={require("../../assets/system-icons/back.png")}
+            style={styles.backIcon}
+          ></Image>
         </TouchableWithoutFeedback>
         <Text style={styles.title}>Notary Details</Text>
       </View>
@@ -99,7 +101,10 @@ export default function NotaryItemScreen({ navigation, route }) {
         <>
           <Text style={styles.label}>File</Text>
           <View style={styles.fileContainer}>
-            <MaterialIcons name="attach-file" size={24} color="black" />
+            <Image
+              source={require("../../assets/system-icons/attach.png")}
+              style={styles.systemIcon}
+            ></Image>
             <Text style={styles.fileName}>{fileName}</Text>
           </View>
         </>

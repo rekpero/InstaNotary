@@ -9,8 +9,6 @@ import {
   Animated,
   Linking,
 } from "react-native";
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import Ionicons from "react-native-vector-icons/Ionicons";
 
 import moment from "moment";
 import styles from "./styles";
@@ -20,7 +18,7 @@ console.disableYellowBox = true;
 export default function NotaryViewScreen({ route, navigation }) {
   const { notary } = route.params;
   const [isHidden, setIsHidden] = React.useState(true);
-  const [bounceValue, setBounceValue] = React.useState(new Animated.Value(280));
+  const [bounceValue, setBounceValue] = React.useState(new Animated.Value(320));
   const [downloadFile, setDownloadFile] = React.useState(false);
 
   const goBack = () => {
@@ -79,7 +77,7 @@ export default function NotaryViewScreen({ route, navigation }) {
 
   // toggle subview
   const _toggleSubView = () => {
-    var toValue = 280;
+    var toValue = 320;
 
     if (isHidden) {
       toValue = 0;
@@ -98,7 +96,10 @@ export default function NotaryViewScreen({ route, navigation }) {
     <View style={styles.homeContainer}>
       <View style={styles.toolbarContainer}>
         <TouchableWithoutFeedback onPress={goBack}>
-          <FontAwesome5 name="arrow-left" size={20} color="black" />
+          <Image
+            source={require("../../assets/system-icons/back.png")}
+            style={styles.backIcon}
+          ></Image>
         </TouchableWithoutFeedback>
         <View style={styles.toolbarTitle}>
           <Text style={styles.title}>Notary Details</Text>
@@ -111,13 +112,19 @@ export default function NotaryViewScreen({ route, navigation }) {
               _toggleSubView();
             }}
           >
-            <FontAwesome5 name="info-circle" size={24} color="#15548b" />
+            <Image
+              source={require("../../assets/system-icons/info.png")}
+              style={styles.toolbarIcons}
+            ></Image>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.downloadButton}
             onPress={handleOpenFile}
           >
-            <Ionicons name="md-cloud-download" size={32} color="#15548b" />
+            <Image
+              source={require("../../assets/system-icons/globe.png")}
+              style={styles.toolbarIcons}
+            ></Image>
           </TouchableOpacity>
         </View>
       </View>
@@ -160,7 +167,10 @@ export default function NotaryViewScreen({ route, navigation }) {
         <View style={styles.subViewHeaderContainer}>
           <Text style={styles.subViewTitle}>Notary Detail Info.</Text>
           <TouchableWithoutFeedback onPress={_toggleSubView}>
-            <Ionicons name="ios-close" size={28} color="rgba(0, 0, 0, 0.5)" />
+            <Image
+              source={require("../../assets/system-icons/close.png")}
+              style={styles.closeIcon}
+            ></Image>
           </TouchableWithoutFeedback>
         </View>
         <View style={styles.subViewDetailContainer}>

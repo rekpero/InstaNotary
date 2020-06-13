@@ -12,7 +12,7 @@ export default StyleSheet.create({
   },
   toolbarContainer: {
     flexDirection: "row",
-    alignItems: "baseline",
+    alignItems: "flex-start",
     marginBottom: 12,
   },
   toolbarTitle: {
@@ -65,7 +65,7 @@ export default StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderTopRightRadius: 8,
     borderTopLeftRadius: 8,
-    height: 280,
+    height: 320,
     elevation: 100,
     paddingLeft: 24,
     paddingRight: 24,
@@ -105,5 +105,19 @@ export default StyleSheet.create({
     textAlign: "center",
     paddingHorizontal: 24,
     marginVertical: 8,
+  },
+  backIcon: {
+    height: 32,
+    width: 32,
+    paddingTop: 24,
+  },
+  toolbarIcons: {
+    height: 24,
+    width: 24,
+  },
+  systemIcon: {},
+  closeIcon: {
+    height: 28,
+    width: 28,
   },
 });

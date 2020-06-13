@@ -25,13 +25,22 @@ export default StyleSheet.create({
     height: 32,
     width: 32,
   },
+  systemIcon: {
+    height: 18,
+    width: 18,
+  },
+  trashIcon: {
+    height: 20,
+    width: 20,
+  },
+  closeIcon: {
+    height: 28,
+    width: 28,
+  },
   logoutButton: {
     flexDirection: "row",
     borderRadius: 4,
-    paddingBottom: 4,
-    paddingTop: 4,
-    paddingLeft: 12,
-    paddingRight: 12,
+    padding: 6,
     backgroundColor: "#15548b",
     shadowColor: "rgba(0, 0, 0, 0.1)",
     shadowOpacity: 0.8,
