@@ -8,8 +8,9 @@ import {
   TouchableOpacity,
   Animated,
   Linking,
+  Clipboard,
 } from "react-native";
-
+import { notifyMessage } from "../../utils";
 import moment from "moment";
 import styles from "./styles";
 
@@ -75,6 +76,12 @@ export default function NotaryViewScreen({ route, navigation }) {
     return false;
   };
 
+  const handleCopyToClipboard = async () => {
+    console.log("Entering ");
+    await Clipboard.setString(notary.hash);
+    notifyMessage("Hash Copied to Clipboard!");
+  };
+
   // toggle subview
   const _toggleSubView = () => {
     var toValue = 320;
@@ -117,10 +124,7 @@ export default function NotaryViewScreen({ route, navigation }) {
               style={styles.toolbarIcons}
             ></Image>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.downloadButton}
-            onPress={handleOpenFile}
-          >
+          <TouchableOpacity onPress={handleOpenFile}>
             <Image
               source={require("../../assets/system-icons/globe.png")}
               style={styles.toolbarIcons}
@@ -182,20 +186,38 @@ export default function NotaryViewScreen({ route, navigation }) {
             <Text style={styles.detailTitle}>Description: </Text>
             <Text style={styles.detailText}>{notary.description}</Text>
           </View>
-          <View style={styles.subViewDetailItems}>
+          <TouchableOpacity
+            style={styles.subViewDetailItems}
+            onPress={handleCopyToClipboard}
+          >
             <Text style={styles.detailTitle}>Hash: </Text>
             <Text style={styles.detailText}>{notary.hash}</Text>
-          </View>
-          <View style={styles.subViewDetailItems}>
+            <TouchableOpacity onPress={handleCopyToClipboard}>
+              <Image
+                source={require("../../assets/system-icons/copy.png")}
+                style={[styles.systemIcon, styles.infoButtonIcon]}
+              ></Image>
+            </TouchableOpacity>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.subViewDetailItems}
+            onPress={handleOpenFile}
+          >
             <Text style={styles.detailTitle}>IPFS Link: </Text>
             <Text style={styles.detailText}>
               https://ipfs.io/ipfs/{notary.hash}
             </Text>
-          </View>
+            <TouchableOpacity onPress={handleOpenFile}>
+              <Image
+                source={require("../../assets/system-icons/ext-link.png")}
+                style={[styles.systemIcon, styles.infoButtonIcon]}
+              ></Image>
+            </TouchableOpacity>
+          </TouchableOpacity>
           <View style={styles.subViewDetailItems}>
             <Text style={styles.detailTitle}>Created On: </Text>
             <Text style={styles.detailText}>
-              {moment(notary.time).format("LLLL")}
+              {moment(notary.time).format("dddd, MMMM DD, YYYY HH:mm z")}
             </Text>
           </View>
         </View>

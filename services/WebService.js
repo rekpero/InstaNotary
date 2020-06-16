@@ -1,4 +1,5 @@
 import { ToastAndroid, Alert } from "react-native";
+import { ROOT_URL } from "../config";
 class Webservice {
   notifyMessage = (msg) => {
     if (Platform.OS === "android") {
@@ -27,10 +28,7 @@ class Webservice {
       },
       body: data,
     };
-    return fetch(
-      "https://bluzelle-notary-backend.herokuapp.com/uploadNotary/file",
-      config
-    )
+    return fetch(`${ROOT_URL}/uploadNotary/file`, config)
       .then((res) => res.json())
       .catch((err) => {
         console.log("Error", err);
@@ -46,10 +44,7 @@ class Webservice {
       },
       body: JSON.stringify(textDetails),
     };
-    return fetch(
-      "https://bluzelle-notary-backend.herokuapp.com/uploadNotary/text",
-      config
-    )
+    return fetch(`${ROOT_URL}/uploadNotary/text`, config)
       .then((res) => res.json())
       .catch((err) => {
         console.log("Error", err);
@@ -57,10 +52,7 @@ class Webservice {
   };
 
   getNotaryItemsByNumber = async (phoneNumber) => {
-    return fetch(
-      "https://bluzelle-notary-backend.herokuapp.com/notary/phone/" +
-        phoneNumber
-    )
+    return fetch(`${ROOT_URL}/notary/phone/` + phoneNumber)
       .then((res) => res.json())
       .catch((err) => {
         console.log("Error", err);
@@ -71,10 +63,7 @@ class Webservice {
     const config = {
       method: "DELETE",
     };
-    return fetch(
-      `https://bluzelle-notary-backend.herokuapp.com/notary/phone/${phoneNumber}/${id}`,
-      config
-    )
+    return fetch(`${ROOT_URL}/notary/phone/${phoneNumber}/${id}`, config)
       .then((res) => res.json())
       .catch((err) => {
         console.log("Error", err);

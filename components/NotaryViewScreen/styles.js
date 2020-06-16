@@ -26,6 +26,7 @@ export default StyleSheet.create({
   },
   webview: {
     borderRadius: 4,
+    backgroundColor: "green",
   },
   fileIcon: {
     height: 500,
@@ -115,7 +116,13 @@ export default StyleSheet.create({
     height: 24,
     width: 24,
   },
-  systemIcon: {},
+  systemIcon: {
+    height: 18,
+    width: 18,
+  },
+  infoButtonIcon: {
+    marginLeft: 12,
+  },
   closeIcon: {
     height: 28,
     width: 28,

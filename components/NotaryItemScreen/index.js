@@ -21,8 +21,6 @@ export default function NotaryItemScreen({ navigation, route }) {
   const { state, authContext } = React.useContext(AuthContext);
   const [loading, setLoading] = React.useState(false);
   const [notaryName, setNotaryName] = React.useState("");
-  const [notaryDescription, setNotaryDescription] = React.useState("");
-  const [notaryTextContent, setNotaryTextContent] = React.useState("");
   let fileName = "";
   try {
     if (file) {
@@ -31,6 +29,8 @@ export default function NotaryItemScreen({ navigation, route }) {
   } catch (err) {
     console.log(err);
   }
+  const [notaryDescription, setNotaryDescription] = React.useState(fileName);
+  const [notaryTextContent, setNotaryTextContent] = React.useState("");
 
   const goBack = () => {
     navigation.goBack();
@@ -55,6 +55,7 @@ export default function NotaryItemScreen({ navigation, route }) {
           name: notaryName,
           description: notaryDescription,
           type: fileType,
+          fileName,
           phoneNumber: state.userMobileNumber,
           time: moment().format(),
         });
@@ -86,6 +87,8 @@ export default function NotaryItemScreen({ navigation, route }) {
         placeholder="Enter a name"
         autoFocus
         autoCorrect={false}
+        returnKeyType="done"
+        value={notaryName}
         onChangeText={(notaryName) => setNotaryName(notaryName)}
       />
       <Text style={styles.label}>Description</Text>
@@ -93,9 +96,11 @@ export default function NotaryItemScreen({ navigation, route }) {
         style={styles.notaryName}
         placeholder="Enter a description"
         autoCorrect={false}
+        returnKeyType="done"
         onChangeText={(notaryDescription) =>
           setNotaryDescription(notaryDescription)
         }
+        value={notaryDescription}
       />
       {fileType !== "text" ? (
         <>
@@ -115,6 +120,8 @@ export default function NotaryItemScreen({ navigation, route }) {
             style={styles.notaryName}
             placeholder="Enter your content"
             autoCorrect={false}
+            returnKeyType="done"
+            value={notaryTextContent}
             onChangeText={(notaryTextContent) =>
               setNotaryTextContent(notaryTextContent)
             }
