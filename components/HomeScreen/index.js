@@ -35,6 +35,7 @@ export default class HomeScreen extends React.Component {
       bounceValue: new Animated.Value(210),
       isHidden: true,
       searchText: "",
+      modalVisible: false,
     };
   }
 
@@ -77,7 +78,9 @@ export default class HomeScreen extends React.Component {
         permission1.status !== "granted" &&
         permission2.status !== "granted"
       ) {
-        alert("Sorry, we need camera roll permissions to make this work!");
+        this.notifyMessage(
+          "Sorry, we need camera roll permissions to make this work!"
+        );
       }
     }
   };
@@ -455,12 +458,24 @@ export default class HomeScreen extends React.Component {
             style={styles.sponsorIcon}
           ></Image>
           <Text style={styles.title}>InstaNotary.</Text>
-          <TouchableOpacity style={styles.logoutButton} onPress={this.logout}>
-            <Image
-              source={require("../../assets/system-icons/off.png")}
-              style={styles.systemIcon}
-            ></Image>
-          </TouchableOpacity>
+          <View style={styles.accountContainer}>
+            <TouchableOpacity
+              onPress={() => {
+                this.setState({ modalVisible: !this.state.modalVisible });
+              }}
+            >
+              <Image
+                source={require("../../assets/system-icons/user.png")}
+                style={styles.closeIcon}
+              ></Image>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.logoutButton} onPress={this.logout}>
+              <Image
+                source={require("../../assets/system-icons/off.png")}
+                style={styles.systemIcon}
+              ></Image>
+            </TouchableOpacity>
+          </View>
         </View>
         <View style={styles.searchContainer}>
           <View style={styles.searchSection}>

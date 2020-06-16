@@ -16,6 +16,10 @@ export default StyleSheet.create({
     paddingRight: 24,
     paddingLeft: 24,
   },
+  accountContainer: {
+    flexDirection: "row",
+    display: "flex",
+  },
   title: {
     fontSize: 24,
     fontWeight: "bold",
@@ -47,6 +51,7 @@ export default StyleSheet.create({
     elevation: 10,
     shadowRadius: 15,
     shadowOffset: { width: 2, height: 2 },
+    marginLeft: 12,
   },
   logoutText: {
     marginLeft: 4,

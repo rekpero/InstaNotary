@@ -8,11 +8,15 @@ import {
   ActivityIndicator,
   Image,
 } from "react-native";
+import * as Location from "expo-location";
 import { notifyMessage } from "../../utils";
 import styles from "./styles";
 import moment from "moment";
+import timezone from "moment-timezone";
 import { WebService } from "../../services";
 import { AuthContext } from "../../hooks";
+import { CheckBox } from "native-base";
+import * as Permissions from "expo-permissions";
 
 console.disableYellowBox = true;
 
@@ -31,14 +35,45 @@ export default function NotaryItemScreen({ navigation, route }) {
   }
   const [notaryDescription, setNotaryDescription] = React.useState(fileName);
   const [notaryTextContent, setNotaryTextContent] = React.useState("");
+  const [notaryTakeLocation, setNotaryTakeLocation] = React.useState(false);
 
   const goBack = () => {
     navigation.goBack();
   };
 
+  const handleAskForLocation = async () => {
+    if (!notaryTakeLocation) {
+      let { status } = await Permissions.askAsync(Permissions.LOCATION);
+      if (status !== "granted") {
+        setNotaryTakeLocation(false);
+        notifyMessage("Sorry, we need location to make this work!");
+      } else {
+        setNotaryTakeLocation(!notaryTakeLocation);
+      }
+    } else {
+      setNotaryTakeLocation(!notaryTakeLocation);
+    }
+  };
+
   // send file data to server
   const sendFileData = async () => {
     setLoading(true);
+    let region = null;
+    if (notaryTakeLocation) {
+      console.log("Entering notary location");
+      const location = await Location.getCurrentPositionAsync({});
+
+      region = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 1.0,
+        longitudeDelta: 1.0,
+      };
+    }
+    const timeZone = moment.tz.guess();
+    const time = new Date();
+    const timeZoneOffset = time.getTimezoneOffset();
+    const timeZoneAbbr = moment.tz.zone(timeZone).abbr(timeZoneOffset);
     try {
       let res;
       if (fileType === "text") {
@@ -48,6 +83,8 @@ export default function NotaryItemScreen({ navigation, route }) {
           type: fileType,
           phoneNumber: state.userMobileNumber,
           textContent: notaryTextContent,
+          region,
+          timeZone: timeZoneAbbr,
           time: moment().format(),
         });
       } else {
@@ -57,6 +94,8 @@ export default function NotaryItemScreen({ navigation, route }) {
           type: fileType,
           fileName,
           phoneNumber: state.userMobileNumber,
+          region,
+          timeZone: timeZoneAbbr,
           time: moment().format(),
         });
       }
@@ -128,6 +167,22 @@ export default function NotaryItemScreen({ navigation, route }) {
           />
         </>
       )}
+      <View style={styles.item}>
+        <CheckBox
+          checked={notaryTakeLocation}
+          color="#15548b"
+          onPress={() => handleAskForLocation()}
+        />
+        <Text
+          style={{
+            ...styles.checkBoxTxt,
+            color: notaryTakeLocation ? "#15548b" : "gray",
+            fontWeight: notaryTakeLocation ? "bold" : "normal",
+          }}
+        >
+          Store Location
+        </Text>
+      </View>
       <TouchableOpacity
         style={styles.sendVerificationButton}
         onPress={sendFileData}

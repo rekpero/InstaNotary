@@ -9,6 +9,7 @@ import {
   Animated,
   Linking,
   Clipboard,
+  Platform,
 } from "react-native";
 import { notifyMessage } from "../../utils";
 import moment from "moment";
@@ -19,7 +20,7 @@ console.disableYellowBox = true;
 export default function NotaryViewScreen({ route, navigation }) {
   const { notary } = route.params;
   const [isHidden, setIsHidden] = React.useState(true);
-  const [bounceValue, setBounceValue] = React.useState(new Animated.Value(320));
+  const [bounceValue, setBounceValue] = React.useState(new Animated.Value(360));
   const [downloadFile, setDownloadFile] = React.useState(false);
 
   const goBack = () => {
@@ -84,7 +85,7 @@ export default function NotaryViewScreen({ route, navigation }) {
 
   // toggle subview
   const _toggleSubView = () => {
-    var toValue = 320;
+    var toValue = 360;
 
     if (isHidden) {
       toValue = 0;
@@ -97,6 +98,21 @@ export default function NotaryViewScreen({ route, navigation }) {
     }).start();
 
     setIsHidden(!isHidden);
+  };
+
+  const openMapLocation = () => {
+    const scheme = Platform.select({
+      ios: "maps:0,0?q=",
+      android: "geo:0,0?q=",
+    });
+    const latLng = `${notary.region.latitude},${notary.region.longitude}`;
+    const label = "Notary stored here";
+    const url = Platform.select({
+      ios: `${scheme}${label}@${latLng}`,
+      android: `${scheme}${latLng}(${label})`,
+    });
+
+    Linking.openURL(url);
   };
 
   return (
@@ -214,10 +230,30 @@ export default function NotaryViewScreen({ route, navigation }) {
               ></Image>
             </TouchableOpacity>
           </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.subViewDetailItems}
+            onPress={openMapLocation}
+          >
+            <Text style={styles.detailTitle}>Location: </Text>
+            <Text style={styles.detailText}>
+              Lat: {Number.parseFloat(notary.region.latitude).toFixed(2)}
+              {"    "}Long:{" "}
+              {Number.parseFloat(notary.region.longitude).toFixed(2)}
+            </Text>
+            <TouchableOpacity onPress={openMapLocation}>
+              <Image
+                source={require("../../assets/system-icons/map.png")}
+                style={[styles.systemIcon, styles.infoButtonIcon]}
+              ></Image>
+            </TouchableOpacity>
+          </TouchableOpacity>
+
           <View style={styles.subViewDetailItems}>
             <Text style={styles.detailTitle}>Created On: </Text>
             <Text style={styles.detailText}>
-              {moment(notary.time).format("dddd, MMMM DD, YYYY HH:mm z")}
+              {moment(notary.time).format("dddd, MMMM DD, YYYY HH:mm z") +
+                " " +
+                notary.timeZone}
             </Text>
           </View>
         </View>

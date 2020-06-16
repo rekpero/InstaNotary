@@ -88,4 +88,18 @@ export default StyleSheet.create({
     width: 24,
     marginRight: 12,
   },
+  item: {
+    fontSize: 18,
+    borderRadius: 6,
+    padding: 8,
+    paddingLeft: 0,
+    paddingRight: 0,
+    marginBottom: 12,
+    marginTop: 18,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  checkBoxTxt: {
+    marginLeft: 20,
+  },
 });
