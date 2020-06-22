@@ -80,8 +80,8 @@ export default StyleSheet.create({
     textTransform: "uppercase",
   },
   backIcon: {
-    height: 32,
-    width: 32,
+    height: 36,
+    width: 36,
   },
   systemIcon: {
     height: 24,

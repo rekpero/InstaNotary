@@ -87,10 +87,22 @@ export default StyleSheet.create({
     flexDirection: "column",
     marginVertical: 10,
   },
+  qrCodeContainer: {
+    flexDirection: "row",
+    marginVertical: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: 16,
+  },
   subViewDetailItems: {
     flexDirection: "row",
     alignItems: "center",
     marginVertical: 4,
+  },
+  qrCodeText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#15548b",
   },
   detailTitle: {
     color: "rgba(0, 0, 0, 0.5)",

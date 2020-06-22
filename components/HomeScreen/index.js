@@ -11,6 +11,7 @@ import {
   Image,
   ToastAndroid,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
@@ -36,6 +37,8 @@ export default class HomeScreen extends React.Component {
       isHidden: true,
       searchText: "",
       modalVisible: false,
+      modalType: "",
+      selectedItemForDelete: null,
     };
   }
 
@@ -60,10 +63,10 @@ export default class HomeScreen extends React.Component {
   }
 
   // sort notary
-  handleSortNotaries = (type) => {
+  handleSortNotaries = (type, order) => {
     const { authContext, state } = this.context;
 
-    const finalNotaries = sortNotaries(state.allNotaries, type);
+    const finalNotaries = sortNotaries(state.allNotaries, type, order);
 
     authContext.setAllNotaries(finalNotaries);
     this.hideMenu();
@@ -90,7 +93,7 @@ export default class HomeScreen extends React.Component {
     try {
       let result = await DocumentPicker.getDocumentAsync({});
       if (result.type === "success") {
-        this._toggleSubView();
+        this._toggleSubView("");
 
         this.props.navigation.navigate("NotaryDetail", {
           file: result,
@@ -115,7 +118,7 @@ export default class HomeScreen extends React.Component {
         },
       });
       if (!result.cancelled) {
-        this._toggleSubView();
+        this._toggleSubView("");
 
         this.props.navigation.navigate("NotaryDetail", {
           file: result,
@@ -135,7 +138,7 @@ export default class HomeScreen extends React.Component {
         allowsEditing: false,
       });
       if (!result.cancelled) {
-        this._toggleSubView();
+        this._toggleSubView("");
         this.props.navigation.navigate("NotaryDetail", {
           file: result,
           fileType: "image",
@@ -148,28 +151,39 @@ export default class HomeScreen extends React.Component {
 
   // send to add text view
   _addText = () => {
-    this._toggleSubView();
+    this._toggleSubView("");
     this.props.navigation.navigate("NotaryDetail", {
       fileType: "text",
     });
   };
 
   // toggle the bottom subView
-  _toggleSubView = () => {
-    const { isHidden } = this.state;
-    var toValue = 210;
-
-    if (isHidden) {
+  _toggleSubView = (pMenu) => {
+    if (pMenu) {
+      this.setState({ modalType: pMenu });
+      var toValue = 210;
       toValue = 0;
-    }
-    Animated.spring(this.state.bounceValue, {
-      toValue: toValue,
-      velocity: 3,
-      tension: 2,
-      friction: 8,
-    }).start();
 
-    this.setState({ isHidden: !isHidden });
+      Animated.spring(this.state.bounceValue, {
+        toValue: toValue,
+        velocity: 3,
+        tension: 2,
+        friction: 8,
+      }).start();
+
+      this.setState({ isHidden: false });
+    } else {
+      var toValue = 210;
+
+      Animated.spring(this.state.bounceValue, {
+        toValue: toValue,
+        velocity: 3,
+        tension: 2,
+        friction: 8,
+      }).start();
+
+      this.setState({ isHidden: true });
+    }
   };
 
   logout = async () => {
@@ -401,11 +415,20 @@ export default class HomeScreen extends React.Component {
     }
   };
 
+  handleDeleteNotary = (item) => {
+    this.setState({ selectedItemForDelete: item });
+    this._toggleSubView("deleteConfirm");
+  };
   // delete notary files
-  deleteNotary = async (item) => {
-    console.log(item);
-    const res = await WebService.deleteNotaryItems(item.phoneNumber, item.id);
+  deleteNotary = async () => {
+    this._toggleSubView("");
+    this._toggleSubView("deleteLoading");
+    const res = await WebService.deleteNotaryItems(
+      this.state.selectedItemForDelete.phoneNumber,
+      this.state.selectedItemForDelete.id
+    );
     this.notifyMessage(res.message);
+    this._toggleSubView("");
     const { state, authContext } = this.context;
     authContext.fetchNotaryItem(state.userMobileNumber);
   };
@@ -446,7 +469,7 @@ export default class HomeScreen extends React.Component {
     console.log(error, errorInfo);
   }
   render() {
-    let { isHidden } = this.state;
+    let { isHidden, modalType } = this.state;
     const { state } = this.context;
     return (
       <View style={styles.homeContainer}>
@@ -460,19 +483,19 @@ export default class HomeScreen extends React.Component {
           <Text style={styles.title}>InstaNotary.</Text>
           <View style={styles.accountContainer}>
             <TouchableOpacity
-              onPress={() => {
-                this.setState({ modalVisible: !this.state.modalVisible });
-              }}
+              onPress={(e) => this._toggleSubView("accountInfo")}
             >
               <Image
                 source={require("../../assets/system-icons/user.png")}
                 style={styles.closeIcon}
               ></Image>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.logoutButton} onPress={this.logout}>
+            <TouchableOpacity
+              onPress={(e) => this._toggleSubView("logoutConfirm")}
+            >
               <Image
                 source={require("../../assets/system-icons/off.png")}
-                style={styles.systemIcon}
+                style={[styles.closeIcon, styles.leftMarginSet]}
               ></Image>
             </TouchableOpacity>
           </View>
@@ -505,12 +528,20 @@ export default class HomeScreen extends React.Component {
               </TouchableOpacity>
             }
           >
-            <MenuItem onPress={(e) => this.handleSortNotaries("date")}>
-              Sort By Date
+            <MenuItem onPress={(e) => this.handleSortNotaries("date", true)}>
+              Sort By Date Asc
             </MenuItem>
             <MenuDivider />
-            <MenuItem onPress={(e) => this.handleSortNotaries("name")}>
-              Sort By Name
+            <MenuItem onPress={(e) => this.handleSortNotaries("date", false)}>
+              Sort By Date Desc
+            </MenuItem>
+            <MenuDivider />
+            <MenuItem onPress={(e) => this.handleSortNotaries("name", true)}>
+              Sort By Name Asc
+            </MenuItem>
+            <MenuDivider />
+            <MenuItem onPress={(e) => this.handleSortNotaries("name", false)}>
+              Sort By Name Desc
             </MenuItem>
           </Menu>
 
@@ -553,7 +584,7 @@ export default class HomeScreen extends React.Component {
                           {moment(item.time).fromNow()}
                         </Text>
                         <TouchableOpacity
-                          onPress={(e) => this.deleteNotary(item)}
+                          onPress={(e) => this.handleDeleteNotary(item)}
                         >
                           <Text style={styles.notaryItemDetailsHeaderDelete}>
                             <Image
@@ -603,7 +634,7 @@ export default class HomeScreen extends React.Component {
         <TouchableOpacity
           style={styles.fabButton}
           onPress={() => {
-            this._toggleSubView();
+            this._toggleSubView("importMenu");
           }}
         >
           <Image
@@ -613,7 +644,7 @@ export default class HomeScreen extends React.Component {
         </TouchableOpacity>
 
         {!isHidden && (
-          <TouchableWithoutFeedback onPress={(e) => this._toggleSubView()}>
+          <TouchableWithoutFeedback onPress={(e) => this._toggleSubView("")}>
             <View style={styles.backdrop}></View>
           </TouchableWithoutFeedback>
         )}
@@ -625,58 +656,142 @@ export default class HomeScreen extends React.Component {
           ]}
         >
           <View style={styles.subViewHeaderContainer}>
-            <Text style={styles.subViewTitle}>Import from</Text>
-            <TouchableWithoutFeedback onPress={this._toggleSubView}>
+            {modalType === "importMenu" ? (
+              <Text style={styles.subViewTitle}>Import from</Text>
+            ) : null}
+            {modalType === "deleteConfirm" ? (
+              <Text style={styles.subViewTitle}>Are you sure?</Text>
+            ) : null}
+            {modalType === "deleteLoading" ? (
+              <Text style={styles.subViewTitle}>Deleting Notary</Text>
+            ) : null}
+            {modalType === "logoutConfirm" ? (
+              <Text style={styles.subViewTitle}>Are you sure?</Text>
+            ) : null}
+            {modalType === "accountInfo" ? (
+              <Text style={styles.subViewTitle}>Account Info</Text>
+            ) : null}
+            <TouchableWithoutFeedback onPress={(e) => this._toggleSubView("")}>
               <Image
                 source={require("../../assets/system-icons/close.png")}
                 style={styles.closeIcon}
               ></Image>
             </TouchableWithoutFeedback>
           </View>
-          <View style={styles.subViewButtonContainer}>
-            <TouchableOpacity
-              style={[styles.importButton, styles.marginSet]}
-              onPress={this._pickImageFromCamera}
-            >
-              <Image
-                source={require("../../assets/system-icons/camera.png")}
-                style={styles.systemIcon}
-              ></Image>
-              <Text style={styles.importText}>Camera</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.importButton}
-              onPress={this._pickImageFromSystem}
-            >
-              <Image
-                source={require("../../assets/system-icons/gallery.png")}
-                style={styles.systemIcon}
-              ></Image>
-              <Text style={styles.importText}>Gallery</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.subViewButtonContainer}>
-            <TouchableOpacity
-              style={[styles.importButton, styles.marginSet]}
-              onPress={this._pickDocument}
-            >
-              <Image
-                source={require("../../assets/system-icons/folder.png")}
-                style={styles.systemIcon}
-              ></Image>
-              <Text style={styles.importText}>Document</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.importButton}
-              onPress={this._addText}
-            >
-              <Image
-                source={require("../../assets/system-icons/text.png")}
-                style={styles.systemIcon}
-              ></Image>
-              <Text style={styles.importText}>Text</Text>
-            </TouchableOpacity>
-          </View>
+          {modalType === "importMenu" ? (
+            <>
+              <View style={styles.subViewButtonContainer}>
+                <TouchableOpacity
+                  style={[styles.importButton, styles.marginSet]}
+                  onPress={this._pickImageFromCamera}
+                >
+                  <Image
+                    source={require("../../assets/system-icons/camera.png")}
+                    style={styles.systemIcon}
+                  ></Image>
+                  <Text style={styles.importText}>Camera</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.importButton}
+                  onPress={this._pickImageFromSystem}
+                >
+                  <Image
+                    source={require("../../assets/system-icons/gallery.png")}
+                    style={styles.systemIcon}
+                  ></Image>
+                  <Text style={styles.importText}>Gallery</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.subViewButtonContainer}>
+                <TouchableOpacity
+                  style={[styles.importButton, styles.marginSet]}
+                  onPress={this._pickDocument}
+                >
+                  <Image
+                    source={require("../../assets/system-icons/folder.png")}
+                    style={styles.systemIcon}
+                  ></Image>
+                  <Text style={styles.importText}>Document</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.importButton}
+                  onPress={this._addText}
+                >
+                  <Image
+                    source={require("../../assets/system-icons/text.png")}
+                    style={styles.systemIcon}
+                  ></Image>
+                  <Text style={styles.importText}>Text</Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          ) : null}
+          {modalType === "deleteConfirm" ? (
+            <View style={styles.subViewButtonContainer}>
+              <TouchableOpacity
+                style={[styles.cancelButton, styles.marginSet]}
+                onPress={(e) => this._toggleSubView("")}
+              >
+                <Text style={styles.importText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.confirmButton}
+                onPress={(e) => this.deleteNotary()}
+              >
+                <Text style={styles.importText}>Confirm</Text>
+              </TouchableOpacity>
+            </View>
+          ) : null}
+          {modalType === "deleteLoading" ? (
+            <View style={styles.subViewButtonContainer}>
+              <ActivityIndicator size="small" color="#15548b" />
+              <Text style={{ marginLeft: 12, fontSize: 16 }}>
+                Deleting your notary item, wait few sec...
+              </Text>
+            </View>
+          ) : null}
+          {modalType === "logoutConfirm" ? (
+            <>
+              <Text style={styles.userMobileNumber}>
+                You are logged in with {state.userMobileNumber}.
+              </Text>
+              <Text>
+                You have to authenticate again with your phone number.
+              </Text>
+              <View style={styles.subViewButtonContainer}>
+                <TouchableOpacity
+                  style={[styles.cancelButton, styles.marginSet]}
+                  onPress={(e) => this._toggleSubView("")}
+                >
+                  <Text style={styles.importText}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.confirmButton}
+                  onPress={(e) => this.logout()}
+                >
+                  <Text style={styles.importText}>Confirm</Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          ) : null}
+          {modalType === "accountInfo" ? (
+            <>
+              <Text style={styles.userMobileText}>
+                You are logged in with
+                <Text style={styles.userMobileNumber}>
+                  {" " + state.userMobileNumber}.
+                </Text>
+              </Text>
+              <View style={[styles.subViewButtonContainer, styles.flexSet]}>
+                <TouchableOpacity
+                  style={[styles.cancelButton, styles.marginSet]}
+                  onPress={(e) => this._toggleSubView("logoutConfirm")}
+                >
+                  <Text style={styles.importText}>Logout</Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          ) : null}
         </Animated.View>
       </View>
     );

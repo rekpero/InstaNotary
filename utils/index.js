@@ -11,18 +11,33 @@ export const notifyMessage = (msg) => {
   }
 };
 
-export const sortNotaries = (allNotaries, type) => {
+export const sortNotaries = (allNotaries, type, order) => {
   if (type === "name") {
     return allNotaries.sort((a, b) => {
-      if (a.name < b.name) {
-        return -1;
-      }
-      if (a.name > b.name) {
-        return 1;
+      if (order) {
+        if (a.name < b.name) {
+          return -1;
+        }
+        if (a.name > b.name) {
+          return 1;
+        }
+      } else {
+        if (a.name < b.name) {
+          return 1;
+        }
+        if (a.name > b.name) {
+          return -1;
+        }
       }
       return 0;
     });
   } else {
-    return allNotaries.sort((a, b) => moment(b.time).diff(moment(a.time)));
+    return allNotaries.sort((a, b) => {
+      if (order) {
+        return moment(b.time).diff(moment(a.time));
+      } else {
+        return moment(a.time).diff(moment(b.time));
+      }
+    });
   }
 };
