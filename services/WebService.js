@@ -1,5 +1,6 @@
 import { ToastAndroid, Alert } from "react-native";
 import { ROOT_URL } from "../config";
+import axios from "axios";
 class Webservice {
   notifyMessage = (msg) => {
     if (Platform.OS === "android") {
@@ -8,7 +9,12 @@ class Webservice {
       Alert.alert(msg, "", [], { cancelable: true });
     }
   };
-  uploadFileToServer = async (file, fileDetails) => {
+  uploadFileToServer = async (
+    file,
+    fileDetails,
+    onProgressCallback,
+    onCompleteCallback
+  ) => {
     const data = new FormData();
 
     let uriParts = file.uri.split(".");
@@ -22,14 +28,17 @@ class Webservice {
     const finalFileDetails = { ...fileDetails, type: fileType };
     data.append("fileDetails", JSON.stringify(finalFileDetails));
     const config = {
-      method: "POST",
       headers: {
         Accept: "multipart/form-data",
       },
-      body: data,
+      onUploadProgress: onProgressCallback,
     };
-    return fetch(`${ROOT_URL}/uploadNotary/file`, config)
-      .then((res) => res.json())
+    await axios
+      .post(`${ROOT_URL}/uploadNotary/file`, data, config)
+      .then((res) => {
+        console.log("Response", res.data);
+        onCompleteCallback(res.data);
+      })
       .catch((err) => {
         console.log("Error", err);
         this.notifyMessage(err.message);
@@ -53,6 +62,14 @@ class Webservice {
 
   getNotaryItemsByNumber = async (phoneNumber) => {
     return fetch(`${ROOT_URL}/notary/phone/` + phoneNumber)
+      .then((res) => res.json())
+      .catch((err) => {
+        console.log("Error", err);
+      });
+  };
+
+  getAppConfig = async () => {
+    return fetch(`${ROOT_URL}/appConfigs`)
       .then((res) => res.json())
       .catch((err) => {
         console.log("Error", err);

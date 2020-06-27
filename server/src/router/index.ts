@@ -30,6 +30,10 @@ export default (app: express.Application) => {
     }
   );
 
+  app.get("/appConfigs", (req: express.Request, res: express.Response) => {
+    controller.getAppConfigs(res);
+  });
+
   app.delete(
     "/notary/phone/:phone/:id",
     (req: express.Request, res: express.Response) => {

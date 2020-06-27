@@ -88,24 +88,41 @@ export default function NotaryItemScreen({ navigation, route }) {
           timeZone: timeZoneAbbr,
           time: moment().format(),
         });
+        console.log(res);
+        notifyMessage(res.message);
+        authContext.fetchNotaryItem(state.userMobileNumber);
+        setTimeout(async () => {
+          navigation.navigate("Home");
+        }, 2000);
       } else {
-        res = await WebService.uploadFileToServer(file, {
-          name: notaryName,
-          description: notaryDescription,
-          type: fileType,
-          fileName,
-          phoneNumber: state.userMobileNumber,
-          isLocationEnabled: notaryTakeLocation,
-          region,
-          timeZone: timeZoneAbbr,
-          time: moment().format(),
-        });
+        res = await WebService.uploadFileToServer(
+          file,
+          {
+            name: notaryName,
+            description: notaryDescription,
+            type: fileType,
+            fileName,
+            phoneNumber: state.userMobileNumber,
+            isLocationEnabled: notaryTakeLocation,
+            region,
+            timeZone: timeZoneAbbr,
+            time: moment().format(),
+          },
+          (progressEvent) => {
+            const { loaded, total } = progressEvent;
+            let percent = Math.floor((loaded / total) * 100);
+            console.log(`${loaded}kb of ${total}kb | ${percent}%`);
+          },
+          (res) => {
+            console.log(res);
+            notifyMessage(res.message);
+            authContext.fetchNotaryItem(state.userMobileNumber);
+            setTimeout(async () => {
+              navigation.navigate("Home");
+            }, 2000);
+          }
+        );
       }
-      notifyMessage(res.message);
-      authContext.fetchNotaryItem(state.userMobileNumber);
-      setTimeout(async () => {
-        navigation.navigate("Home");
-      }, 2000);
     } catch (err) {
       notifyMessage(err.message);
     }

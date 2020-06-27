@@ -13,9 +13,10 @@ import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import CodeInput from "react-native-confirmation-code-input";
 
 import * as firebase from "firebase";
-import { firebaseConfig, countryCodes } from "../../constants";
+import { countryCodes } from "../../constants";
 import styles from "./style";
 import { AuthContext } from "../../hooks";
+import { WebService } from "../../services";
 import RNPickerSelect from "react-native-picker-select";
 import { notifyMessage } from "../../utils";
 import {
@@ -26,9 +27,6 @@ import {
 
 console.disableYellowBox = true;
 
-// import RNOtpVerify from "react-native-otp-verify";
-!firebase.apps.length ? firebase.initializeApp(firebaseConfig) : firebase.app();
-
 const PhoneAuthScreen = ({ navigation }) => {
   const { authContext } = React.useContext(AuthContext);
   const recaptchaVerifier = React.useRef(null);
@@ -38,11 +36,20 @@ const PhoneAuthScreen = ({ navigation }) => {
   const [sendVerificationLoading, setSendVerificationLoading] = React.useState(
     false
   );
-  const [verifyLoading, setVerifyLoading] = React.useState(false);
   const [countryCode, setCountryCode] = React.useState("+1");
-  const firebaseConfig = firebase.apps.length
-    ? firebase.app().options
-    : undefined;
+  const [firebaseConfig, setFirebaseConfig] = React.useState(null);
+
+  React.useEffect(() => {
+    WebService.getAppConfig().then((config) => {
+      !firebase.apps.length
+        ? firebase.initializeApp(config.firebaseConfig)
+        : firebase.app();
+      const firebaseConfig = firebase.apps.length
+        ? firebase.app().options
+        : undefined;
+      setFirebaseConfig(firebaseConfig);
+    });
+  }, []);
 
   // send the verification code
   const sendVerification = async () => {
@@ -87,7 +94,6 @@ const PhoneAuthScreen = ({ navigation }) => {
 
   // confirmation of verification code
   const confirmVerification = async (verificationCode) => {
-    setVerifyLoading(true);
     try {
       const credential = firebase.auth.PhoneAuthProvider.credential(
         verificationId,
@@ -107,7 +113,6 @@ const PhoneAuthScreen = ({ navigation }) => {
     } catch (err) {
       notifyMessage(`Error: ${err.message}`);
     }
-    setVerifyLoading(false);
   };
 
   // get all the country code

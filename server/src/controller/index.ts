@@ -4,6 +4,9 @@ import IPFS from "ipfs-api";
 const ipfs = IPFS("ipfs.infura.io", "5001", { protocol: "https" });
 import { bluzelle, API } from "bluzelle";
 import { logger } from "../utils";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 class Controller {
   bz: API;
@@ -40,6 +43,7 @@ class Controller {
         res.json({ message: "Error uploading file in IPFS" });
       }
       const randomID = (Math.random() * 1e32).toString(36).substring(0, 10);
+      console.log(data);
       const fileData = {
         ...fileDetails,
         hash: data[0].hash,
@@ -81,6 +85,7 @@ class Controller {
             }
           );
         }
+        console.debug("Done adding");
         res.json({
           message: "Successfully uploaded file to bluzelle",
         });
@@ -221,6 +226,21 @@ class Controller {
         message: "Error in deleting file to bluzelle",
       });
     }
+  };
+
+  getAppConfigs = async (res: express.Response) => {
+    res.json({
+      firebaseConfig: {
+        apiKey: process.env.FIREBASE_KEY,
+        authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+        databaseURL: process.env.FIREBASE_DATABASE_URL,
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+        messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+        appId: process.env.FIREBASE_APP_ID,
+        measurementId: process.env.FIREBASE_MEASUREMENT_ID,
+      },
+    });
   };
 }
 export default new Controller();
