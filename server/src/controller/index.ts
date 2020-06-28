@@ -3,7 +3,7 @@ import express from "express";
 import IPFS from "ipfs-api";
 const ipfs = IPFS("ipfs.infura.io", "5001", { protocol: "https" });
 import { bluzelle, API } from "bluzelle";
-import { logger } from "../utils";
+// import { logger } from "../utils";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -25,7 +25,7 @@ class Controller {
         uuid: "InstaNotaryv0.0.3",
       });
     } catch (err) {
-      logger.error(err, { origin: "Error from Bluzelle SDK Init" });
+      console.error(err, { origin: "Error from Bluzelle SDK Init" });
     }
   }
 
@@ -39,7 +39,7 @@ class Controller {
     // storing the file in IPFS
     ipfs.files.add(picBuffer, async (err: any, data: any) => {
       if (err) {
-        logger.error(err, { origin: "Error from IPFS" });
+        console.error(err, { origin: "Error from IPFS" });
         res.json({ message: "Error uploading file in IPFS" });
       }
       const randomID = (Math.random() * 1e32).toString(36).substring(0, 10);
@@ -70,7 +70,7 @@ class Controller {
             }
           );
         } catch (err) {
-          logger.error(err, {
+          console.error(err, {
             origin: `Error due to no file present in bluzelle DB with key ${fileData.phoneNumber}`,
           });
           // didn't found any notary items of the user
@@ -90,7 +90,7 @@ class Controller {
           message: "Successfully uploaded file to bluzelle",
         });
       } catch (err) {
-        logger.error(err, {
+        console.error(err, {
           origin: `Error due to failing in creating or updating notary file`,
           data: fileData,
         });
@@ -107,7 +107,7 @@ class Controller {
       [new Buffer(notaryText.textContent)],
       async (err: any, data: any) => {
         if (err) {
-          logger.error(err, { origin: "Error from IPFS" });
+          console.error(err, { origin: "Error from IPFS" });
           res.json({ message: "Error uploading file in IPFS" });
         }
         const randomID = (Math.random() * 1e32).toString(36).substring(0, 10);
@@ -137,7 +137,7 @@ class Controller {
               }
             );
           } catch (err) {
-            logger.error(err, {
+            console.error(err, {
               origin: `Error due to no file present in bluzelle DB with key ${fileData.phoneNumber}`,
             });
             // didn't found any notary items of the user
@@ -156,7 +156,7 @@ class Controller {
             message: "Successfully uploaded file to bluzelle",
           });
         } catch (err) {
-          logger.error(err, {
+          console.error(err, {
             origin: `Error due to failing in creating or updating notary file`,
             data: fileData,
           });
@@ -190,7 +190,7 @@ class Controller {
         notaries: selectedNotariesParsed,
       });
     } catch (err) {
-      logger.error(err, { origin: "Error in getting notary from bluzelle" });
+      console.error(err, { origin: "Error in getting notary from bluzelle" });
       res.json({
         message: "Error in getting notary from bluzelle",
       });
@@ -221,7 +221,7 @@ class Controller {
         message: "Deleted Notary",
       });
     } catch (err) {
-      logger.error(err, { origin: "Error in deleting file to bluzelle" });
+      console.error(err, { origin: "Error in deleting file to bluzelle" });
       res.json({
         message: "Error in deleting file to bluzelle",
       });
