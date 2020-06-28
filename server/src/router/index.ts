@@ -8,6 +8,7 @@ export default (app: express.Application) => {
     "/uploadNotary/file",
     upload.single("fileData"),
     (req: express.Request, res: express.Response) => {
+      req.socket.removeAllListeners("timeout");
       controller.parseFileUpload(
         req.file,
         JSON.parse(req.body.fileDetails),
