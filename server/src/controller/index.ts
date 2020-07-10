@@ -20,7 +20,7 @@ class Controller {
       this.bz = await bluzelle({
         mnemonic:
           "celery celery swamp outside measure convince another surprise daring glue smoke web silver hazard divert absent december wife usage eight inquiry diesel order that",
-        endpoint: "http://client.sentry.testnet.public.bluzelle.com/",
+        endpoint: "http://client.sentry.testnet.public.bluzelle.com:1317/",
         chain_id: "bluzelleTestPublic-1",
         uuid: "InstaNotaryv0.0.3",
       });
