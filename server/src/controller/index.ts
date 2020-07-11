@@ -42,7 +42,12 @@ class Controller {
         console.error(err, { origin: "Error from IPFS" });
         res.json({ message: "Error uploading file in IPFS" });
       }
-      if (this.checkHashPresent(fileDetails.phoneNumber, data[0].hash)) {
+      const isFilePresent = await this.checkHashPresent(
+        fileDetails.phoneNumber,
+        data[0].hash
+      );
+      console.log(isFilePresent);
+      if (isFilePresent) {
         res.json({ isFilePresent: true, message: "File is already present" });
       } else {
         const randomID = (Math.random() * 1e32).toString(36).substring(0, 10);
@@ -114,7 +119,12 @@ class Controller {
           console.error(err, { origin: "Error from IPFS" });
           res.json({ message: "Error uploading file in IPFS" });
         }
-        if (this.checkHashPresent(notaryText.phoneNumber, data[0].hash)) {
+        const isFilePresent = await this.checkHashPresent(
+          notaryText.phoneNumber,
+          data[0].hash
+        );
+        console.log(isFilePresent);
+        if (isFilePresent) {
           res.json({ isFilePresent: true, message: "File is already present" });
         } else {
           const randomID = (Math.random() * 1e32).toString(36).substring(0, 10);
@@ -223,7 +233,6 @@ class Controller {
           console.log(notaryItem.hash, hash, notaryItem.hash === hash);
           return notaryItem.hash === hash;
         }).length !== 0;
-      console.log(isPresent);
       return isPresent;
     } catch (err) {
       console.error(err, { origin: "Error in getting notary from bluzelle" });
