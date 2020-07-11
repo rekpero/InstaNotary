@@ -218,11 +218,11 @@ class Controller {
       const selectedNotariesParsed = selectedNotaries.map((notaryItem: any) =>
         JSON.parse(notaryItem)
       );
-      console.log(selectedNotariesParsed);
       const isPresent =
-        selectedNotariesParsed.filter(
-          (notaryItem: any) => notaryItem.hash === hash
-        ).length !== 0;
+        selectedNotariesParsed.filter((notaryItem: any) => {
+          console.log(notaryItem.hash, hash, notaryItem.hash === hash);
+          return notaryItem.hash === hash;
+        }).length !== 0;
       return isPresent;
     } catch (err) {
       console.error(err, { origin: "Error in getting notary from bluzelle" });
