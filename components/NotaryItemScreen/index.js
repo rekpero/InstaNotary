@@ -43,6 +43,7 @@ export default function NotaryItemScreen({ navigation, route }) {
   const [notaryTakeLocation, setNotaryTakeLocation] = React.useState(false);
   const [progressPercent, setProgressPercent] = React.useState(0);
   const [overrideNotaryId, setOverrideNotaryId] = React.useState(0);
+  const [overrideNotary, setOverrideNotary] = React.useState();
 
   const goBack = () => {
     navigation.goBack();
@@ -98,12 +99,23 @@ export default function NotaryItemScreen({ navigation, route }) {
           time: moment().format(),
         });
         console.log(res);
+        notifyMessage(res.message);
         if (res.isFilePresent) {
           console.log("Present notary");
           setOverrideNotaryId(res.notaryId);
+          setOverrideNotary({
+            name: notaryName,
+            description: notaryDescription,
+            type: fileType,
+            phoneNumber: state.userMobileNumber,
+            textContent: notaryTextContent,
+            isLocationEnabled: notaryTakeLocation,
+            region,
+            timeZone: timeZoneAbbr,
+            time: moment().format(),
+          });
           _toggleSubView("overrideConfirm");
         } else {
-          notifyMessage(res.message);
           authContext.fetchNotaryItem(state.userMobileNumber);
           setTimeout(async () => {
             navigation.navigate("Home");
@@ -132,12 +144,23 @@ export default function NotaryItemScreen({ navigation, route }) {
           (res) => {
             console.log(res);
             _toggleSubView("");
+            notifyMessage(res.message);
             if (res.isFilePresent) {
               console.log("Present notary");
               setOverrideNotaryId(res.notaryId);
+              setOverrideNotary({
+                name: notaryName,
+                description: notaryDescription,
+                type: fileType,
+                fileName,
+                phoneNumber: state.userMobileNumber,
+                isLocationEnabled: notaryTakeLocation,
+                region,
+                timeZone: timeZoneAbbr,
+                time: moment().format(),
+              });
               _toggleSubView("overrideConfirm");
             } else {
-              notifyMessage(res.message);
               authContext.fetchNotaryItem(state.userMobileNumber);
               setTimeout(async () => {
                 navigation.navigate("Home");
@@ -181,7 +204,19 @@ export default function NotaryItemScreen({ navigation, route }) {
     }
   };
 
-  const updateNotary = () => {};
+  const updateNotary = async () => {
+    console.log(overrideNotaryId, overrideNotary);
+    const res = await WebService.overrideNotary(
+      overrideNotaryId,
+      overrideNotary
+    );
+    console.log(res);
+    notifyMessage(res.message);
+    authContext.fetchNotaryItem(state.userMobileNumber);
+    setTimeout(async () => {
+      navigation.navigate("Home");
+    }, 2000);
+  };
 
   return (
     <View style={styles.homeContainer}>
@@ -317,7 +352,8 @@ export default function NotaryItemScreen({ navigation, route }) {
         {modalType === "overrideConfirm" ? (
           <View style={styles.subViewDetailContainer}>
             <Text style={styles.progressText}>
-              Do you want to override notary #{overrideNotaryId}
+              You already have a notary of this file. Do you want to override
+              notary #{overrideNotaryId}
             </Text>
             <View style={styles.subViewButtonContainer}>
               <TouchableOpacity

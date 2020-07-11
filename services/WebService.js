@@ -60,6 +60,21 @@ class Webservice {
       });
   };
 
+  overrideNotary = async (notaryId, notaryDetails) => {
+    const config = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(notaryDetails),
+    };
+    return fetch(`${ROOT_URL}/updateNotary/${notaryId}`, config)
+      .then((res) => res.json())
+      .catch((err) => {
+        console.log("Error", err);
+      });
+  };
+
   getNotaryItemsByNumber = async (phoneNumber) => {
     return fetch(`${ROOT_URL}/notary/phone/` + phoneNumber)
       .then((res) => res.json())

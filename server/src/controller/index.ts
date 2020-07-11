@@ -121,6 +121,7 @@ class Controller {
   ) => {
     try {
       const notaryItem = await this.bz.read(id);
+      console.log(notaryItem);
       const fileData = Object.assign(notaryItem, {
         ...fileDetails,
       });
