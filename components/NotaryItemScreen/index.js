@@ -7,6 +7,7 @@ import {
   TextInput,
   ActivityIndicator,
   Image,
+  Animated,
 } from "react-native";
 import * as Location from "expo-location";
 import { notifyMessage } from "../../utils";
@@ -25,6 +26,10 @@ export default function NotaryItemScreen({ navigation, route }) {
   const { state, authContext } = React.useContext(AuthContext);
   const [loading, setLoading] = React.useState(false);
   const [notaryName, setNotaryName] = React.useState("");
+  const [modalType, setModalType] = React.useState("");
+  const [isHidden, setIsHidden] = React.useState(true);
+  const [bounceValue, setBounceValue] = React.useState(new Animated.Value(200));
+
   let fileName = "";
   try {
     if (file) {
@@ -36,6 +41,7 @@ export default function NotaryItemScreen({ navigation, route }) {
   const [notaryDescription, setNotaryDescription] = React.useState(fileName);
   const [notaryTextContent, setNotaryTextContent] = React.useState("");
   const [notaryTakeLocation, setNotaryTakeLocation] = React.useState(false);
+  const [progressPercent, setProgressPercent] = React.useState(0);
 
   const goBack = () => {
     navigation.goBack();
@@ -58,11 +64,13 @@ export default function NotaryItemScreen({ navigation, route }) {
   // send file data to server
   const sendFileData = async () => {
     setLoading(true);
+    if (fileType !== "text") {
+      _toggleSubView("uploadNotary");
+    }
     let region = null;
     if (notaryTakeLocation) {
       console.log("Entering notary location");
       const location = await Location.getCurrentPositionAsync({});
-
       region = {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
@@ -89,11 +97,15 @@ export default function NotaryItemScreen({ navigation, route }) {
           time: moment().format(),
         });
         console.log(res);
-        notifyMessage(res.message);
-        authContext.fetchNotaryItem(state.userMobileNumber);
-        setTimeout(async () => {
-          navigation.navigate("Home");
-        }, 2000);
+        if (res.isFilePresent) {
+          console.log("Present notary");
+        } else {
+          notifyMessage(res.message);
+          authContext.fetchNotaryItem(state.userMobileNumber);
+          setTimeout(async () => {
+            navigation.navigate("Home");
+          }, 2000);
+        }
       } else {
         res = await WebService.uploadFileToServer(
           file,
@@ -111,15 +123,21 @@ export default function NotaryItemScreen({ navigation, route }) {
           (progressEvent) => {
             const { loaded, total } = progressEvent;
             let percent = Math.floor((loaded / total) * 100);
+            setProgressPercent(percent);
             console.log(`${loaded}kb of ${total}kb | ${percent}%`);
           },
           (res) => {
             console.log(res);
-            notifyMessage(res.message);
-            authContext.fetchNotaryItem(state.userMobileNumber);
-            setTimeout(async () => {
-              navigation.navigate("Home");
-            }, 2000);
+            _toggleSubView("");
+            if (res.isFilePresent) {
+              console.log("Present notary");
+            } else {
+              notifyMessage(res.message);
+              authContext.fetchNotaryItem(state.userMobileNumber);
+              setTimeout(async () => {
+                navigation.navigate("Home");
+              }, 2000);
+            }
           }
         );
       }
@@ -128,6 +146,36 @@ export default function NotaryItemScreen({ navigation, route }) {
     }
     setLoading(false);
   };
+
+  // toggle subview
+  const _toggleSubView = (pMenu) => {
+    if (pMenu) {
+      setModalType(pMenu);
+      var toValue = 200;
+      toValue = 0;
+
+      Animated.spring(bounceValue, {
+        toValue: toValue,
+        velocity: 3,
+        tension: 2,
+        friction: 8,
+      }).start();
+
+      setIsHidden(false);
+    } else {
+      var toValue = 200;
+
+      Animated.spring(bounceValue, {
+        toValue: toValue,
+        velocity: 3,
+        tension: 2,
+        friction: 8,
+      }).start();
+
+      setIsHidden(true);
+    }
+  };
+
   return (
     <View style={styles.homeContainer}>
       <View style={styles.toolbarContainer}>
@@ -212,6 +260,51 @@ export default function NotaryItemScreen({ navigation, route }) {
           <ActivityIndicator size="small" color="#fff" />
         )}
       </TouchableOpacity>
+
+      {!isHidden && (
+        <TouchableWithoutFeedback onPress={(e) => _toggleSubView("")}>
+          <View style={styles.backdrop}></View>
+        </TouchableWithoutFeedback>
+      )}
+
+      <Animated.View
+        style={[styles.subView, { transform: [{ translateY: bounceValue }] }]}
+      >
+        <View style={styles.subViewHeaderContainer}>
+          {modalType === "uploadNotary" ? (
+            <Text style={styles.subViewTitle}>Uploading File</Text>
+          ) : null}
+          <TouchableWithoutFeedback onPress={(e) => _toggleSubView("")}>
+            <Image
+              source={require("../../assets/system-icons/close.png")}
+              style={styles.closeIcon}
+            ></Image>
+          </TouchableWithoutFeedback>
+        </View>
+        {modalType === "uploadNotary" ? (
+          <View style={styles.subViewDetailContainer}>
+            {progressPercent !== 100 ? (
+              <>
+                <View style={styles.progressTextContainer}>
+                  <Text style={styles.progressText}>
+                    {`${progressPercent}%`} Uploaded
+                  </Text>
+                </View>
+                <View
+                  style={[styles.progressBar, { width: `${progressPercent}%` }]}
+                ></View>
+              </>
+            ) : (
+              <View style={styles.subViewButtonContainer}>
+                <ActivityIndicator size="small" color="#15548b" />
+                <Text style={{ marginLeft: 12, fontSize: 16 }}>
+                  Processing you notary, wait few sec...
+                </Text>
+              </View>
+            )}
+          </View>
+        ) : null}
+      </Animated.View>
     </View>
   );
 }

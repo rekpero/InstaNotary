@@ -102,4 +102,69 @@ export default StyleSheet.create({
   checkBoxTxt: {
     marginLeft: 20,
   },
+  subViewDetailContainer: {
+    flexDirection: "column",
+    marginVertical: 10,
+  },
+
+  progressBar: {
+    height: 10,
+    backgroundColor: "#15548b",
+    borderRadius: 12,
+    width: "20%",
+  },
+  progressTextContainer: {
+    marginBottom: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  progressText: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  backdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    opacity: 0.8,
+    position: "absolute",
+    top: 0,
+    left: 0,
+    elevation: 20,
+    width: winWidth,
+    height: winHeight + 50,
+  },
+  subView: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "#FFFFFF",
+    borderTopRightRadius: 8,
+    borderTopLeftRadius: 8,
+    height: 200,
+    elevation: 100,
+    paddingLeft: 24,
+    paddingRight: 24,
+    paddingTop: 18,
+  },
+  subViewHeaderContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "baseline",
+    display: "flex",
+  },
+  closeIcon: {
+    height: 28,
+    width: 28,
+  },
+  subViewTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 18,
+  },
+  subViewButtonContainer: {
+    flexDirection: "row",
+    marginVertical: 10,
+    alignItems: "center",
+  },
 });
