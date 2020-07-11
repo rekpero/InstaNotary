@@ -223,6 +223,7 @@ class Controller {
           console.log(notaryItem.hash, hash, notaryItem.hash === hash);
           return notaryItem.hash === hash;
         }).length !== 0;
+      console.log(isPresent);
       return isPresent;
     } catch (err) {
       console.error(err, { origin: "Error in getting notary from bluzelle" });
