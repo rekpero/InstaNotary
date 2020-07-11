@@ -42,6 +42,7 @@ export default function NotaryItemScreen({ navigation, route }) {
   const [notaryTextContent, setNotaryTextContent] = React.useState("");
   const [notaryTakeLocation, setNotaryTakeLocation] = React.useState(false);
   const [progressPercent, setProgressPercent] = React.useState(0);
+  const [overrideNotaryId, setOverrideNotaryId] = React.useState(0);
 
   const goBack = () => {
     navigation.goBack();
@@ -99,6 +100,8 @@ export default function NotaryItemScreen({ navigation, route }) {
         console.log(res);
         if (res.isFilePresent) {
           console.log("Present notary");
+          setOverrideNotaryId(res.notaryId);
+          _toggleSubView("overrideConfirm");
         } else {
           notifyMessage(res.message);
           authContext.fetchNotaryItem(state.userMobileNumber);
@@ -131,6 +134,8 @@ export default function NotaryItemScreen({ navigation, route }) {
             _toggleSubView("");
             if (res.isFilePresent) {
               console.log("Present notary");
+              setOverrideNotaryId(res.notaryId);
+              _toggleSubView("overrideConfirm");
             } else {
               notifyMessage(res.message);
               authContext.fetchNotaryItem(state.userMobileNumber);
@@ -175,6 +180,8 @@ export default function NotaryItemScreen({ navigation, route }) {
       setIsHidden(true);
     }
   };
+
+  const updateNotary = () => {};
 
   return (
     <View style={styles.homeContainer}>
@@ -274,6 +281,9 @@ export default function NotaryItemScreen({ navigation, route }) {
           {modalType === "uploadNotary" ? (
             <Text style={styles.subViewTitle}>Uploading File</Text>
           ) : null}
+          {modalType === "overrideConfirm" ? (
+            <Text style={styles.subViewTitle}>Updated Notary</Text>
+          ) : null}
           <TouchableWithoutFeedback onPress={(e) => _toggleSubView("")}>
             <Image
               source={require("../../assets/system-icons/close.png")}
@@ -302,6 +312,27 @@ export default function NotaryItemScreen({ navigation, route }) {
                 </Text>
               </View>
             )}
+          </View>
+        ) : null}
+        {modalType === "overrideConfirm" ? (
+          <View style={styles.subViewDetailContainer}>
+            <Text style={styles.progressText}>
+              Do you want to override notary #{overrideNotaryId}
+            </Text>
+            <View style={styles.subViewButtonContainer}>
+              <TouchableOpacity
+                style={[styles.cancelButton, styles.marginSet]}
+                onPress={(e) => _toggleSubView("")}
+              >
+                <Text style={styles.importText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.confirmButton}
+                onPress={(e) => updateNotary()}
+              >
+                <Text style={styles.importText}>Confirm</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         ) : null}
       </Animated.View>

@@ -47,8 +47,12 @@ class Controller {
         data[0].hash
       );
       console.log(isFilePresent);
-      if (isFilePresent) {
-        res.json({ isFilePresent: true, message: "File is already present" });
+      if (isFilePresent.isPresent) {
+        res.json({
+          isFilePresent: true,
+          notaryId: isFilePresent.id,
+          message: "File is already present",
+        });
       } else {
         const randomID = (Math.random() * 1e32).toString(36).substring(0, 10);
         console.log(data);
@@ -110,6 +114,44 @@ class Controller {
     });
   };
 
+  parseFileUploadOverride = async (
+    id: string,
+    fileDetails: any,
+    res: express.Response
+  ) => {
+    try {
+      const notaryItem = await this.bz.read(id);
+      const fileData = Object.assign(notaryItem, {
+        ...fileDetails,
+      });
+      console.log(fileData);
+      try {
+        // creating a notary with a unique id
+        await this.bz.update(id, JSON.stringify(fileData), {
+          gas_price: 10,
+          max_gas: 2000000,
+        });
+        console.debug("Done updating");
+        res.json({
+          message: "Successfully updated file to bluzelle",
+        });
+      } catch (err) {
+        console.error(err, {
+          origin: `Error due to failing in creating or updating notary file`,
+          data: fileData,
+        });
+        res.json({
+          message: "Error in uploaded file to bluzelle",
+        });
+      }
+    } catch (err) {
+      console.error(err, { origin: "Error in getting notary from bluzelle" });
+      res.json({
+        message: "Error in getting notary from bluzelle",
+      });
+    }
+  };
+
   parseTextUpload = async (notaryText: any, res: express.Response) => {
     // getting the buffer from the file and storing the text in IPFS
     ipfs.files.add(
@@ -124,8 +166,12 @@ class Controller {
           data[0].hash
         );
         console.log(isFilePresent);
-        if (isFilePresent) {
-          res.json({ isFilePresent: true, message: "File is already present" });
+        if (isFilePresent.isPresent) {
+          res.json({
+            isFilePresent: true,
+            notaryId: isFilePresent.id,
+            message: "File is already present",
+          });
         } else {
           const randomID = (Math.random() * 1e32).toString(36).substring(0, 10);
           const fileData = {
@@ -215,30 +261,6 @@ class Controller {
     }
   };
 
-  checkHashPresent = async (phoneNumber: string, hash: string) => {
-    try {
-      const notaryItems = await this.bz.read(phoneNumber);
-      const parsedNotaryItems = JSON.parse(notaryItems);
-      // fetching all notary items details
-      const selectedNotaries = await Promise.all(
-        parsedNotaryItems.map((notaryItem: any) => {
-          return this.bz.read(notaryItem.id);
-        })
-      );
-      const selectedNotariesParsed = selectedNotaries.map((notaryItem: any) =>
-        JSON.parse(notaryItem)
-      );
-      const isPresent =
-        selectedNotariesParsed.filter((notaryItem: any) => {
-          console.log(notaryItem.hash, hash, notaryItem.hash === hash);
-          return notaryItem.hash === hash;
-        }).length !== 0;
-      return isPresent;
-    } catch (err) {
-      console.error(err, { origin: "Error in getting notary from bluzelle" });
-    }
-  };
-
   deleteNotaryFiles = async (
     phoneNumber: string,
     id: string,
@@ -283,6 +305,37 @@ class Controller {
         measurementId: process.env.FIREBASE_MEASUREMENT_ID,
       },
     });
+  };
+
+  checkHashPresent = async (phoneNumber: string, hash: string) => {
+    try {
+      const notaryItems = await this.bz.read(phoneNumber);
+      const parsedNotaryItems = JSON.parse(notaryItems);
+      // fetching all notary items details
+      const selectedNotaries = await Promise.all(
+        parsedNotaryItems.map((notaryItem: any) => {
+          return this.bz.read(notaryItem.id);
+        })
+      );
+      const selectedNotariesParsed = selectedNotaries.map((notaryItem: any) =>
+        JSON.parse(notaryItem)
+      );
+      const isPresent =
+        selectedNotariesParsed.filter((notaryItem: any) => {
+          console.log(notaryItem.hash, hash, notaryItem.hash === hash);
+          return notaryItem.hash === hash;
+        }).length !== 0;
+      let id = "0";
+      if (isPresent) {
+        id = selectedNotariesParsed.filter((notaryItem: any) => {
+          console.log(notaryItem.hash, hash, notaryItem.hash === hash);
+          return notaryItem.hash === hash;
+        })[0].id;
+      }
+      return { isPresent, id };
+    } catch (err) {
+      console.error(err, { origin: "Error in getting notary from bluzelle" });
+    }
   };
 }
 export default new Controller();

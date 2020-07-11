@@ -18,6 +18,14 @@ export default (app: express.Application) => {
   );
 
   app.post(
+    "/updateNotary/:id",
+    (req: express.Request, res: express.Response) => {
+      req.socket.removeAllListeners("timeout");
+      controller.parseFileUploadOverride(req.params.id, req.body, res);
+    }
+  );
+
+  app.post(
     "/uploadNotary/text",
     (req: express.Request, res: express.Response) => {
       controller.parseTextUpload(req.body, res);
