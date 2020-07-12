@@ -3563,6 +3563,13 @@ expo-error-recovery@~1.1.0:
   resolved "https://registry.yarnpkg.com/expo-error-recovery/-/expo-error-recovery-1.1.0.tgz#98b9de5400dbfd022d1631739f3bf5e7016565da"
   integrity sha512-33aRfPaXdAt0df1TL26JjM5qCAoEW8RAExjgMgunPcdQcf4sWiWFm3qYL8zrO/8DM4uUq4X2FCuPLHMlOYT/aw==
 
+expo-file-system@^9.0.1:
+  version "9.0.1"
+  resolved "https://registry.yarnpkg.com/expo-file-system/-/expo-file-system-9.0.1.tgz#50a6a0b29fbc45413de9f7d38c0695503bf03d7e"
+  integrity sha512-xZKv7g0dhFNMjp49+XiZBnApOUu/WlLzwWaruNbBnSgi/HGnSwbHNyk7zuK1RdQ9NndvXu6uT4uW2i67pIrKig==
+  dependencies:
+    uuid "^3.4.0"
+
 expo-file-system@~8.1.0:
   version "8.1.0"
   resolved "https://registry.yarnpkg.com/expo-file-system/-/expo-file-system-8.1.0.tgz#d6aa66fa32c19982b94d0013f963c5ee972dfd6d"
@@ -3602,6 +3609,11 @@ expo-image-picker@^8.1.0:
   dependencies:
     expo-permissions "~8.1.0"
 
+expo-intent-launcher@^8.2.1:
+  version "8.2.1"
+  resolved "https://registry.yarnpkg.com/expo-intent-launcher/-/expo-intent-launcher-8.2.1.tgz#e87c532cdc501e3e4804a2bbd056cbe200883efc"
+  integrity sha512-8G90TVVUPZz8fJ2ZneBe9d2zq1VUdOxCrkYke5zKrTIzxmYTBdXMIArmgl7zgQFI0vnNk9BCEYp6zTHbKP01TA==
+
 expo-keep-awake@~8.1.0:
   version "8.1.0"
   resolved "https://registry.yarnpkg.com/expo-keep-awake/-/expo-keep-awake-8.1.0.tgz#3a1d8aa5a8395d40c7d79e1c93020ae5f848e664"
@@ -3627,6 +3639,11 @@ expo-location@^8.1.0, expo-location@~8.1.0:
   integrity sha512-G9JvsK1t9Z5Iybf+FCG81Jgm9Ee9leqpazxOPVabUJEWu/55Iex3yLGX04BuIA4ozAlJKBPzkhPdyqKdC7zrSw==
   dependencies:
     invariant "^2.2.4"
+
+expo-media-library@^8.3.0:
+  version "8.3.0"
+  resolved "https://registry.yarnpkg.com/expo-media-library/-/expo-media-library-8.3.0.tgz#2f5278fea31fb43f8c0e973cbb365c61b225e441"
+  integrity sha512-7ktRLlolgDI7P3R3kLSj+KMzPABBMUmQQcKRwqyyzSmkq8tH48ywoNYOUFZMPs9iKpMmP/D58LKdJlbMBsP8/A==
 
 expo-permissions@^8.1.0, expo-permissions@~8.1.0:
   version "8.1.0"

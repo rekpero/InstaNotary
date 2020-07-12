@@ -13,7 +13,6 @@ import * as Location from "expo-location";
 import { notifyMessage } from "../../utils";
 import styles from "./styles";
 import moment from "moment";
-import timezone from "moment-timezone";
 import { WebService } from "../../services";
 import { AuthContext } from "../../hooks";
 import { CheckBox } from "native-base";
@@ -131,7 +130,7 @@ export default function NotaryItemScreen({ navigation, route }) {
             fileName,
             phoneNumber: state.userMobileNumber,
             isLocationEnabled: notaryTakeLocation,
-            region,
+            region: notaryTakeLocation ? region : null,
             timeZone: timeZoneAbbr,
             time: moment().format(),
           },
@@ -151,11 +150,11 @@ export default function NotaryItemScreen({ navigation, route }) {
               setOverrideNotary({
                 name: notaryName,
                 description: notaryDescription,
-                type: fileType,
+                type: fileName.split(".")[fileName.split(".").length - 1],
                 fileName,
                 phoneNumber: state.userMobileNumber,
                 isLocationEnabled: notaryTakeLocation,
-                region,
+                region: notaryTakeLocation ? region : null,
                 timeZone: timeZoneAbbr,
                 time: moment().format(),
               });
@@ -205,12 +204,15 @@ export default function NotaryItemScreen({ navigation, route }) {
   };
 
   const updateNotary = async () => {
+    setProgressPercent(100);
+    setModalType("uploadNotary");
     console.log(overrideNotaryId, overrideNotary);
     const res = await WebService.overrideNotary(
       overrideNotaryId,
       overrideNotary
     );
     console.log(res);
+    _toggleSubView("");
     notifyMessage(res.message);
     authContext.fetchNotaryItem(state.userMobileNumber);
     setTimeout(async () => {
@@ -328,7 +330,7 @@ export default function NotaryItemScreen({ navigation, route }) {
         </View>
         {modalType === "uploadNotary" ? (
           <View style={styles.subViewDetailContainer}>
-            {progressPercent !== 100 ? (
+            {progressPercent < 100 ? (
               <>
                 <View style={styles.progressTextContainer}>
                   <Text style={styles.progressText}>
@@ -343,7 +345,7 @@ export default function NotaryItemScreen({ navigation, route }) {
               <View style={styles.subViewButtonContainer}>
                 <ActivityIndicator size="small" color="#15548b" />
                 <Text style={{ marginLeft: 12, fontSize: 16 }}>
-                  Processing you notary, wait few sec...
+                  Processing your notary, wait few sec...
                 </Text>
               </View>
             )}

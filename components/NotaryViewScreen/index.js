@@ -16,6 +16,8 @@ import { notifyMessage } from "../../utils";
 import { appIcon } from "../../constants";
 import moment from "moment";
 import styles from "./styles";
+import * as FileSystem from "expo-file-system";
+import * as MediaLibrary from "expo-media-library";
 
 console.disableYellowBox = true;
 
@@ -81,6 +83,30 @@ export default function NotaryViewScreen({ route, navigation }) {
     return false;
   };
 
+  // check downloadable extensions
+  const downloadableExt = (pType) => {
+    if (
+      pType === "jpg" ||
+      pType === "jpeg" ||
+      pType === "png" ||
+      pType === "gif" ||
+      pType === "tiff" ||
+      pType === "mp4" ||
+      pType === "3g2" ||
+      pType === "3gp" ||
+      pType === "avi" ||
+      pType === "m4v" ||
+      pType === "mkv" ||
+      pType === "mov" ||
+      pType === "mpg" ||
+      pType === "mpeg" ||
+      pType === "wmv"
+    ) {
+      return true;
+    }
+    return false;
+  };
+
   const handleCopyToClipboard = async () => {
     console.log("Entering ");
     await Clipboard.setString(notary.hash);
@@ -131,6 +157,32 @@ export default function NotaryViewScreen({ route, navigation }) {
     Linking.openURL(url);
   };
 
+  const downloadFiles = async () => {
+    const downloadResumable = FileSystem.createDownloadResumable(
+      `${
+        checkGViewSupportedExt(notary.type) && !downloadFile
+          ? "http://docs.google.com/gview?embedded=true&url="
+          : ""
+      }https://ipfs.io/ipfs/${notary.hash}`,
+      FileSystem.documentDirectory + notary.fileName,
+      {},
+      (downloadProgress) => {
+        const progress =
+          downloadProgress.totalBytesWritten /
+          downloadProgress.totalBytesExpectedToWrite;
+        console.log(progress);
+      }
+    );
+    try {
+      const { uri } = await downloadResumable.downloadAsync();
+      console.log("Finished downloading to ", uri);
+      const res = await MediaLibrary.saveToLibraryAsync(uri);
+      console.log(res);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return (
     <View style={styles.homeContainer}>
       <View style={styles.toolbarContainer}>
@@ -167,12 +219,14 @@ export default function NotaryViewScreen({ route, navigation }) {
               style={styles.toolbarIcons}
             ></Image>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleOpenFile}>
-            <Image
-              source={require("../../assets/system-icons/globe.png")}
-              style={styles.toolbarIcons}
-            ></Image>
-          </TouchableOpacity>
+          {downloadableExt(notary.type) ? (
+            <TouchableOpacity onPress={downloadFiles}>
+              <Image
+                source={require("../../assets/system-icons/download.png")}
+                style={styles.toolbarIcons}
+              ></Image>
+            </TouchableOpacity>
+          ) : null}
         </View>
       </View>
       {previewAbleExt(notary.type) || downloadFile ? (
