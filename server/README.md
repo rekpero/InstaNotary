@@ -32,6 +32,17 @@ FIREBASE_APP_ID=xxx
 FIREBASE_MEASUREMENT_ID=xxx
 ```
 
+## How to install Docker?
+
+To install the docker ce and docker-compose on EC2 instance, just follow this simple instruction one by one:
+```
+$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+$ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+$ sudo apt-get update
+$ sudo apt-get install docker-ce // installing the docker
+$ sudo apt-get install docker-compose // installing the docker-compose
+```
+
 ## How to run?
 
 To run this app you just have to clone the whole app and then follow these steps:
