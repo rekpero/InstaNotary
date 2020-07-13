@@ -94,11 +94,14 @@ export default class HomeScreen extends React.Component {
       let result = await DocumentPicker.getDocumentAsync({});
       if (result.type === "success") {
         this._toggleSubView("");
-
-        this.props.navigation.navigate("NotaryDetail", {
-          file: result,
-          fileType: "file",
-        });
+        if (result.size / 1000000 <= 10) {
+          this.props.navigation.navigate("NotaryDetail", {
+            file: result,
+            fileType: "file",
+          });
+        } else {
+          this.notifyMessage("Can't upload more than 10 MB file");
+        }
       }
     } catch (err) {
       console.log(err);
@@ -112,14 +115,14 @@ export default class HomeScreen extends React.Component {
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         quality: 1,
-        base64: true,
+        base64: false,
         storageOptions: {
           skipBackup: true,
         },
       });
       if (!result.cancelled) {
         this._toggleSubView("");
-
+        console.log(result);
         this.props.navigation.navigate("NotaryDetail", {
           file: result,
           fileType: "image",
@@ -474,12 +477,17 @@ export default class HomeScreen extends React.Component {
     return (
       <View style={styles.homeContainer}>
         <View style={styles.toolbarContainer}>
-          <Image
-            source={{
-              uri: `https://cdn.discordapp.com/attachments/698447732028735528/712240046144749641/Bluzelle_-_Screen_-_Symbol_-_Big_-_Blue.png`,
-            }}
-            style={styles.sponsorIcon}
-          ></Image>
+          <TouchableOpacity
+            onPress={(e) => this.props.navigation.navigate("AboutApp")}
+          >
+            <Image
+              source={{
+                uri: `https://cdn.discordapp.com/attachments/698447732028735528/712240046144749641/Bluzelle_-_Screen_-_Symbol_-_Big_-_Blue.png`,
+              }}
+              style={styles.sponsorIcon}
+            ></Image>
+          </TouchableOpacity>
+
           <Text style={styles.title}>InstaNotary.</Text>
           <View style={styles.accountContainer}>
             <TouchableOpacity

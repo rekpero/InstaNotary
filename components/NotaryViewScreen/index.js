@@ -76,6 +76,7 @@ export default function NotaryViewScreen({ route, navigation }) {
       pType === "mpg" ||
       pType === "mpeg" ||
       pType === "wmv" ||
+      pType === "mp3" ||
       pType === "vcf"
     ) {
       return true;
@@ -109,7 +110,7 @@ export default function NotaryViewScreen({ route, navigation }) {
 
   const handleCopyToClipboard = async () => {
     console.log("Entering ");
-    await Clipboard.setString(notary.hash);
+    Clipboard.setString(notary.hash);
     notifyMessage("Hash Copied to Clipboard!");
   };
 
@@ -173,6 +174,13 @@ export default function NotaryViewScreen({ route, navigation }) {
         console.log(progress);
       }
     );
+    console.log(
+      `${
+        checkGViewSupportedExt(notary.type) && !downloadFile
+          ? "http://docs.google.com/gview?embedded=true&url="
+          : ""
+      }https://ipfs.io/ipfs/${notary.hash}`
+    );
     try {
       const { uri } = await downloadResumable.downloadAsync();
       console.log("Finished downloading to ", uri);
@@ -181,6 +189,12 @@ export default function NotaryViewScreen({ route, navigation }) {
     } catch (e) {
       console.error(e);
     }
+  };
+
+  const copyToClipboardNotaryText = async () => {
+    console.log("Entering ");
+    Clipboard.setString(notary.textContent);
+    notifyMessage("Text Copied to Clipboard!");
   };
 
   return (
@@ -223,6 +237,14 @@ export default function NotaryViewScreen({ route, navigation }) {
             <TouchableOpacity onPress={downloadFiles}>
               <Image
                 source={require("../../assets/system-icons/download.png")}
+                style={styles.toolbarIcons}
+              ></Image>
+            </TouchableOpacity>
+          ) : null}
+          {notary.type === "text" ? (
+            <TouchableOpacity onPress={copyToClipboardNotaryText}>
+              <Image
+                source={require("../../assets/system-icons/copyColor.png")}
                 style={styles.toolbarIcons}
               ></Image>
             </TouchableOpacity>
