@@ -12,10 +12,15 @@ Find apk [here](https://github.com/mmitrasish/InstaNotary/releases).
 ### Notary
 
 1. Add image directly from camera/gallery, documents like .doc, .pdf, etc, video and text too.
-2. Notarize the file with name and description, timestamp with timezone and location.
-3. The file is permanently stored in IPFS, User can use the hash from the app to directly lookup their file.
-4. Showing preview for viewable file.
-5. User can Download both viewable and non-viewable file.
+1. Notarize the file with name and description, timestamp with timezone and location.
+1. The file is permanently stored in IPFS, User can use the hash from the app to directly lookup their file.
+1. Showing preview for viewable file.
+1. User can Download both viewable and non-viewable file.
+1. User can show QR code to share their IPFS link.
+1. User can copy ipfs hash to clipboard.
+1. User can open browser with the ipfs link.
+1. User can open map to lookup the location where it was notarized.
+
 
 ### Codebase
 
