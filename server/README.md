@@ -9,6 +9,7 @@ This app handles all the request from the mobile app and submit them to ipfs and
 - Bluzelle JS SDK
 - Express JS
 - Multiter
+- Docker
 
 ## How to run?
 
@@ -16,8 +17,8 @@ To run this app you just have to clone the whole app and then follow these steps
 ```
 git clone https://github.com/mmitrasish/InstaNotary.git
 cd InstaNotary/server
-yarn
-yarn start
+docker-compose up --build // if you are running for the first time or change and packages
+docker-compose up // if you have already build the container
 ```
 
 ## How to deploy in AWS?
@@ -26,6 +27,6 @@ To deploy this app you have to `Launch an EC2 instance` and `SSH into your insta
 
 - Once you have ssh into your instance, you have to clone the app - `git clone https://github.com/mmitrasish/InstaNotary.git`
 - Go to the server folder - `cd InstaNotary/server`
-- Install all the packages - `yarn`
-- Start the app - `yarn start`
+- Run and build with docker - `docker-compose up --build`
+- Run with docker - `docker-compose up`
 - Once the server is up, you have expose the port whatever you get in the console in the earlier step.
