@@ -61,5 +61,5 @@ To deploy this app you have to `Launch an EC2 instance` and `SSH into your insta
 - Once you have ssh into your instance, you have to clone the app - `git clone https://github.com/mmitrasish/InstaNotary.git`
 - Go to the server folder - `cd InstaNotary/server`
 - Run and build with docker - `docker-compose up --build`
-- Run with docker - `docker-compose up`
+- Run with docker - `docker-compose up` - You don't have to do this step if it's your first time
 - Once the server is up, you have expose the port whatever you get in the console in the earlier step.
