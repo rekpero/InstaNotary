@@ -11,6 +11,27 @@ This app handles all the request from the mobile app and submit them to ipfs and
 - Multiter
 - Docker
 
+## Setup env
+
+- Create a .env file in this server folder with `nano .env`
+- Copy paste the below text and provide your own keys and save it
+```
+# Set to production when deploying to production
+NODE_ENV=development
+
+# Node.js server configuration
+SERVER_PORT=5000
+
+FIREBASE_KEY=xxx
+FIREBASE_AUTH_DOMAIN=xxx
+FIREBASE_DATABASE_URL=xxx
+FIREBASE_PROJECT_ID=xxx
+FIREBASE_STORAGE_BUCKET=xxx
+FIREBASE_MESSAGING_SENDER_ID=xxx
+FIREBASE_APP_ID=xxx
+FIREBASE_MEASUREMENT_ID=xxx
+```
+
 ## How to run?
 
 To run this app you just have to clone the whole app and then follow these steps:
