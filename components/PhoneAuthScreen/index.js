@@ -7,12 +7,16 @@ import {
   AsyncStorage,
   Image,
   ActivityIndicator,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
+import CodeInput from "react-native-confirmation-code-input";
+
 import * as firebase from "firebase";
-import { firebaseConfig, countryCodes } from "../../constants";
+import { countryCodes } from "../../constants";
 import styles from "./style";
 import { AuthContext } from "../../hooks";
+import { WebService } from "../../services";
 import RNPickerSelect from "react-native-picker-select";
 import { notifyMessage } from "../../utils";
 import {
@@ -23,24 +27,29 @@ import {
 
 console.disableYellowBox = true;
 
-// import RNOtpVerify from "react-native-otp-verify";
-!firebase.apps.length ? firebase.initializeApp(firebaseConfig) : firebase.app();
-
 const PhoneAuthScreen = ({ navigation }) => {
   const { authContext } = React.useContext(AuthContext);
   const recaptchaVerifier = React.useRef(null);
   const [phoneNumber, setPhoneNumber] = React.useState();
   const [phoneAuthState, setPhoneAuthState] = React.useState("phone");
   const [verificationId, setVerificationId] = React.useState();
-  const [verificationCode, setVerificationCode] = React.useState();
   const [sendVerificationLoading, setSendVerificationLoading] = React.useState(
     false
   );
-  const [verifyLoading, setVerifyLoading] = React.useState(false);
   const [countryCode, setCountryCode] = React.useState("+1");
-  const firebaseConfig = firebase.apps.length
-    ? firebase.app().options
-    : undefined;
+  const [firebaseConfig, setFirebaseConfig] = React.useState(null);
+
+  React.useEffect(() => {
+    WebService.getAppConfig().then((config) => {
+      !firebase.apps.length
+        ? firebase.initializeApp(config.firebaseConfig)
+        : firebase.app();
+      const firebaseConfig = firebase.apps.length
+        ? firebase.app().options
+        : undefined;
+      setFirebaseConfig(firebaseConfig);
+    });
+  }, []);
 
   // send the verification code
   const sendVerification = async () => {
@@ -84,8 +93,7 @@ const PhoneAuthScreen = ({ navigation }) => {
   };
 
   // confirmation of verification code
-  const confirmVerification = async () => {
-    setVerifyLoading(true);
+  const confirmVerification = async (verificationCode) => {
     try {
       const credential = firebase.auth.PhoneAuthProvider.credential(
         verificationId,
@@ -105,7 +113,6 @@ const PhoneAuthScreen = ({ navigation }) => {
     } catch (err) {
       notifyMessage(`Error: ${err.message}`);
     }
-    setVerifyLoading(false);
   };
 
   // get all the country code
@@ -115,6 +122,10 @@ const PhoneAuthScreen = ({ navigation }) => {
       value: countryCode.code,
       key: countryCode.code,
     }));
+  };
+
+  const goBack = () => {
+    setPhoneAuthState("phone");
   };
 
   return (
@@ -142,13 +153,13 @@ const PhoneAuthScreen = ({ navigation }) => {
               hideIcon={true}
               style={{
                 inputIOS: {
-                  fontSize: 15,
+                  fontSize: 16,
                   paddingHorizontal: 4,
                   paddingRight: 4, // to ensure the text is never behind the icon
                   maxWidth: 150,
                 },
                 inputAndroid: {
-                  fontSize: 15,
+                  fontSize: 16,
                   paddingRight: 36, // to ensure the text is never behind the icon
                   maxWidth: 150,
                 },
@@ -186,6 +197,14 @@ const PhoneAuthScreen = ({ navigation }) => {
       )}
       {phoneAuthState === "verification" && (
         <View style={styles.phoneNumberInputContainer}>
+          <View style={styles.toolbarContainer}>
+            <TouchableWithoutFeedback onPress={goBack}>
+              <Image
+                source={require("../../assets/system-icons/back.png")}
+                style={styles.backIcon}
+              ></Image>
+            </TouchableWithoutFeedback>
+          </View>
           <Image
             style={styles.welcomeIcon}
             source={{
@@ -197,7 +216,17 @@ const PhoneAuthScreen = ({ navigation }) => {
               Enter Verification code
             </Text>
           </View>
-          <TextInput
+          <View style={styles.phoneNumberTextContainer}>
+            <Text style={styles.userMobileText}>
+              Enter the 6 digit code sent to you at
+              <Text style={styles.userMobileNumber}>
+                {" "}
+                {countryCode + phoneNumber}
+              </Text>
+            </Text>
+          </View>
+
+          {/* <TextInput
             style={styles.verificationInput}
             editable={!!verificationId}
             placeholder="123456"
@@ -208,8 +237,31 @@ const PhoneAuthScreen = ({ navigation }) => {
             returnKeyType="done"
             autoCorrect={false}
             onChangeText={setVerificationCode}
-          />
-          <View style={styles.sendVerificationButtonContainer}>
+          /> */}
+          <View>
+            <CodeInput
+              secureTextEntry
+              activeColor="#15548b"
+              inactiveColor="#15548b"
+              autoFocus={true}
+              keyboardType="numeric"
+              codeLength={6}
+              inputPosition="center"
+              size={50}
+              onFulfill={(code) => confirmVerification(code)}
+              codeInputStyle={{ borderWidth: 2, borderRadius: 4 }}
+            />
+          </View>
+          <TouchableOpacity
+            onPress={sendVerification}
+            style={styles.verificationTextContainer}
+          >
+            <Text style={styles.resend}>
+              Don't receive the code?
+              <Text style={styles.colorBlue}> Resend</Text>
+            </Text>
+          </TouchableOpacity>
+          {/* <View style={styles.sendVerificationButtonContainer}>
             <TouchableOpacity
               style={styles.sendVerificationButton}
               onPress={confirmVerification}
@@ -220,7 +272,7 @@ const PhoneAuthScreen = ({ navigation }) => {
                 <ActivityIndicator size="small" color="#fff" />
               )}
             </TouchableOpacity>
-          </View>
+          </View> */}
         </View>
       )}
     </View>

@@ -15,6 +15,16 @@ export default StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
   },
+  phoneNumberTextContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 12,
+    textAlign: "center",
+  },
+  verificationTextContainer: {
+    flexDirection: "column",
+    marginTop: 84,
+  },
   enterPhoneNumberText: {
     fontSize: 24,
     fontWeight: "bold",
@@ -25,7 +35,7 @@ export default StyleSheet.create({
     borderWidth: 2,
     borderColor: "#15548b",
     borderRadius: 6,
-    padding: 8,
+    padding: 12,
     paddingLeft: 18,
     paddingRight: 18,
     display: "flex",
@@ -36,6 +46,7 @@ export default StyleSheet.create({
     fontSize: 15,
     flex: 1,
     marginLeft: 5,
+    fontSize: 16,
   },
   verificationInput: {
     fontSize: 15,
@@ -81,5 +92,32 @@ export default StyleSheet.create({
     width: 300,
     height: 100,
     marginTop: 150,
+  },
+  resend: {
+    fontSize: 18,
+    textAlign: "center",
+  },
+  colorBlue: {
+    color: "#15548b",
+  },
+  backIcon: {
+    height: 36,
+    width: 36,
+  },
+  toolbarContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 12,
+    marginLeft: -8,
+  },
+  userMobileText: {
+    fontSize: 16,
+    marginVertical: 6,
+    textAlign: "center",
+  },
+  userMobileNumber: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginVertical: 6,
   },
 });

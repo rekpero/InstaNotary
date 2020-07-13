@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  notary-server:
+    build: .
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - 5000:5000
+    command: yarn start

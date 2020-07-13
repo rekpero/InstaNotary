@@ -4,6 +4,7 @@ import Routes from "./routes";
 import { AuthContext } from "./hooks";
 import { WebService } from "./services";
 import { sortNotaries } from "./utils";
+import { assignConfig } from "./constants";
 
 function App() {
   const [state, dispatch] = React.useReducer(

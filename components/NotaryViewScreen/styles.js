@@ -26,6 +26,7 @@ export default StyleSheet.create({
   },
   webview: {
     borderRadius: 4,
+    backgroundColor: "green",
   },
   fileIcon: {
     height: 500,
@@ -65,7 +66,7 @@ export default StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderTopRightRadius: 8,
     borderTopLeftRadius: 8,
-    height: 320,
+    height: 360,
     elevation: 100,
     paddingLeft: 24,
     paddingRight: 24,
@@ -86,10 +87,22 @@ export default StyleSheet.create({
     flexDirection: "column",
     marginVertical: 10,
   },
+  qrCodeContainer: {
+    flexDirection: "row",
+    marginVertical: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: 16,
+  },
   subViewDetailItems: {
     flexDirection: "row",
     alignItems: "center",
     marginVertical: 4,
+  },
+  qrCodeText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#15548b",
   },
   detailTitle: {
     color: "rgba(0, 0, 0, 0.5)",
@@ -115,7 +128,13 @@ export default StyleSheet.create({
     height: 24,
     width: 24,
   },
-  systemIcon: {},
+  systemIcon: {
+    height: 18,
+    width: 18,
+  },
+  infoButtonIcon: {
+    marginLeft: 12,
+  },
   closeIcon: {
     height: 28,
     width: 28,

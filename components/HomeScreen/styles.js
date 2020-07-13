@@ -16,6 +16,10 @@ export default StyleSheet.create({
     paddingRight: 24,
     paddingLeft: 24,
   },
+  accountContainer: {
+    flexDirection: "row",
+    display: "flex",
+  },
   title: {
     fontSize: 24,
     fontWeight: "bold",
@@ -30,12 +34,46 @@ export default StyleSheet.create({
     width: 18,
   },
   trashIcon: {
-    height: 20,
-    width: 20,
+    height: 24,
+    width: 24,
   },
   closeIcon: {
     height: 28,
     width: 28,
+  },
+  confirmButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 4,
+    paddingBottom: 10,
+    paddingTop: 10,
+    paddingLeft: 12,
+    paddingRight: 12,
+    backgroundColor: "#28a744",
+    shadowColor: "rgba(0, 0, 0, 0.1)",
+    shadowOpacity: 0.8,
+    elevation: 4,
+    shadowRadius: 15,
+    shadowOffset: { width: 0, height: 0 },
+    width: "48%",
+  },
+  cancelButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 4,
+    paddingBottom: 10,
+    paddingTop: 10,
+    paddingLeft: 12,
+    paddingRight: 12,
+    backgroundColor: "#dd3444",
+    shadowColor: "rgba(0, 0, 0, 0.1)",
+    shadowOpacity: 0.8,
+    elevation: 4,
+    shadowRadius: 15,
+    shadowOffset: { width: 0, height: 0 },
+    width: "48%",
   },
   logoutButton: {
     flexDirection: "row",
@@ -47,6 +85,7 @@ export default StyleSheet.create({
     elevation: 10,
     shadowRadius: 15,
     shadowOffset: { width: 2, height: 2 },
+    marginLeft: 12,
   },
   logoutText: {
     marginLeft: 4,
@@ -176,6 +215,7 @@ export default StyleSheet.create({
   subViewButtonContainer: {
     flexDirection: "row",
     marginVertical: 10,
+    alignItems: "center",
   },
   subViewHeaderContainer: {
     flexDirection: "row",
@@ -294,6 +334,9 @@ export default StyleSheet.create({
     height: 150,
     width: 150,
   },
+  flexSet: {
+    flex: 1,
+  },
   emptyImageContainer: {
     flex: 1,
     display: "flex",
@@ -305,5 +348,17 @@ export default StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginVertical: 12,
+  },
+  userMobileText: {
+    fontSize: 16,
+    marginVertical: 6,
+  },
+  userMobileNumber: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginVertical: 6,
+  },
+  leftMarginSet: {
+    marginLeft: 12,
   },
 });
