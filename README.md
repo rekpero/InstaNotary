@@ -36,6 +36,9 @@ There is additional configuration to disable this magic number authentication, T
 MAGIC_NUMBER_AUTH = false
 ```
 
+**[Important] To add the server domain after setting up the server in EC2 instance** - Just replace the ROOT_URL in the `config/index.js` with the public DNS of the EC2 Instance
+
+
 ## How to run?
 
 This app is built with [expo](https://expo.io/learn) (a wrapper for react-native). To run this app, first you need to install expo-cli
