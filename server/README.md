@@ -22,6 +22,7 @@ NODE_ENV=development
 # Node.js server configuration
 SERVER_PORT=5000
 
+# Firebase configurations
 FIREBASE_KEY=xxx
 FIREBASE_AUTH_DOMAIN=xxx
 FIREBASE_DATABASE_URL=xxx
