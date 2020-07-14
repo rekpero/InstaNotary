@@ -1,4 +1,4 @@
-# Project Instanotary
+# Project InstaNotary
 
 This React Native based application aims to give users a way to instantly notarize any data or file they want with current datetime.<br>
 Find apk [here](https://github.com/mmitrasish/InstaNotary/releases).
@@ -35,6 +35,9 @@ There is additional configuration to disable this magic number authentication, T
 ```
 MAGIC_NUMBER_AUTH = false
 ```
+
+**[Important] To add the server domain after setting up the server in EC2 instance** - Just replace the ROOT_URL in the `config/index.js` with the public DNS of the EC2 Instance
+
 
 ## How to run?
 
@@ -75,18 +78,41 @@ expo build:android -t apk // for building apk
 expo build:android -t app-bundle // for building bundle
 ```
 
-These command directly build your app but you have to create an account on expo. Also for more details regarding building for android you can follow this doc [Expo Android Build Doc](https://docs.expo.io/distribution/building-standalone-apps/#if-you-choose-to-build-for-android). This has a step by step instructions to build your app.
+These commands directly build your app but you have to create an account on expo. Also for more details regarding building for android you can follow this doc [Expo Android Build Doc](https://docs.expo.io/distribution/building-standalone-apps/#if-you-choose-to-build-for-android). This has a step by step instructions to build your app.
+
+Once done, if you want to push to the Google PlayStore, use:
+
+```
+expo upload:android
+```
 
 - For IOS
+
+If building with XCode, first do the following on a newly installed copy of the code, in the ios folder:
+
+```
+pod install
+```
+
+In XCode, be sure to set the correct development team account:
+```
+Build Setting - Signing - Development Team - Change The Account "S3LY459S86"
+```
 
 ```
 expo build:ios -t archive // for app store
 expo build:ios -t simulator // for simulation
 ```
 
-Same as of android. Also for more details regarding building for ios you can follow this doc [Expo IOS Build Doc](https://docs.expo.io/distribution/building-standalone-apps/#if-you-choose-to-build-for-ios). This has a step by step instructions to build your app.
+Same as Android. Also for more details regarding building for ios you can follow this doc [Expo IOS Build Doc](https://docs.expo.io/distribution/building-standalone-apps/#if-you-choose-to-build-for-ios). This has a step by step instructions to build your app.
 
 _Or you can directly build ios and android app from xcode and android studio directly which is same as you do for standalone app._
+
+Once done, if you want to push to the Apple AppStore, use:
+
+```
+expo upload:ios
+```
 
 ## Demo Video
 
