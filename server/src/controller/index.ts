@@ -16,12 +16,6 @@ class Controller {
   }
 
   async initBlz() {
-    console.log(
-      process.env.BLUZELLE_ACCOUNT_MNEMONIC,
-      process.env.BLUZELLE_ENDPOINT,
-      process.env.BLUZELLE_CHAIN_ID,
-      process.env.BLUZELLE_APP_UUID
-    );
     try {
       this.bz = await bluzelle({
         mnemonic: process.env.BLUZELLE_ACCOUNT_MNEMONIC,
