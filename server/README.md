@@ -1,4 +1,4 @@
-# InstaNotary Express App
+# InstaNotary Rest Server
 
 This is a express app with bluzelle db.
 
