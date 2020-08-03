@@ -335,6 +335,7 @@ class Controller {
       return { isPresent, id };
     } catch (err) {
       console.error(err, { origin: "Error in getting notary from bluzelle" });
+      return { isPresent: false };
     }
   };
 }
