@@ -38,14 +38,14 @@ class Controller {
     // storing the file in IPFS
     ipfs.files.add(picBuffer, async (err: any, data: any) => {
       if (err) {
-        console.error(err, { origin: "Error from IPFS" });
+        // console.error(err, { origin: "Error from IPFS" });
         res.json({ message: "Error uploading file in IPFS" });
       }
       const isFilePresent = await this.checkHashPresent(
         fileDetails.phoneNumber,
         data[0].hash
       );
-      console.log(isFilePresent);
+      // console.log(isFilePresent);
       if (isFilePresent.isPresent) {
         res.json({
           isFilePresent: true,
@@ -54,7 +54,7 @@ class Controller {
         });
       } else {
         const randomID = (Math.random() * 1e32).toString(36).substring(0, 10);
-        console.log(data);
+        // console.log(data);
         const fileData = {
           ...fileDetails,
           hash: data[0].hash,
@@ -81,9 +81,9 @@ class Controller {
               }
             );
           } catch (err) {
-            console.error(err, {
-              origin: `Error due to no file present in bluzelle DB with key ${fileData.phoneNumber}`,
-            });
+            // console.error(err, {
+            //   origin: `Error due to no file present in bluzelle DB with key ${fileData.phoneNumber}`,
+            // });
             // didn't found any notary items of the user
             addNotaryItem = [{ id: randomID }];
             // creating new notary item for the user
@@ -101,10 +101,10 @@ class Controller {
             message: "Successfully uploaded file to bluzelle",
           });
         } catch (err) {
-          console.error(err, {
-            origin: `Error due to failing in creating or updating notary file`,
-            data: fileData,
-          });
+          // console.error(err, {
+          //   origin: `Error due to failing in creating or updating notary file`,
+          //   data: fileData,
+          // });
           res.json({
             message: "Error in uploaded file to bluzelle",
           });
@@ -120,32 +120,32 @@ class Controller {
   ) => {
     try {
       const notaryItem = await this.bz.read(id);
-      console.log(notaryItem);
+      // console.log(notaryItem);
       const fileData = Object.assign(JSON.parse(notaryItem), {
         ...fileDetails,
       });
-      console.log(fileData);
+      // console.log(fileData);
       try {
         // creating a notary with a unique id
         await this.bz.update(id, JSON.stringify(fileData), {
           gas_price: 10,
           max_gas: 2000000,
         });
-        console.debug("Done updating");
+        // console.debug("Done updating");
         res.json({
           message: "Successfully updated file to bluzelle",
         });
       } catch (err) {
-        console.error(err, {
-          origin: `Error due to failing in creating or updating notary file`,
-          data: fileData,
-        });
+        // console.error(err, {
+        //   origin: `Error due to failing in creating or updating notary file`,
+        //   data: fileData,
+        // });
         res.json({
           message: "Error in uploaded file to bluzelle",
         });
       }
     } catch (err) {
-      console.error(err, { origin: "Error in getting notary from bluzelle" });
+      // console.error(err, { origin: "Error in getting notary from bluzelle" });
       res.json({
         message: "Error in getting notary from bluzelle",
       });
@@ -158,14 +158,14 @@ class Controller {
       [new Buffer(notaryText.textContent)],
       async (err: any, data: any) => {
         if (err) {
-          console.error(err, { origin: "Error from IPFS" });
+          // console.error(err, { origin: "Error from IPFS" });
           res.json({ message: "Error uploading file in IPFS" });
         }
         const isFilePresent = await this.checkHashPresent(
           notaryText.phoneNumber,
           data[0].hash
         );
-        console.log(isFilePresent);
+        // console.log(isFilePresent);
         if (isFilePresent.isPresent) {
           res.json({
             isFilePresent: true,
@@ -200,9 +200,9 @@ class Controller {
                 }
               );
             } catch (err) {
-              console.error(err, {
-                origin: `Error due to no file present in bluzelle DB with key ${fileData.phoneNumber}`,
-              });
+              // console.error(err, {
+              //   origin: `Error due to no file present in bluzelle DB with key ${fileData.phoneNumber}`,
+              // });
               // didn't found any notary items of the user
               addNotaryItem = [{ id: randomID }];
               // creating new notary item for the user
@@ -219,10 +219,10 @@ class Controller {
               message: "Successfully uploaded file to bluzelle",
             });
           } catch (err) {
-            console.error(err, {
-              origin: `Error due to failing in creating or updating notary file`,
-              data: fileData,
-            });
+            // console.error(err, {
+            //   origin: `Error due to failing in creating or updating notary file`,
+            //   data: fileData,
+            // });
             res.json({
               message: "Error in uploaded file to bluzelle",
             });
@@ -254,7 +254,7 @@ class Controller {
         notaries: selectedNotariesParsed,
       });
     } catch (err) {
-      console.error(err, { origin: "Error in getting notary from bluzelle" });
+      // console.error(err, { origin: "Error in getting notary from bluzelle" });
       res.json({
         message: "Error in getting notary from bluzelle",
       });
@@ -285,7 +285,7 @@ class Controller {
         message: "Deleted Notary",
       });
     } catch (err) {
-      console.error(err, { origin: "Error in deleting file to bluzelle" });
+      // console.error(err, { origin: "Error in deleting file to bluzelle" });
       res.json({
         message: "Error in deleting file to bluzelle",
       });
@@ -322,19 +322,19 @@ class Controller {
       );
       const isPresent =
         selectedNotariesParsed.filter((notaryItem: any) => {
-          console.log(notaryItem.hash, hash, notaryItem.hash === hash);
+          // console.log(notaryItem.hash, hash, notaryItem.hash === hash);
           return notaryItem.hash === hash;
         }).length !== 0;
       let id = "0";
       if (isPresent) {
         id = selectedNotariesParsed.filter((notaryItem: any) => {
-          console.log(notaryItem.hash, hash, notaryItem.hash === hash);
+          // console.log(notaryItem.hash, hash, notaryItem.hash === hash);
           return notaryItem.hash === hash;
         })[0].id;
       }
       return { isPresent, id };
     } catch (err) {
-      console.error(err, { origin: "Error in getting notary from bluzelle" });
+      // console.error(err, { origin: "Error in getting notary from bluzelle" });
       return { isPresent: false };
     }
   };
