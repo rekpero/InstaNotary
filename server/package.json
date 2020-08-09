@@ -31,7 +31,6 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-winston": "^4.0.3",
-    "ipfs": "^0.48.2",
     "ipfs-api": "^26.1.2",
     "moment": "^2.27.0",
     "multer": "^1.4.2",

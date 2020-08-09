@@ -1,7 +1,7 @@
 import express from "express";
 // @ts-ignore
-import IPFS from "ipfs";
-// const ipfs = IPFS("ipfs.infura.io", "5001", { protocol: "https" });
+import IPFS from "ipfs-api";
+const ipfs = IPFS("ipfs.infura.io", "5001", { protocol: "https" });
 import { bluzelle, API } from "bluzelle";
 // import { logger } from "../utils";
 import dotenv from "dotenv";
@@ -10,7 +10,6 @@ dotenv.config();
 
 class Controller {
   bz: API;
-  ipfs: any;
 
   constructor() {
     this.initBlz();
@@ -27,12 +26,6 @@ class Controller {
     } catch (err) {
       console.error(err, { origin: "Error from Bluzelle SDK Init" });
     }
-
-    try {
-      this.ipfs = await IPFS.create();
-    } catch (err) {
-      console.error(err, { origin: "Error from IPFS Init" });
-    }
   }
 
   parseFileUpload = async (
@@ -43,96 +36,89 @@ class Controller {
     // getting the buffer from the file
     const picBuffer = Buffer.from(file.buffer);
     // storing the file in IPFS
-    this.ipfs.add(
-      {
-        path: fileDetails.fileName,
-        content: picBuffer,
-      },
-      { wrap: true },
-      async (err: any, data: any) => {
-        if (err) {
-          // console.error(err, { origin: "Error from IPFS" });
-          res.json({ message: "Error uploading file in IPFS" });
-        }
-        const isFilePresent = await this.checkHashPresent(
-          fileDetails.phoneNumber,
-          data[0].hash
-        );
-        // console.log(isFilePresent);
-        if (isFilePresent.isPresent) {
-          res.json({
-            isFilePresent: true,
-            notaryId: isFilePresent.id,
-            message: "File is already present",
-          });
-        } else {
-          const randomID = (Math.random() * 1e32).toString(36).substring(0, 10);
-          // console.log(data);
-          const fileData = {
-            ...fileDetails,
-            ipfsHash: data[0].hash,
-            id: randomID,
-          };
+    ipfs.files.add(picBuffer, async (err: any, data: any) => {
+      if (err) {
+        // console.error(err, { origin: "Error from IPFS" });
+        res.json({ message: "Error uploading file in IPFS" });
+      }
+      const isFilePresent = await this.checkHashPresent(
+        fileDetails.phoneNumber,
+        data[0].hash
+      );
+      // console.log(isFilePresent);
+      if (isFilePresent.isPresent) {
+        res.json({
+          isFilePresent: true,
+          notaryId: isFilePresent.id,
+          message: "File is already present",
+        });
+      } else {
+        const randomID = (Math.random() * 1e32).toString(36).substring(0, 10);
+        // console.log(data);
+        const fileData = {
+          ...fileDetails,
+          ipfsHash: data[0].hash,
+          id: randomID,
+        };
+        try {
+          let addNotaryItem = [];
+          // creating a notary with a unique id
+          const txResult = await this.bz.create(
+            randomID,
+            JSON.stringify(fileData),
+            {
+              gas_price: 10,
+              max_gas: 2000000,
+            }
+          );
+          console.log(txResult);
           try {
-            let addNotaryItem = [];
-            // creating a notary with a unique id
-            const txResult = await this.bz.create(
-              randomID,
-              JSON.stringify(fileData),
+            // fetching previously stored notary list
+            const notaryItems = await this.bz.read(fileData.phoneNumber);
+            addNotaryItem = [
+              ...JSON.parse(notaryItems),
+              { id: randomID, txHash: txResult.txhash },
+            ];
+            // updating with the newly added notary item
+            await this.bz.update(
+              fileData.phoneNumber,
+              JSON.stringify(addNotaryItem),
               {
                 gas_price: 10,
                 max_gas: 2000000,
               }
             );
-            console.log(txResult);
-            try {
-              // fetching previously stored notary list
-              const notaryItems = await this.bz.read(fileData.phoneNumber);
-              addNotaryItem = [
-                ...JSON.parse(notaryItems),
-                { id: randomID, txHash: txResult.txhash },
-              ];
-              // updating with the newly added notary item
-              await this.bz.update(
-                fileData.phoneNumber,
-                JSON.stringify(addNotaryItem),
-                {
-                  gas_price: 10,
-                  max_gas: 2000000,
-                }
-              );
-            } catch (err) {
-              // console.error(err, {
-              //   origin: `Error due to no file present in bluzelle DB with key ${fileData.phoneNumber}`,
-              // });
-              // didn't found any notary items of the user
-              addNotaryItem = [{ id: randomID }];
-              // creating new notary item for the user
-              await this.bz.create(
-                fileData.phoneNumber,
-                JSON.stringify(addNotaryItem),
-                {
-                  gas_price: 10,
-                  max_gas: 2000000,
-                }
-              );
-            }
-            console.debug("Done adding");
-            res.json({
-              message: "Successfully uploaded file to bluzelle",
-            });
           } catch (err) {
             // console.error(err, {
-            //   origin: `Error due to failing in creating or updating notary file`,
-            //   data: fileData,
+            //   origin: `Error due to no file present in bluzelle DB with key ${fileData.phoneNumber}`,
             // });
-            res.json({
-              message: "Error in uploaded file to bluzelle",
-            });
+            // didn't found any notary items of the user
+            addNotaryItem = [{ id: randomID }];
+            // creating new notary item for the user
+            await this.bz.create(
+              fileData.phoneNumber,
+              JSON.stringify(addNotaryItem),
+              {
+                gas_price: 10,
+                max_gas: 2000000,
+              }
+            );
           }
+          console.debug("Done adding");
+          res.json({
+            message: "Successfully uploaded file to bluzelle",
+          });
+        } catch (err) {
+          // console.error(err, {
+          //   origin: `Error due to failing in creating or updating notary file`,
+          //   data: fileData,
+          // });
+          res.json({
+            message: "Error in uploaded file to bluzelle",
+          });
         }
       }
-    );
+    });
   };
 
   parseFileUploadOverride = async (
@@ -176,12 +162,8 @@ class Controller {
 
   parseTextUpload = async (notaryText: any, res: express.Response) => {
     // getting the buffer from the file and storing the text in IPFS
-    this.ipfs.add(
-      {
-        path: notaryText.name,
-        content: Buffer.from(notaryText.textContent),
-      },
-      { wrap: true },
+    ipfs.files.add(
+      [Buffer.from(notaryText.textContent)],
       async (err: any, data: any) => {
         if (err) {
           console.error(err);
