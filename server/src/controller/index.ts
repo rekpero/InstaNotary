@@ -163,10 +163,10 @@ class Controller {
   parseTextUpload = async (notaryText: any, res: express.Response) => {
     // getting the buffer from the file and storing the text in IPFS
     ipfs.files.add(
-      [new Buffer(notaryText.textContent)],
+      [Buffer.from(notaryText.textContent)],
       async (err: any, data: any) => {
         if (err) {
-          // console.error(err, { origin: "Error from IPFS" });
+          console.error(err);
           res.json({ message: "Error uploading file in IPFS" });
         }
         const isFilePresent = await this.checkHashPresent(
