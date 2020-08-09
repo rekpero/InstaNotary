@@ -57,20 +57,28 @@ class Controller {
         // console.log(data);
         const fileData = {
           ...fileDetails,
-          hash: data[0].hash,
+          ipfsHash: data[0].hash,
           id: randomID,
         };
         try {
           let addNotaryItem = [];
           // creating a notary with a unique id
-          await this.bz.create(randomID, JSON.stringify(fileData), {
-            gas_price: 10,
-            max_gas: 2000000,
-          });
+          const txResult = await this.bz.create(
+            randomID,
+            JSON.stringify(fileData),
+            {
+              gas_price: 10,
+              max_gas: 2000000,
+            }
+          );
+          console.log(txResult);
           try {
             // fetching previously stored notary list
             const notaryItems = await this.bz.read(fileData.phoneNumber);
-            addNotaryItem = [...JSON.parse(notaryItems), { id: randomID }];
+            addNotaryItem = [
+              ...JSON.parse(notaryItems),
+              { id: randomID, txHash: txResult.txhash },
+            ];
             // updating with the newly added notary item
             await this.bz.update(
               fileData.phoneNumber,
@@ -176,20 +184,28 @@ class Controller {
           const randomID = (Math.random() * 1e32).toString(36).substring(0, 10);
           const fileData = {
             ...notaryText,
-            hash: data[0].hash,
+            ipfsHash: data[0].hash,
             id: randomID,
           };
           try {
             let addNotaryItem = [];
             // creating a notary with a unique id
-            await this.bz.create(randomID, JSON.stringify(fileData), {
-              gas_price: 10,
-              max_gas: 2000000,
-            });
+            const txResult = await this.bz.create(
+              randomID,
+              JSON.stringify(fileData),
+              {
+                gas_price: 10,
+                max_gas: 2000000,
+              }
+            );
+            console.log(txResult);
             try {
               // fetching previously stored notary list
               const notaryItems = await this.bz.read(fileData.phoneNumber);
-              addNotaryItem = [...JSON.parse(notaryItems), { id: randomID }];
+              addNotaryItem = [
+                ...JSON.parse(notaryItems),
+                { id: randomID, txHash: txResult.txhash },
+              ];
               // updating with the newly added notary item
               await this.bz.update(
                 fileData.phoneNumber,
@@ -249,9 +265,18 @@ class Controller {
       const selectedNotariesParsed = selectedNotaries.map((notaryItem: any) =>
         JSON.parse(notaryItem)
       );
+      const selectedNotariesFinal = selectedNotariesParsed.map(
+        (notaryItem: any) => {
+          Object.assign(notaryItem, {
+            txHash: parsedNotaryItems.filter(
+              (item: any) => item.id === notaryItem.id
+            )[0].txHash,
+          });
+        }
+      );
       res.json({
         message: "Get All Notary Items",
-        notaries: selectedNotariesParsed,
+        notaries: selectedNotariesFinal,
       });
     } catch (err) {
       // console.error(err, { origin: "Error in getting notary from bluzelle" });
