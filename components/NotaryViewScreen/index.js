@@ -24,7 +24,7 @@ console.disableYellowBox = true;
 export default function NotaryViewScreen({ route, navigation }) {
   const { notary } = route.params;
   const [isHidden, setIsHidden] = React.useState(true);
-  const [bounceValue, setBounceValue] = React.useState(new Animated.Value(360));
+  const [bounceValue, setBounceValue] = React.useState(new Animated.Value(500));
   const [downloadFile, setDownloadFile] = React.useState(false);
   const [modalType, setModalType] = React.useState("");
   const appIconBase64 = appIcon;
@@ -47,7 +47,15 @@ export default function NotaryViewScreen({ route, navigation }) {
       checkGViewSupportedExt(notary.type) && !downloadFile
         ? "http://docs.google.com/gview?embedded=true&url="
         : ""
-    }https://ipfs.io/ipfs/${notary.hash}`;
+    }https://ipfs.io/ipfs/${notary.ipfsHash}`;
+    const supported = await Linking.canOpenURL(url);
+    if (supported) {
+      await Linking.openURL(url);
+    }
+  };
+
+  const handleOpenTxLink = async () => {
+    const url = `http://b.bigdipper.testnet.public.bluzelle.com/transactions/${notary.txHash}`;
     const supported = await Linking.canOpenURL(url);
     if (supported) {
       await Linking.openURL(url);
@@ -110,7 +118,7 @@ export default function NotaryViewScreen({ route, navigation }) {
 
   const handleCopyToClipboard = async () => {
     console.log("Entering ");
-    Clipboard.setString(notary.hash);
+    Clipboard.setString(notary.ipfsHash);
     notifyMessage("Hash Copied to Clipboard!");
   };
 
@@ -118,7 +126,7 @@ export default function NotaryViewScreen({ route, navigation }) {
   const _toggleSubView = (pMenu) => {
     if (pMenu) {
       setModalType(pMenu);
-      var toValue = 360;
+      var toValue = 500;
       toValue = 0;
 
       Animated.spring(bounceValue, {
@@ -130,7 +138,7 @@ export default function NotaryViewScreen({ route, navigation }) {
 
       setIsHidden(false);
     } else {
-      var toValue = 360;
+      var toValue = 500;
 
       Animated.spring(bounceValue, {
         toValue: toValue,
@@ -164,7 +172,7 @@ export default function NotaryViewScreen({ route, navigation }) {
         checkGViewSupportedExt(notary.type) && !downloadFile
           ? "http://docs.google.com/gview?embedded=true&url="
           : ""
-      }https://ipfs.io/ipfs/${notary.hash}`,
+      }https://ipfs.io/ipfs/${notary.ipfsHash}`,
       FileSystem.documentDirectory + notary.fileName,
       {},
       (downloadProgress) => {
@@ -179,7 +187,7 @@ export default function NotaryViewScreen({ route, navigation }) {
         checkGViewSupportedExt(notary.type) && !downloadFile
           ? "http://docs.google.com/gview?embedded=true&url="
           : ""
-      }https://ipfs.io/ipfs/${notary.hash}`
+      }https://ipfs.io/ipfs/${notary.ipfsHash}`
     );
     try {
       const { uri } = await downloadResumable.downloadAsync();
@@ -208,7 +216,7 @@ export default function NotaryViewScreen({ route, navigation }) {
         </TouchableWithoutFeedback>
         <View style={styles.toolbarTitle}>
           <Text style={styles.title}>Notary Details</Text>
-          <Text style={styles.subtitle}>{notary.hash}</Text>
+          <Text style={styles.subtitle}>{notary.ipfsHash}</Text>
         </View>
         <View style={styles.toolbarAction}>
           <TouchableOpacity
@@ -252,19 +260,25 @@ export default function NotaryViewScreen({ route, navigation }) {
         </View>
       </View>
       {previewAbleExt(notary.type) || downloadFile ? (
-        <WebView
-          source={{
-            uri: `${
-              checkGViewSupportedExt(notary.type) && !downloadFile
-                ? "http://docs.google.com/gview?embedded=true&url="
-                : ""
-            }https://ipfs.io/ipfs/${notary.hash}`,
-          }}
-          style={styles.webview}
-          scalesPageToFit={
-            Platform.OS === "ios" || notary.type === "text" ? false : true
-          }
-        />
+        notary.type === "text" ? (
+          <View style={styles.textContentContainer}>
+            <Text style={styles.subViewTitle}>{notary.textContent}</Text>
+          </View>
+        ) : (
+          <WebView
+            source={{
+              uri: `${
+                checkGViewSupportedExt(notary.type) && !downloadFile
+                  ? "http://docs.google.com/gview?embedded=true&url="
+                  : ""
+              }https://ipfs.io/ipfs/${notary.ipfsHash}`,
+            }}
+            style={styles.webview}
+            scalesPageToFit={
+              Platform.OS === "ios" || notary.type === "text" ? false : true
+            }
+          />
+        )
       ) : (
         <View style={styles.imageContainer}>
           <Image
@@ -315,8 +329,8 @@ export default function NotaryViewScreen({ route, navigation }) {
               style={styles.subViewDetailItems}
               onPress={handleCopyToClipboard}
             >
-              <Text style={styles.detailTitle}>Hash: </Text>
-              <Text style={styles.detailText}>{notary.hash}</Text>
+              <Text style={styles.detailTitle}>IPFS Hash: </Text>
+              <Text style={styles.detailText}>{notary.ipfsHash}</Text>
               <TouchableOpacity onPress={handleCopyToClipboard}>
                 <Image
                   source={require("../../assets/system-icons/copy.png")}
@@ -330,9 +344,38 @@ export default function NotaryViewScreen({ route, navigation }) {
             >
               <Text style={styles.detailTitle}>IPFS Link: </Text>
               <Text style={styles.detailText}>
-                https://ipfs.io/ipfs/{notary.hash}
+                https://ipfs.io/ipfs/{notary.ipfsHash}
               </Text>
               <TouchableOpacity onPress={handleOpenFile}>
+                <Image
+                  source={require("../../assets/system-icons/ext-link.png")}
+                  style={[styles.systemIcon, styles.infoButtonIcon]}
+                ></Image>
+              </TouchableOpacity>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.subViewDetailItems}
+              onPress={handleCopyToClipboard}
+            >
+              <Text style={styles.detailTitle}>Tx Hash: </Text>
+              <Text style={styles.detailText}>{notary.txHash}</Text>
+              <TouchableOpacity onPress={handleCopyToClipboard}>
+                <Image
+                  source={require("../../assets/system-icons/copy.png")}
+                  style={[styles.systemIcon, styles.infoButtonIcon]}
+                ></Image>
+              </TouchableOpacity>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.subViewDetailItems}
+              onPress={handleOpenTxLink}
+            >
+              <Text style={styles.detailTitle}>Tx Link: </Text>
+              <Text style={styles.detailText}>
+                http://b.bigdipper.testnet.public.bluzelle.com/transactions/
+                {notary.txHash}
+              </Text>
+              <TouchableOpacity onPress={handleOpenTxLink}>
                 <Image
                   source={require("../../assets/system-icons/ext-link.png")}
                   style={[styles.systemIcon, styles.infoButtonIcon]}
@@ -375,8 +418,7 @@ export default function NotaryViewScreen({ route, navigation }) {
             </Text>
             <View style={styles.qrCodeContainer}>
               <QRCode
-                value={`https://ipfs.io/ipfs/${notary.hash}`}
-                logo={{ uri: appIconBase64 }}
+                value={`https://ipfs.io/ipfs/${notary.ipfsHash}`}
                 logoSize={81}
                 logoBackgroundColor="transparent"
                 size={200}
