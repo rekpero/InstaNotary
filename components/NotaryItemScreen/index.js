@@ -8,7 +8,9 @@ import {
   ActivityIndicator,
   Image,
   Animated,
+  Keyboard,
 } from "react-native";
+
 import * as Location from "expo-location";
 import { notifyMessage } from "../../utils";
 import styles from "./styles";
@@ -65,6 +67,7 @@ export default function NotaryItemScreen({ navigation, route }) {
 
   // send file data to server
   const sendFileData = async () => {
+    Keyboard.dismiss(0);
     setLoading(true);
     if (fileType !== "text") {
       _toggleSubView("uploadNotary");
