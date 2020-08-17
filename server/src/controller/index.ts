@@ -45,7 +45,7 @@ class Controller {
         fileDetails.phoneNumber,
         data[0].hash
       );
-      // console.log(isFilePresent);
+      console.log(isFilePresent);
       if (isFilePresent.isPresent) {
         res.json({
           isFilePresent: true,
@@ -54,7 +54,7 @@ class Controller {
         });
       } else {
         const randomID = (Math.random() * 1e32).toString(36).substring(0, 10);
-        // console.log(data);
+        console.log(data);
         const fileData = {
           ...fileDetails,
           ipfsHash: data[0].hash,
@@ -128,18 +128,18 @@ class Controller {
   ) => {
     try {
       const notaryItem = await this.bz.read(id);
-      // console.log(notaryItem);
+      console.log(notaryItem);
       const fileData = Object.assign(JSON.parse(notaryItem), {
         ...fileDetails,
       });
-      // console.log(fileData);
+      console.log(fileData);
       try {
         // creating a notary with a unique id
         await this.bz.update(id, JSON.stringify(fileData), {
           gas_price: 10,
           max_gas: 2000000,
         });
-        // console.debug("Done updating");
+        console.debug("Done updating");
         res.json({
           message: "Successfully updated file to bluzelle",
         });
@@ -173,7 +173,7 @@ class Controller {
           notaryText.phoneNumber,
           data[0].hash
         );
-        // console.log(isFilePresent);
+        console.log(isFilePresent);
         if (isFilePresent.isPresent) {
           res.json({
             isFilePresent: true,
@@ -347,13 +347,13 @@ class Controller {
       );
       const isPresent =
         selectedNotariesParsed.filter((notaryItem: any) => {
-          // console.log(notaryItem.hash, hash, notaryItem.hash === hash);
+          console.log(notaryItem.hash, hash, notaryItem.hash === hash);
           return notaryItem.hash === hash;
         }).length !== 0;
       let id = "0";
       if (isPresent) {
         id = selectedNotariesParsed.filter((notaryItem: any) => {
-          // console.log(notaryItem.hash, hash, notaryItem.hash === hash);
+          console.log(notaryItem.hash, hash, notaryItem.hash === hash);
           return notaryItem.hash === hash;
         })[0].id;
       }
