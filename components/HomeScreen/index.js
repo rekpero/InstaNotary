@@ -609,7 +609,7 @@ export default class HomeScreen extends React.Component {
                           numberOfLines={1}
                           style={styles.notaryItemDetailsHash}
                         >
-                          {item.hash}
+                          {item.ipfsHash}
                         </Text>
                       </View>
                       <View

@@ -45,7 +45,6 @@ class Controller {
         fileDetails.phoneNumber,
         data[0].hash
       );
-      // console.log(isFilePresent);
       if (isFilePresent.isPresent) {
         res.json({
           isFilePresent: true,
@@ -54,23 +53,29 @@ class Controller {
         });
       } else {
         const randomID = (Math.random() * 1e32).toString(36).substring(0, 10);
-        // console.log(data);
         const fileData = {
           ...fileDetails,
-          hash: data[0].hash,
+          ipfsHash: data[0].hash,
           id: randomID,
         };
         try {
           let addNotaryItem = [];
           // creating a notary with a unique id
-          await this.bz.create(randomID, JSON.stringify(fileData), {
-            gas_price: 10,
-            max_gas: 2000000,
-          });
+          const txResult = await this.bz.create(
+            randomID,
+            JSON.stringify(fileData),
+            {
+              gas_price: 10,
+              max_gas: 2000000,
+            }
+          );
           try {
             // fetching previously stored notary list
             const notaryItems = await this.bz.read(fileData.phoneNumber);
-            addNotaryItem = [...JSON.parse(notaryItems), { id: randomID }];
+            addNotaryItem = [
+              ...JSON.parse(notaryItems),
+              { id: randomID, txHash: txResult.txhash },
+            ];
             // updating with the newly added notary item
             await this.bz.update(
               fileData.phoneNumber,
@@ -85,7 +90,7 @@ class Controller {
             //   origin: `Error due to no file present in bluzelle DB with key ${fileData.phoneNumber}`,
             // });
             // didn't found any notary items of the user
-            addNotaryItem = [{ id: randomID }];
+            addNotaryItem = [{ id: randomID, txHash: txResult.txhash }];
             // creating new notary item for the user
             await this.bz.create(
               fileData.phoneNumber,
@@ -96,7 +101,7 @@ class Controller {
               }
             );
           }
-          console.debug("Done adding");
+          // console.debug("Done adding");
           res.json({
             message: "Successfully uploaded file to bluzelle",
           });
@@ -155,17 +160,16 @@ class Controller {
   parseTextUpload = async (notaryText: any, res: express.Response) => {
     // getting the buffer from the file and storing the text in IPFS
     ipfs.files.add(
-      [new Buffer(notaryText.textContent)],
+      [Buffer.from(notaryText.textContent)],
       async (err: any, data: any) => {
         if (err) {
-          // console.error(err, { origin: "Error from IPFS" });
+          console.error(err);
           res.json({ message: "Error uploading file in IPFS" });
         }
         const isFilePresent = await this.checkHashPresent(
           notaryText.phoneNumber,
           data[0].hash
         );
-        // console.log(isFilePresent);
         if (isFilePresent.isPresent) {
           res.json({
             isFilePresent: true,
@@ -176,20 +180,27 @@ class Controller {
           const randomID = (Math.random() * 1e32).toString(36).substring(0, 10);
           const fileData = {
             ...notaryText,
-            hash: data[0].hash,
+            ipfsHash: data[0].hash,
             id: randomID,
           };
           try {
             let addNotaryItem = [];
             // creating a notary with a unique id
-            await this.bz.create(randomID, JSON.stringify(fileData), {
-              gas_price: 10,
-              max_gas: 2000000,
-            });
+            const txResult = await this.bz.create(
+              randomID,
+              JSON.stringify(fileData),
+              {
+                gas_price: 10,
+                max_gas: 2000000,
+              }
+            );
             try {
               // fetching previously stored notary list
               const notaryItems = await this.bz.read(fileData.phoneNumber);
-              addNotaryItem = [...JSON.parse(notaryItems), { id: randomID }];
+              addNotaryItem = [
+                ...JSON.parse(notaryItems),
+                { id: randomID, txHash: txResult.txhash },
+              ];
               // updating with the newly added notary item
               await this.bz.update(
                 fileData.phoneNumber,
@@ -204,7 +215,7 @@ class Controller {
               //   origin: `Error due to no file present in bluzelle DB with key ${fileData.phoneNumber}`,
               // });
               // didn't found any notary items of the user
-              addNotaryItem = [{ id: randomID }];
+              addNotaryItem = [{ id: randomID, txHash: txResult.txhash }];
               // creating new notary item for the user
               await this.bz.create(
                 fileData.phoneNumber,
@@ -249,9 +260,19 @@ class Controller {
       const selectedNotariesParsed = selectedNotaries.map((notaryItem: any) =>
         JSON.parse(notaryItem)
       );
+      const selectedNotariesFinal = selectedNotariesParsed.map(
+        (notaryItem: any) => {
+          return {
+            ...notaryItem,
+            txHash: parsedNotaryItems.filter(
+              (item: any) => item.id === notaryItem.id
+            )[0].txHash,
+          };
+        }
+      );
       res.json({
         message: "Get All Notary Items",
-        notaries: selectedNotariesParsed,
+        notaries: selectedNotariesFinal,
       });
     } catch (err) {
       // console.error(err, { origin: "Error in getting notary from bluzelle" });
@@ -322,13 +343,11 @@ class Controller {
       );
       const isPresent =
         selectedNotariesParsed.filter((notaryItem: any) => {
-          // console.log(notaryItem.hash, hash, notaryItem.hash === hash);
           return notaryItem.hash === hash;
         }).length !== 0;
       let id = "0";
       if (isPresent) {
         id = selectedNotariesParsed.filter((notaryItem: any) => {
-          // console.log(notaryItem.hash, hash, notaryItem.hash === hash);
           return notaryItem.hash === hash;
         })[0].id;
       }

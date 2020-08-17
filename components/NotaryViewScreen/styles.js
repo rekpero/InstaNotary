@@ -66,7 +66,7 @@ export default StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderTopRightRadius: 8,
     borderTopLeftRadius: 8,
-    height: 360,
+    height: 500,
     elevation: 100,
     paddingLeft: 24,
     paddingRight: 24,
@@ -138,5 +138,11 @@ export default StyleSheet.create({
   closeIcon: {
     height: 28,
     width: 28,
+  },
+  textContentContainer: {
+    backgroundColor: "#d9eaf7",
+    flex: 1,
+    padding: 12,
+    borderRadius: 4,
   },
 });
