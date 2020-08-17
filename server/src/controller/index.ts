@@ -45,7 +45,6 @@ class Controller {
         fileDetails.phoneNumber,
         data[0].hash
       );
-      // console.log(isFilePresent);
       if (isFilePresent.isPresent) {
         res.json({
           isFilePresent: true,
@@ -54,7 +53,6 @@ class Controller {
         });
       } else {
         const randomID = (Math.random() * 1e32).toString(36).substring(0, 10);
-        // console.log(data);
         const fileData = {
           ...fileDetails,
           ipfsHash: data[0].hash,
@@ -71,7 +69,6 @@ class Controller {
               max_gas: 2000000,
             }
           );
-          console.log(txResult);
           try {
             // fetching previously stored notary list
             const notaryItems = await this.bz.read(fileData.phoneNumber);
@@ -93,7 +90,7 @@ class Controller {
             //   origin: `Error due to no file present in bluzelle DB with key ${fileData.phoneNumber}`,
             // });
             // didn't found any notary items of the user
-            addNotaryItem = [{ id: randomID }];
+            addNotaryItem = [{ id: randomID, txHash: txResult.txhash }];
             // creating new notary item for the user
             await this.bz.create(
               fileData.phoneNumber,
@@ -104,7 +101,7 @@ class Controller {
               }
             );
           }
-          console.debug("Done adding");
+          // console.debug("Done adding");
           res.json({
             message: "Successfully uploaded file to bluzelle",
           });
@@ -173,7 +170,6 @@ class Controller {
           notaryText.phoneNumber,
           data[0].hash
         );
-        // console.log(isFilePresent);
         if (isFilePresent.isPresent) {
           res.json({
             isFilePresent: true,
@@ -198,7 +194,6 @@ class Controller {
                 max_gas: 2000000,
               }
             );
-            console.log(txResult);
             try {
               // fetching previously stored notary list
               const notaryItems = await this.bz.read(fileData.phoneNumber);
@@ -220,7 +215,7 @@ class Controller {
               //   origin: `Error due to no file present in bluzelle DB with key ${fileData.phoneNumber}`,
               // });
               // didn't found any notary items of the user
-              addNotaryItem = [{ id: randomID }];
+              addNotaryItem = [{ id: randomID, txHash: txResult.txhash }];
               // creating new notary item for the user
               await this.bz.create(
                 fileData.phoneNumber,
@@ -267,11 +262,12 @@ class Controller {
       );
       const selectedNotariesFinal = selectedNotariesParsed.map(
         (notaryItem: any) => {
-          Object.assign(notaryItem, {
+          return {
+            ...notaryItem,
             txHash: parsedNotaryItems.filter(
               (item: any) => item.id === notaryItem.id
             )[0].txHash,
-          });
+          };
         }
       );
       res.json({
@@ -347,13 +343,11 @@ class Controller {
       );
       const isPresent =
         selectedNotariesParsed.filter((notaryItem: any) => {
-          // console.log(notaryItem.hash, hash, notaryItem.hash === hash);
           return notaryItem.hash === hash;
         }).length !== 0;
       let id = "0";
       if (isPresent) {
         id = selectedNotariesParsed.filter((notaryItem: any) => {
-          // console.log(notaryItem.hash, hash, notaryItem.hash === hash);
           return notaryItem.hash === hash;
         })[0].id;
       }

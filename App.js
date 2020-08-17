@@ -85,6 +85,7 @@ function App() {
         const allNotaries = await WebService.getNotaryItemsByNumber(
           userMobileNumber
         );
+        console.log(allNotaries);
         const finalSort = allNotaries.notaries
           ? sortNotaries(allNotaries.notaries)
           : [];
