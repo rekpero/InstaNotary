@@ -72,9 +72,20 @@ To run this app you just have to clone the whole app and then follow these steps
 ```
 git clone https://github.com/mmitrasish/InstaNotary.git
 cd InstaNotary/server
+```
+
+- Run with docker:
+```
 sudo docker-compose up --build // if you are running for the first time or change and packages
 sudo docker-compose up // if you have already build the container
 ```
+
+- Run with npm:
+```
+npm install
+npm run start
+```
+
 
 ## How to deploy in AWS?
 
@@ -84,4 +95,7 @@ To deploy this app you have to `Launch an EC2 instance` and `SSH into your insta
 - Go to the server folder - `cd InstaNotary/server`
 - Run and build with docker - `sudo docker-compose up --build`
 - Run with docker - `sudo docker-compose up` - You don't have to do this step if it's your first time
+- Download npm in ec2 instance using this command - `sudo apt install npm`
+- Install package with npm - `npm install`
+- Run app with npm - `npm start`
 - Once the server is up, you have expose the port whatever you get in the console in the earlier step.
