@@ -26,6 +26,7 @@ export default function NotaryViewScreen({ route, navigation }) {
   const [isHidden, setIsHidden] = React.useState(true);
   const [bounceValue, setBounceValue] = React.useState(new Animated.Value(500));
   const [downloadFile, setDownloadFile] = React.useState(false);
+  const [selectedTab, setSelectedTab] = React.useState(1);
   const [modalType, setModalType] = React.useState("");
   const appIconBase64 = appIcon;
 
@@ -413,16 +414,43 @@ export default function NotaryViewScreen({ route, navigation }) {
         ) : null}
         {modalType === "notaryQrCode" ? (
           <View style={styles.subViewDetailContainer}>
-            <Text style={styles.qrCodeText}>
-              Scan this QR Code to get the IPFS Link
-            </Text>
-            <View style={styles.qrCodeContainer}>
-              <QRCode
-                value={`https://ipfs.io/ipfs/${notary.ipfsHash}`}
-                logoSize={81}
-                logoBackgroundColor="transparent"
-                size={200}
-              />
+            <View style={styles.tabViewContainer}>
+              <TouchableOpacity
+                style={[
+                  styles.tabItemContainer,
+                  selectedTab === 1 ? styles.selectedTab : null,
+                ]}
+                onPress={(e) => setSelectedTab(1)}
+              >
+                <Text style={styles.tabItem}>IPFS Link</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.tabItemContainer,
+                  selectedTab === 2 ? styles.selectedTab : null,
+                ]}
+                onPress={(e) => setSelectedTab(2)}
+              >
+                <Text style={styles.tabItem}>TX Link</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.QrViewContainer}>
+              <Text style={styles.qrCodeText}>
+                Scan this QR Code to get the{" "}
+                {selectedTab === 1 ? "IPFS Link" : "TX Link"}
+              </Text>
+              <View style={styles.qrCodeContainer}>
+                <QRCode
+                  value={
+                    selectedTab === 1
+                      ? `https://ipfs.io/ipfs/${notary.ipfsHash}`
+                      : `http://b.bigdipper.testnet.public.bluzelle.com/transactions/${notary.txHash}`
+                  }
+                  logoSize={81}
+                  logoBackgroundColor="transparent"
+                  size={200}
+                />
+              </View>
             </View>
           </View>
         ) : null}

@@ -19,6 +19,7 @@ export default StyleSheet.create({
   accountContainer: {
     flexDirection: "row",
     display: "flex",
+    alignItems: "center",
   },
   title: {
     fontSize: 24,
@@ -28,18 +29,23 @@ export default StyleSheet.create({
   sponsorIcon: {
     height: 32,
     width: 32,
+    marginRight: 6,
   },
   systemIcon: {
     height: 18,
     width: 18,
   },
   trashIcon: {
-    height: 24,
+    height: 36,
     width: 24,
   },
   closeIcon: {
     height: 28,
     width: 28,
+  },
+  helpIcon: {
+    height: 26,
+    width: 26,
   },
   confirmButton: {
     flexDirection: "row",
@@ -336,6 +342,9 @@ export default StyleSheet.create({
   },
   flexSet: {
     flex: 1,
+  },
+  notaryItemDetailsHeaderDeleteContainer: {
+    marginLeft: 12,
   },
   emptyImageContainer: {
     flex: 1,

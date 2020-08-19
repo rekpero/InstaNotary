@@ -145,4 +145,28 @@ export default StyleSheet.create({
     padding: 12,
     borderRadius: 4,
   },
+  tabViewContainer: {
+    display: "flex",
+    flexDirection: "row",
+    marginBottom: 24,
+    borderRadius: 8,
+  },
+  tabItemContainer: {
+    flex: 1,
+    justifyContent: "center",
+    padding: 8,
+    backgroundColor: "#B9D6F3",
+    marginLeft: 2,
+    borderRadius: 2,
+  },
+  tabItem: {
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: 16,
+    color: "#15548b",
+  },
+  selectedTab: {
+    borderBottomWidth: 3,
+    borderBottomColor: "#15548b",
+  },
 });
