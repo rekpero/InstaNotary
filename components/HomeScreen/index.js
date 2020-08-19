@@ -477,17 +477,26 @@ export default class HomeScreen extends React.Component {
     return (
       <View style={styles.homeContainer}>
         <View style={styles.toolbarContainer}>
-          <TouchableOpacity
-            onPress={(e) => this.props.navigation.navigate("AboutApp")}
-          >
-            <Image
-              source={{
-                uri: `https://cdn.discordapp.com/attachments/698447732028735528/712240046144749641/Bluzelle_-_Screen_-_Symbol_-_Big_-_Blue.png`,
-              }}
-              style={styles.sponsorIcon}
-            ></Image>
-          </TouchableOpacity>
-
+          <View style={styles.accountContainer}>
+            <TouchableOpacity
+              onPress={(e) => this.props.navigation.navigate("AboutApp")}
+            >
+              <Image
+                source={{
+                  uri: `https://cdn.discordapp.com/attachments/698447732028735528/712240046144749641/Bluzelle_-_Screen_-_Symbol_-_Big_-_Blue.png`,
+                }}
+                style={styles.sponsorIcon}
+              ></Image>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={(e) => this.props.navigation.navigate("Help")}
+            >
+              <Image
+                source={require("../../assets/system-icons/help.png")}
+                style={styles.helpIcon}
+              ></Image>
+            </TouchableOpacity>
+          </View>
           <Text style={styles.title}>InstaNotary.</Text>
           <View style={styles.accountContainer}>
             <TouchableOpacity
@@ -591,16 +600,6 @@ export default class HomeScreen extends React.Component {
                         <Text style={styles.notaryItemDetailsHeaderTime}>
                           {moment(item.time).fromNow()}
                         </Text>
-                        <TouchableOpacity
-                          onPress={(e) => this.handleDeleteNotary(item)}
-                        >
-                          <Text style={styles.notaryItemDetailsHeaderDelete}>
-                            <Image
-                              source={require("../../assets/system-icons/trash.png")}
-                              style={styles.trashIcon}
-                            ></Image>
-                          </Text>
-                        </TouchableOpacity>
                       </View>
                       <View
                         style={styles.notaryItemDetailsDescriptionContainer}
@@ -624,6 +623,15 @@ export default class HomeScreen extends React.Component {
                         </Text>
                       </View>
                     </View>
+                    <TouchableOpacity
+                      onPress={(e) => this.handleDeleteNotary(item)}
+                      style={styles.notaryItemDetailsHeaderDeleteContainer}
+                    >
+                      <Image
+                        source={require("../../assets/system-icons/trash.png")}
+                        style={styles.trashIcon}
+                      ></Image>
+                    </TouchableOpacity>
                   </TouchableOpacity>
                 );
               }}
