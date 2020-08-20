@@ -9,6 +9,7 @@ import {
   Image,
   Animated,
   Keyboard,
+  ScrollView,
 } from "react-native";
 
 import * as Location from "expo-location";
@@ -235,79 +236,81 @@ export default function NotaryItemScreen({ navigation, route }) {
         </TouchableWithoutFeedback>
         <Text style={styles.title}>Notary Details</Text>
       </View>
-      <Text style={styles.label}>Name</Text>
-      <TextInput
-        style={styles.notaryName}
-        placeholder="Enter a name"
-        autoFocus
-        autoCorrect={false}
-        returnKeyType="done"
-        value={notaryName}
-        onChangeText={(notaryName) => setNotaryName(notaryName)}
-      />
-      <Text style={styles.label}>Description</Text>
-      <TextInput
-        style={styles.notaryName}
-        placeholder="Enter a description"
-        autoCorrect={false}
-        returnKeyType="done"
-        onChangeText={(notaryDescription) =>
-          setNotaryDescription(notaryDescription)
-        }
-        value={notaryDescription}
-      />
-      {fileType !== "text" ? (
-        <>
-          <Text style={styles.label}>File</Text>
-          <View style={styles.fileContainer}>
-            <Image
-              source={require("../../assets/system-icons/attach.png")}
-              style={styles.systemIcon}
-            ></Image>
-            <Text style={styles.fileName}>{fileName}</Text>
-          </View>
-        </>
-      ) : (
-        <>
-          <Text style={styles.label}>Content</Text>
-          <TextInput
-            style={styles.notaryName}
-            placeholder="Enter your content"
-            autoCorrect={false}
-            returnKeyType="done"
-            value={notaryTextContent}
-            onChangeText={(notaryTextContent) =>
-              setNotaryTextContent(notaryTextContent)
-            }
-          />
-        </>
-      )}
-      <View style={styles.item}>
-        <CheckBox
-          checked={notaryTakeLocation}
-          color="#15548b"
-          onPress={() => handleAskForLocation()}
+      <ScrollView>
+        <Text style={styles.label}>Name</Text>
+        <TextInput
+          style={styles.notaryName}
+          placeholder="Enter a name"
+          autoFocus
+          autoCorrect={false}
+          returnKeyType="done"
+          value={notaryName}
+          onChangeText={(notaryName) => setNotaryName(notaryName)}
         />
-        <Text
-          style={{
-            ...styles.checkBoxTxt,
-            color: notaryTakeLocation ? "#15548b" : "gray",
-            fontWeight: notaryTakeLocation ? "bold" : "normal",
-          }}
-        >
-          Store Location
-        </Text>
-      </View>
-      <TouchableOpacity
-        style={styles.sendVerificationButton}
-        onPress={sendFileData}
-      >
-        {!loading ? (
-          <Text style={styles.sendVerificationText}>Notarize</Text>
+        <Text style={styles.label}>Description</Text>
+        <TextInput
+          style={styles.notaryName}
+          placeholder="Enter a description"
+          autoCorrect={false}
+          returnKeyType="done"
+          onChangeText={(notaryDescription) =>
+            setNotaryDescription(notaryDescription)
+          }
+          value={notaryDescription}
+        />
+        {fileType !== "text" ? (
+          <>
+            <Text style={styles.label}>File</Text>
+            <View style={styles.fileContainer}>
+              <Image
+                source={require("../../assets/system-icons/attach.png")}
+                style={styles.systemIcon}
+              ></Image>
+              <Text style={styles.fileName}>{fileName}</Text>
+            </View>
+          </>
         ) : (
-          <ActivityIndicator size="small" color="#fff" />
+          <>
+            <Text style={styles.label}>Content</Text>
+            <TextInput
+              style={styles.notaryName}
+              placeholder="Enter your content"
+              autoCorrect={false}
+              returnKeyType="done"
+              value={notaryTextContent}
+              onChangeText={(notaryTextContent) =>
+                setNotaryTextContent(notaryTextContent)
+              }
+            />
+          </>
         )}
-      </TouchableOpacity>
+        <View style={styles.item}>
+          <CheckBox
+            checked={notaryTakeLocation}
+            color="#15548b"
+            onPress={() => handleAskForLocation()}
+          />
+          <Text
+            style={{
+              ...styles.checkBoxTxt,
+              color: notaryTakeLocation ? "#15548b" : "gray",
+              fontWeight: notaryTakeLocation ? "bold" : "normal",
+            }}
+          >
+            Store Location
+          </Text>
+        </View>
+        <TouchableOpacity
+          style={styles.sendVerificationButton}
+          onPress={sendFileData}
+        >
+          {!loading ? (
+            <Text style={styles.sendVerificationText}>Notarize</Text>
+          ) : (
+            <ActivityIndicator size="small" color="#fff" />
+          )}
+        </TouchableOpacity>
+      </ScrollView>
 
       {!isHidden && (
         <TouchableWithoutFeedback onPress={(e) => _toggleSubView("")}>

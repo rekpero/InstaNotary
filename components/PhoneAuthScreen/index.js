@@ -8,6 +8,7 @@ import {
   Image,
   ActivityIndicator,
   TouchableWithoutFeedback,
+  ScrollView,
 } from "react-native";
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import CodeInput from "react-native-confirmation-code-input";
@@ -137,7 +138,7 @@ const PhoneAuthScreen = ({ navigation }) => {
         cancelLabel="Close"
       />
       {phoneAuthState === "phone" && (
-        <View style={styles.phoneNumberInputContainer}>
+        <ScrollView style={styles.phoneNumberInputContainer}>
           <Image
             style={styles.welcomeIcon}
             source={{
@@ -193,10 +194,10 @@ const PhoneAuthScreen = ({ navigation }) => {
               )}
             </TouchableOpacity>
           </View>
-        </View>
+        </ScrollView>
       )}
       {phoneAuthState === "verification" && (
-        <View style={styles.phoneNumberInputContainer}>
+        <ScrollView style={styles.phoneNumberInputContainer}>
           <View style={styles.toolbarContainer}>
             <TouchableWithoutFeedback onPress={goBack}>
               <Image
@@ -273,7 +274,7 @@ const PhoneAuthScreen = ({ navigation }) => {
               )}
             </TouchableOpacity>
           </View> */}
-        </View>
+        </ScrollView>
       )}
     </View>
   );
