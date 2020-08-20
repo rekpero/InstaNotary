@@ -1,5 +1,11 @@
 import * as React from "react";
-import { View, Text, TouchableWithoutFeedback, Image } from "react-native";
+import {
+  View,
+  Text,
+  TouchableWithoutFeedback,
+  Image,
+  ScrollView,
+} from "react-native";
 import styles from "./style";
 
 console.disableYellowBox = true;
@@ -19,7 +25,7 @@ export default function AboutScreen({ navigation }) {
         </TouchableWithoutFeedback>
         <Text style={styles.title}>About</Text>
       </View>
-      <View style={styles.bodyContainer}>
+      <ScrollView style={styles.bodyContainer}>
         <Text style={styles.subtitle}>
           The application aims to give users a way to instantly notarize any
           data or file they want with current date time and location.
@@ -47,9 +53,9 @@ export default function AboutScreen({ navigation }) {
           IPFS uses content-addressing to uniquely identify each file in a
           global namespace connecting all computing devices.
         </Text>
-        <View style={styles.bottomContainer}>
-          <Text style={styles.bottomTitle}>Built with 💜 by rekpero.</Text>
-        </View>
+      </ScrollView>
+      <View style={styles.bottomContainer}>
+        <Text style={styles.bottomTitle}>Built with 💜 by rekpero.</Text>
       </View>
     </View>
   );

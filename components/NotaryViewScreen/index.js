@@ -10,6 +10,7 @@ import {
   Linking,
   Clipboard,
   Platform,
+  ScrollView,
 } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import { notifyMessage } from "../../utils";
@@ -317,7 +318,7 @@ export default function NotaryViewScreen({ route, navigation }) {
           </TouchableWithoutFeedback>
         </View>
         {modalType === "notaryInfo" ? (
-          <View style={styles.subViewDetailContainer}>
+          <ScrollView style={styles.subViewDetailContainer}>
             <View style={styles.subViewDetailItems}>
               <Text style={styles.detailTitle}>Name: </Text>
               <Text style={styles.detailText}>{notary.name}</Text>
@@ -410,7 +411,7 @@ export default function NotaryViewScreen({ route, navigation }) {
                   notary.timeZone}
               </Text>
             </View>
-          </View>
+          </ScrollView>
         ) : null}
         {modalType === "notaryQrCode" ? (
           <View style={styles.subViewDetailContainer}>

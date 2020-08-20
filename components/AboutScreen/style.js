@@ -6,6 +6,7 @@ export default StyleSheet.create({
     flexDirection: "column",
     paddingTop: 48,
     backgroundColor: "#f5f5f5",
+    position: "relative",
   },
   bodyContainer: {
     flex: 1,
