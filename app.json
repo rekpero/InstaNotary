@@ -2,15 +2,15 @@
   "expo": {
     "name": "BluzelleNotary",
     "icon": "./assets/app-icon.png",
-    "version": "0.0.9",
+    "version": "0.0.11",
     "slug": "instanotary",
     "ios": {
       "bundleIdentifier": "com.bluzelle.notary",
-      "buildNumber": "0.0.9"
+      "buildNumber": "0.0.11"
     },
     "android": {
       "package": "com.bluzelle.notary",
-      "versionCode": 8
+      "versionCode": 11
     }
   }
 }
